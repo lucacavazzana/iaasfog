@@ -1,0 +1,75 @@
+\documentclass[12pt]{article}
+\usepackage{url}
+
+
+\title {IaasFog}
+\author{Stefano Cadario, Luca Cavazzana}
+
+\begin{document}
+\maketitle
+\data{\date}
+
+\tableofcontents
+
+\chapter{Introduzione}
+\chapter{Installazione}
+\section{OpenCV}
+OpenCV (Open Source Computer Vision) \'e una libreria di funzioni per la computer vision, inizialmente sviluppata da Intel e ora distribuita sotto licenza open source. \'E possibile scaricare l'ultima versione all'indirizzo \url{http://sourceforge.net/projects/opencvlibrary/} \footnote{guida d'installazione ufficiale all'indirizzo \url{http://opencv.willowgarage.com/wiki/InstallGuide}}.
+
+\subsection{Windows}
+Per compilare la libreria \'e necessario installare degli header offerti da MinGW (\url{http://http://www.mingw.org/}) e CMake (\url{http://www.cmake.org/cmake/resources/software.html}).\\
+\noindent Una volta assicuratisi che il path dei binari di MinGW \'e fra le variabili di ambiente configurare OpenCV mediante l'interfaccia di CMake.
+
+\subsection{Linux / MacOSX}
+
+\noindent Per l'installazione \'e necessario disporre di \verb|cmake|, inoltre devono essere soddisfatte le seguenti dipendenze:
+\begin{itemize}
+\item \verb|ffmpeg|
+\item \verb|libxine-ffmpeg|cmakecmal
+\item \verb|libavcodec-dev|
+\end{itemize}
+
+\noindent reperibili mediante \verb|apt-get| o package manager.\\
+
+\noindent Una volta scaricata e scompattata l'ultima versione di OpenCV (2.2.0 alla stesura del presente documento), creare una cartella dove verranno salvate le librerie configurate mediante \verb|cmake| e aprirla con una finestra di terminale. Nel nostro esempio la creeremo nella stessa cartella scompattata
+
+\begin{verbatim}
+	$ cd OpenCV2.2.0/
+	$ mkdir release; cd release
+\end{verbatim}
+
+\noindent Lanciare quindi il comando
+
+\begin{verbatim}
+	$ cmake -D CMAKE_BUILD_TYPE=RELEASE -D 
+	CMAKE_INSTALL_PREFIX=/usr/local -D BUILD_PYTHON_SUPPORT=ON ..
+\end{verbatim}
+
+\noindent per configurare la libreria. Il valore della flag \verb|CMAKE_INSTALL_PREFIX| sar\'a l'indirizzo in cui si vorr\'a poi installare OpenCV. Se i sorgenti non dovessero trovarsi nella directory superiore, sostituire i due punti con il path corretto.\\
+
+\noindent A questo punto non rimane che compilare mediante il comando
+
+\begin{verbatim}
+	$ make install
+\end{verbatim}
+
+\noindent ed esportare il path nelle variabili di ambiente con il comando
+
+\begin{verbatim}
+	$ export LD_LIBRARY_PATH=/usr/local/lib/:$LD_LIBRARY_PATH
+	$ sudo ldconfig
+\end{verbatim}
+
+\noindent Se invece si preferisce non installare le librerie, esportare direttamente il path 
+
+\begin{verbatim}
+	$ export LD_LIBRARY_PATH=<opencv_dir>:$LD_LIBRARY_PATH
+	$ sudo ldconfig
+\end{verbatim}
+
+\noindent dove \verb|<opencv_dir>| \'e la cartella dove abbiamo compilato il le librerie, nel nostro caso \verb|~/OpenCV-2.2.0/release|.
+
+\section{Installazione progetto}
+\noindent Importare il progetto in Eclipse, aggiungere le librerie di OpenCV mediante Project $\rightarrow$ Properties  $\rightarrow$ C\slash C++ Editor $\rightarrow$ Settings $\rightarrow$ GCC C++ Compiler $\rightarrow$ Directories ed aggiungendo il percorso \verb|/usr/local/include/opencv| e sotto GCC C\slash C++ Linker $\rightarrow$ Libraries le librerie \verb|...| e \verb|...| sotto \verb|/usr/local/lib| (o qualunque path sia stato utilizzato per l'installazione\dots Cazzo arrangiatevi un po'\dots).
+
+\end{document}
