@@ -41,9 +41,10 @@ imPaths = getPaths(imFolder,imName,imNum);
 [vp,feats] = parseFeatures(outFile); % re-parsing features
 imTime = imTime*ones(1,imNum); imTime(1)=0; % time vector
 
-% FIXME: c'è qualche errore da qualche parte, vp non possono essere in -1,-1
+% FIXME: c'è qualche errore da qualche parte, vp non possono essere in -1,-1 ---
 vp = [182,122,1];
 disp(['keeping vp = ', num2str(vp), ' ''till findFeatures is fixed']);
+%-------------------------------------------------------------------------------
 
 disp(['Found ', num2str(size(feats,1)), ' features over ', num2str(size(feats,2)), ' images']);
 
