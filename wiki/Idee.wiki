@@ -1,0 +1,6 @@
+#summary Idee
+
+= Idee =
+
+uso del tempo medio d'impatto come stimatore: migliore è la visibilità, maggiore sarà la distanza cui cominceranno ad apparire le features, maggiore sarà il tempo d'impatto medio
+uso della triangolazione esplicita delle features come stimatore: maggiore la visibilità, maggiore sarà la distanza media cui appaiono le features, maggiore la distanza media 
