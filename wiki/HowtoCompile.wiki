@@ -20,3 +20,18 @@ Following the instructions for compiling the project
   * Create new project
 
   * Link Includes/Libraries
+
+== Linux / MacOSX ===
+  * Download and Install *Eclipse IDE for C/C++ Developers* (make sure to have gcc and g++!)
+
+  * Make sure to have *CMake* and meet the following dependancies:
+    * `ffmpeg`
+    * `libxine-ffmpeg`
+    * `libavcodec-dev`
+   you can find it via `apt-get`
+
+  * Download and Install *OpenCV2.2* from http://opencv.willowgarage.com/wiki/Welcome, following the instructions at http://opencv.willowgarage.com/wiki/InstallGuide
+
+  * Create new project
+
+  * Link opencv's includes and libraries `opencv_core`, `opencv_highgui`, `opencv_video`, `opencv_imgproc`
