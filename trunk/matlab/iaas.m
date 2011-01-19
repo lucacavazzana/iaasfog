@@ -9,7 +9,7 @@ function [] = iaas()
 SHOWPLOTS = 1;
 DEFPATHS = 1;
 if regexp(path,'/home/luca/','once')
-    imFolder = '/home/luca/Matlab/IAAS/Images';
+    imFolder = '/home/luca/Matlab/iaasfog/Images';
     outFile = 'outFile.txt';
 else
     error('    unhandled Stefano_è_frocio_exception');
@@ -32,10 +32,10 @@ end
 imPaths = getPaths(imFolder,imName,imNum);
 
 % TODO: modify path before "release"
-% if(system(['c++/Debug/iaas -v -f ',imFolder,' -i ',imName,' -n', num2str(imNum),' -t' num2str(imTime),' -o',outFile])~=0)
-%     disp('    - ERROR in finding features. Exit');
-%     return;
-% end
+if(system(['c++/Debug/iaasfog -v -f ',imFolder,' -i ',imName,' -n', num2str(imNum),' -t' num2str(imTime),' -o',outFile])~=0)
+    disp('    - ERROR in finding features. Exit');
+    return;
+end
 
 
 [vp,feats] = parseFeatures(outFile); % re-parsing features
@@ -47,7 +47,7 @@ disp(['keeping vp = ', num2str(vp), ' ''till findFeatures is fixed']);
 %-------------------------------------------------------------------------------
 
 disp(['Found ', num2str(size(feats,1)), ' features over ', num2str(size(feats,2)), ' images']);
-
+return;
 % impactTime1(imPaths, feats', vp, imTime, SHOWPLOTS);
 impactTime2(imPaths, feats', vp, imTime, 1);
 end
