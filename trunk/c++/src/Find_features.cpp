@@ -54,8 +54,25 @@ int main (int argc, char **argv) {
 
 
 	// handle parameters --------------------
+	if (argc == 2 && (
+			!strcmp(argv[1],"help") ||
+			!strcmp(argv[1],"-h") ||
+			!strcmp(argv[1],"--help"))) {
+
+		std::cout << "usage "<< argv[0] <<": -f <folder_pat> -i <first_image_name> -n <number_images> [-t <time_period>] [-o <output>]" << std::endl << std::endl;
+		std::cout << "-f          : image folder path" << endl;
+		std::cout << "-h | --help : print help" << endl;
+		std::cout << "-i          : first image name" << endl;
+		std::cout << "-n          : number of images" << endl;
+		std::cout << "-o          : optional, number of image to analyze" << endl;
+		std::cout << "-t          : optional, time between images" << endl;
+		std::cout << "-v          : verbose mode, shows infos and images" << endl;
+		return 0;
+	}
+
 	if (argc < 7) {
-		std::cout << "usage "<< argv[0] <<": -f <folder_pat> -i <first_image_name> -n <number_images> [-t <time_period>] [-o <output>] " << std::endl;
+		std::cout << "usage "<< argv[0] <<": -f <folder_pat> -i <first_image_name> -n <number_images> [-t <time_period>] [-o <output>]" << std::endl;
+		std::cout << "write iaasfog help for more info" << std::endl;
 		exit(1);
 	} else {
 		int c;
@@ -77,6 +94,7 @@ int main (int argc, char **argv) {
 				break;
 			case 't':
 				inTime = optarg;
+				break;
 			case 'v':
 				verbose = true;
 				break;
@@ -135,27 +153,29 @@ int main (int argc, char **argv) {
 	} // TODO: check folder existence too
 
 
-	int start = atoi(firstImage.substr(mark_pos-4,4).c_str()); // in case the serie doesn't start at img 0000
+	int start = atoi(firstImage.substr(mark_pos-4,4).c_str()); // in case the series doesn't start at img 0000
 	vectPathImages.push_back(folder + "/" + firstImage);
 	// TODO: check image exists
-	if (verbose)
-		std::cout << vectPathImages.back() << std::endl;
 
-	// recreate the path every image (supposing a sequantial numbering)
+#ifdef _DEBUG
+	std::cout << vectPathImages.back() << "porcocristo"<< std::endl;
+#endif //_DEBUG
+
+	// recreate the path every image (supposing a sequential numbering)
 	for(int i=1; i<n;i++){
 		stringstream ss;
 		ss <<  start+i;
 		vectPathImages.push_back(folder + "/" + firstImage.substr(0,mark_pos-ss.str().size()) + ss.str() +  firstImage.substr(mark_pos,firstImage.length()));
-		if (verbose)
-			std::cout << vectPathImages.back() << std::endl;
+#ifdef _DEBUG
+		std::cout << vectPathImages.back() << std::endl;
+#endif
 		// TODO: check image exists
 	}
 
 	try {
-		Find_features(vectPathImages, outFile);
+		Find_features(vectPathImages, outFile, verbose);
 	} catch (cv::Exception e){
 		if (e.code == -5) {
-			// TODO: identificare bene la causa di questo errore, forse troppe immagini
 			std::cout << "- ERROR: no features was present all images, try with a smaller set" << std::endl;
 			exit(-5);
 		}

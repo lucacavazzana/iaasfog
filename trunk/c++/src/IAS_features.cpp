@@ -3,7 +3,7 @@
 #define NAME_WINDOW "^0^"
 
 
-void Find_features(std::vector<std::string> pathImages, std::string pathOutFile){
+void Find_features(std::vector<std::string> pathImages, std::string pathOutFile, bool verb){
 	TrackRecord *a_records;
 	IplImage *imageA, *imageB, *image1, *image0 /*,*image*/;
 	CvPoint2D32f *cornersA, *cornersB;
@@ -14,7 +14,7 @@ void Find_features(std::vector<std::string> pathImages, std::string pathOutFile)
 	int key;
 
 	cvNamedWindow(NAME_WINDOW, CV_WINDOW_AUTOSIZE);
-	
+
 	image0 = cvLoadImage(pathImages[0].c_str(), CV_LOAD_IMAGE_UNCHANGED);
 	image1 = cvLoadImage(pathImages[0].c_str(), CV_LOAD_IMAGE_UNCHANGED);
 
@@ -26,14 +26,16 @@ void Find_features(std::vector<std::string> pathImages, std::string pathOutFile)
 
 		frameA = track_frame;
 		frameB = track_frame+1;
-		
+
 		//Open 1st frame
 		imageA = cvLoadImage(pathImages[frameA].c_str(), CV_LOAD_IMAGE_GRAYSCALE);
-		
+
+#ifdef _DEBUG
 		if(track_frame == 0){
 			cvShowImage(NAME_WINDOW, imageA);
 			key = cvWaitKey(0);
 		}
+#endif
 
 		//At the beginning of the tracking sequence find new corners
 		if(track_frame == 0){
@@ -51,12 +53,14 @@ void Find_features(std::vector<std::string> pathImages, std::string pathOutFile)
 			//Used to iterate on array
 			corner_count = max_corners;
 		}
-		
+
 		//Open 2nd frame
 		imageB = cvLoadImage(pathImages[frameB].c_str(), CV_LOAD_IMAGE_GRAYSCALE);
 
+#ifdef _DEBUG
 		cvShowImage(NAME_WINDOW, imageB);
 		key = cvWaitKey(0);
+#endif
 
 		//Track corners in 2nd frame
 		cornersB = new CvPoint2D32f[max_corners];
@@ -111,7 +115,7 @@ void Find_features(std::vector<std::string> pathImages, std::string pathOutFile)
 				sel_corners = iaasSelectCoherentMotionFeatures(a_records, pathImages.size());
 				//std::cout << "Find_features --- dopo iaasSelectCoherentMotionFeatures --- sel_corners: " << sel_corners << std::endl;
 			}
-			
+
 			//Get selected corners only in first and last array
 			cornersA = new CvPoint2D32f[sel_corners];
 			cornersB = new CvPoint2D32f[sel_corners];
@@ -120,16 +124,15 @@ void Find_features(std::vector<std::string> pathImages, std::string pathOutFile)
 			//First vp estimation
 			int patchSize = 20;
 			vp = iaasHoughMostCrossedPoint(cornersA, cornersB, sel_corners, true, image0->width, image0->height, patchSize);
-#ifdef _DEBUG
-			std::cout << "vp: " << vp.x << "  " << vp.y << std::endl;
-#endif
+
 			//std::cout << "Find_features --- dopo 1a stima vp --- sel_corners: " << sel_corners << std::endl;
 
 			//Filter too distant lines
 			sel_corners = iaasSelectCloseFlowVectors(a_records, vp, pathImages.size(), patchSize);
 			//std::cout << "Find_features --- dopo iaasSelectCloseFlowVectors --- sel_corners: " << sel_corners << std::endl;
-			
-			std::cout << "Find_features: " << sel_corners << " features found." << std::endl;
+
+			if (verb)
+				std::cout << "Find_features: " << sel_corners << " features found." << std::endl;
 
 			//Get selected corners only in first and last array
 			iaasGetTrackedPoints(a_records, cornersA, cornersB, pathImages.size());
@@ -138,25 +141,25 @@ void Find_features(std::vector<std::string> pathImages, std::string pathOutFile)
 			//Extract minimum distant point from lines joining cornersA and cornersB
 			vp = iaasMinimumDistantPoint(cornersA, cornersB, sel_corners);
 
-#ifdef _DEBUG
-			std::cout << "vp: " << vp.x << "  " << vp.y << std::endl;
-			std::cout << "la precedente funzione mi sminchia in qualche modo il vp" << std::endl;
-#endif
-			
+			if(verb)
+				std::cout << "Vanishing point: " << vp.x << "  " << vp.y << std::endl;
+
 			//write a_records on file...
 			Print_vp_and_features(pathOutFile, pathImages.size(), vp, a_records);
 
 			//Compute mean time to impact
 			//double avg_tti = iaasMeanTimeToImpact(vp, cornersA, cornersB, sel_corners);
 
-			//Draw flaw field
-			iaasDrawFlowField(image1, cornersA, cornersB, sel_corners, track_status, CV_RGB(255, 0, 0));
+			if(verb){
+				//Draw flaw field
+				iaasDrawFlowField(image1, cornersA, cornersB, sel_corners, track_status, CV_RGB(255, 0, 0));
 
-			//Draw vanishing point
-			cvCircle(image1, cvPoint(cvRound(vp.x), cvRound(vp.y)), 2, CV_RGB(255, 255, 255));
-			
-			cvShowImage(NAME_WINDOW, image1);
-			key = cvWaitKey(0);
+				//Draw vanishing point
+				cvCircle(image1, cvPoint(cvRound(vp.x), cvRound(vp.y)), 2, CV_RGB(255, 255, 255));
+
+				cvShowImage(NAME_WINDOW, image1);
+				key = cvWaitKey(0);
+			}
 
 			//Attach images and diplay mean time to impact
 			//image = iaasAddImage(image0, image1);
@@ -206,7 +209,7 @@ void Extract_features_file(std::string filePath, std::vector<std::vector<std::ve
 		double x, y;
 		int pos_o, pos_c, pos_v, pos_prec;
 		int nIm;
-		
+
 		getline(f_in, lineF);
 		//std::cout << "Extract_features_file --- lineF: " << lineF << std::endl;
 		if(lineF.find("vanishing point:") != -1){
@@ -222,7 +225,7 @@ void Extract_features_file(std::string filePath, std::vector<std::vector<std::ve
 				//std::cout << "vp->size(): " << vp->size() << std::endl;
 			}
 		}
-		
+
 		std::vector<double> coord;
 		std::vector<std::vector<double> > v_nIm;
 		while(!f_in.eof()){
