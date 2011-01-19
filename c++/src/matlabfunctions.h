@@ -13,8 +13,8 @@
 #include <string>
 //#include <sstream>
 //#include <math.h>
-#include "opencv\cv.h"
-#include "opencv\highgui.h"
+#include "opencv/cv.h"
+#include "opencv/highgui.h"
 
 // Canny parameters
 #define CANNY_LOW_T 0.89
