@@ -28,6 +28,8 @@ Following the instructions for compiling the project
     * `ffmpeg`
     * `libxine-ffmpeg`
     * `libavcodec-dev`
+    * `pgk-config`
+    * `libgtk2.0-dev`
   you can find it via `apt-get`
 
   * Download and Install *OpenCV2.2* from http://opencv.willowgarage.com/wiki/Welcome, following the instructions at http://opencv.willowgarage.com/wiki/InstallGuide
