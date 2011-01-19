@@ -1,0 +1,22 @@
+#summary One-sentence summary of this page.
+
+= Introduction =
+
+Following the instructions for compiling the project
+
+== Windows ==
+  * Download and Install *Eclipse IDE for C/C++ Developers* from http://www.eclipse.org/downloads/
+
+  * Download and Install *MinGW* from http://www.mingw.org/
+      # Download the Automated MinGW Installer
+      # Follow the instructions at http://www.mingw.org/wiki/InstallationHOWTOforMinGW
+
+  * Download and Install *OpenCV2.2* from http://opencv.willowgarage.com/wiki/Welcome
+    # Download OpenCV-2.2.0-win.zip
+    # Follow the instuctions at http://opencv.willowgarage.com/wiki/MinGW#OpenCV2.2
+
+  * Configure Eclipse for using MinGW as compiler
+
+  * Create new project
+
+  * Link Includes/Libraries
