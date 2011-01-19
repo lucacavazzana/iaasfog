@@ -11,7 +11,10 @@
 #include <string>
 #include <cctype>
 #include <sstream>
+
+#include "getopt.h"
 #include "stdio.h"
+
 #include "IAS_features.h"
 #include "matlabfunctions.h"
 
