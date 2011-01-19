@@ -36,5 +36,5 @@ Following the instructions for compiling the project
 
   * Link opencv's includes and libraries `opencv_core`, `opencv_highgui`, `opencv_video`, `opencv_imgproc`
 
-=== Matlab ===
+= Matlab =
 For the matlab part of the code, import the path of the m-files.
