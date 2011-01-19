@@ -19,9 +19,9 @@
 #include <float.h>
 #include <list>
 
-#include "opencv\cv.h"
-#include "opencv\cxcore.h"
-#include "opencv\highgui.h"
+#include "opencv/cv.h"
+#include "opencv/cxcore.h"
+#include "opencv/highgui.h"
 
 
 #include "mathtools.h"

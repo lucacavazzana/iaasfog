@@ -47,7 +47,7 @@ disp(['keeping vp = ', num2str(vp), ' ''till findFeatures is fixed']);
 %-------------------------------------------------------------------------------
 
 disp(['Found ', num2str(size(feats,1)), ' features over ', num2str(size(feats,2)), ' images']);
-return;
+
 % impactTime1(imPaths, feats', vp, imTime, SHOWPLOTS);
 impactTime2(imPaths, feats', vp, imTime, 1);
 end

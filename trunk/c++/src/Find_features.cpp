@@ -55,7 +55,7 @@ int main (int argc, char **argv) {
 
 	// handle parameters --------------------
 	if (argc < 7) {
-		std::cout << "usage "<< argv[0] <<": -p <folder_pat> -i <first_image_name> -n <number_images> [-t <time_period>] [-o <output>] " << std::endl;
+		std::cout << "usage "<< argv[0] <<": -f <folder_pat> -i <first_image_name> -n <number_images> [-t <time_period>] [-o <output>] " << std::endl;
 		exit(1);
 	} else {
 		int c;

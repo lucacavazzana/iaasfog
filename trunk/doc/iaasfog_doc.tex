@@ -41,15 +41,16 @@ Per compilare la libreria \'e necessario installare degli header offerti da MinG
 \noindent Lanciare quindi il comando
 
 \begin{verbatim}
-	$ cmake -D CMAKE_BUILD_TYPE=RELEASE -D 
-	CMAKE_INSTALL_PREFIX=/usr/local -D BUILD_PYTHON_SUPPORT=ON ..
+	cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local
+	-D BUILD_PYTHON_SUPPORT=ON -D BUILD_EXAMPLES=ON ..
 \end{verbatim}
 
 \noindent per configurare la libreria. Il valore della flag \verb|CMAKE_INSTALL_PREFIX| sar\'a l'indirizzo in cui si vorr\'a poi installare OpenCV. Se i sorgenti non dovessero trovarsi nella directory superiore, sostituire i due punti con il path corretto.\\
 
-\noindent A questo punto non rimane che compilare mediante il comando
+\noindent A questo punto non rimane che compilare ed installare le librerie mediante i comandi
 
 \begin{verbatim}
+	$ make
 	$ make install
 \end{verbatim}
 
