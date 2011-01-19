@@ -28,10 +28,13 @@ Following the instructions for compiling the project
     * `ffmpeg`
     * `libxine-ffmpeg`
     * `libavcodec-dev`
-   you can find it via `apt-get`
+  you can find it via `apt-get`
 
   * Download and Install *OpenCV2.2* from http://opencv.willowgarage.com/wiki/Welcome, following the instructions at http://opencv.willowgarage.com/wiki/InstallGuide
 
-  * Create new project
+  * Import the project
 
   * Link opencv's includes and libraries `opencv_core`, `opencv_highgui`, `opencv_video`, `opencv_imgproc`
+
+=== Matlab ===
+For the matlab part of the code, import the path of the m-files.
