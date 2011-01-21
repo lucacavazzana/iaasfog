@@ -158,7 +158,7 @@ int main (int argc, char **argv) {
 	// TODO: check image exists
 
 #ifdef _DEBUG
-	std::cout << vectPathImages.back() << "porcocristo"<< std::endl;
+	std::cout << vectPathImages.back() << std::endl;
 #endif //_DEBUG
 
 	// recreate the path every image (supposing a sequential numbering)
@@ -168,7 +168,7 @@ int main (int argc, char **argv) {
 		vectPathImages.push_back(folder + "/" + firstImage.substr(0,mark_pos-ss.str().size()) + ss.str() +  firstImage.substr(mark_pos,firstImage.length()));
 #ifdef _DEBUG
 		std::cout << vectPathImages.back() << std::endl;
-#endif
+#endif // _DEBUG
 		// TODO: check image exists
 	}
 
