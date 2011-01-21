@@ -121,7 +121,7 @@ void Find_features(std::vector<std::string> pathImages, std::string pathOutFile,
 			cornersB = new CvPoint2D32f[sel_corners];
 			iaasGetTrackedPoints(a_records, cornersA, cornersB, pathImages.size());
 
-			//First vp estimation
+			//First vp estimation by vote system
 			int patchSize = 20;
 			vp = iaasHoughMostCrossedPoint(cornersA, cornersB, sel_corners, true, image0->width, image0->height, patchSize);
 

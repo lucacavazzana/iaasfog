@@ -19,7 +19,7 @@ end
 
 if any(fog_lev>0)
     glob_fog = sum(fog_lev)/sum(fog_lev>0);
-    disp(['Michelson contrast level over ', num2str(sum(fog_lev>0)),' vp: ', num2str(glob_fog)]);
+    disp(['Michelson contrast level over ', num2str(sum(fog_lev>0)),' vps: ', num2str(glob_fog)]);
 else
     disp('Cannot find the contrast level of the vanishing point, inhomogeneous in each image');
     return;
