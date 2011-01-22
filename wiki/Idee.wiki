@@ -1,4 +1,6 @@
-= Idee =
+= idee =
+  # vp potrebbe essere occluso da qualche oggetto (o dalla strada stessa se in prossimità di una salita), rendendo impossibile il calcolo del livello di nebba medio... e se si calcolasse il livello medio di nebbia usando la più grande area omogenea nella metà alta dell'immagine? (o nel triangolo aventi per vertici il vp e i vertici alti dell'immagine)
 
   # uso del *tempo medio d'impatto* come stimatore: migliore è la visibilità, maggiore sarà la distanza cui cominceranno ad apparire le features, maggiore sarà il tempo d'impatto medio
+
   # uso della *triangolazione esplicita* delle features come stimatore: maggiore la visibilità, maggiore sarà la distanza media cui appaiono le features, maggiore la distanza media 
