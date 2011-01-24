@@ -5,7 +5,15 @@ function [] = iaas()
 %   Copyright 1985-2010 Stefano Cadario, Luca Cavazzana
 %   $Revision: 0.0.0.1 $  $Date: 2010/12/ 18:22:08 $
 
-exec_path = 'c++/Debug/iaasfog'; % path of the c++ part of the project. Make sure it exists
+arch = computer('arch');
+
+if strcmp(arch,'win32') || strcmp(arch,'win64')
+    bin_name = 'iaasfog.exe';
+else
+    bin_name = 'iaasfog';
+end
+
+exec_path = strcat('c++/Debug/', bin_name); % path of the c++ part of the project. Make sure it exists
 if exist(exec_path,'file')~=2
     error('- ERROR: cannot find the feature-finding executable. Click on this message to fix the path');
 end
