@@ -2,10 +2,10 @@ function [im_vis] = imageVisibleP3(contr, time, showPlot)
 
 %
 %--------------------------------------------------------------------------
-%[im_vis] = IMAGE_VISIBLE_P3(contr, time, showPlot)
-%Given the discrete visibility function returns the number of the image
-%where the feature becomes visible, choosen as the nearest to the point of
-%inflection of the 3rd degree polynomial fitting the discrete function.
+%[im_vis] = IMAGEVISIBLEP3(contr, time, showPlot)
+% Given the discrete contrast function returns the number of the image
+% where the feature becomes visible, choosen as the nearest to the point of
+% inflection of the 3rd degree polynomial fitting the discrete function.
 %
 % INPUT
 %   'contr':    vector containing the value of the feature in the Ith
@@ -55,12 +55,12 @@ if (showPlot < 1)
 end
 
 hold on;
-plot(inTime, contr,'s', 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'g');
+plot(inTime, contr, 's', 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'g');
 
 % plot polynomial
 X = linspace(inTime(1), inTime(size(inTime,1)), 100);
-Ypol3 = pol3(1)*X.^3 + pol3(2)*X.^2 + pol3(3)*X + pol3(4);
-plot(X, Ypol3,'b', 'MarkerSize', 3);
+Ypol3 = polyval(pol3,X);
+plot(X, Ypol3, 'b', 'MarkerSize', 3);
 
 % plot derivative
 % Yder = der2_pol3(1)*X + der2_pol3(2);

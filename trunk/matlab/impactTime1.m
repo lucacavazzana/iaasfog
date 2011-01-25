@@ -1,11 +1,15 @@
 function [] = impactTime1 (imPaths, feats, vp,  time, showPlot)
 
+% IMPACTTIME1
+% testing the algorithm using a 3rd degree polynomial to approximate the
+% discrete contrast function.
+%
 %   'imPaths':  MxN matrix, containing the complete paths of the M images
 %               in the serie.
 %   'feats':    MxN matrix containint the coordinates of the features as a
 %               structure. N is the number of features, M the number of
 %               images.
-%   'vp':       vanishing point coords [X,Y,Z]
+%   'vp':       vanishing point coords struct (x,y,z)
 %   'time':     vector, for each i-th position contains the time between
 %               frame i and i-1
 %   showPlot:   =1 or ='true' to show various graphs (otherwise just ignore
@@ -35,8 +39,8 @@ end
 %     end
 for ii=1:NIMG
     % proviamo così
-    fog_lev(ii) = zoneHom(vp, imPaths(ii,:), 20, .895, .9, .3, showPlot); %#ok,
-end
+    fog_lev(ii) = zoneHom(vp, imPaths(ii,:), 20, .895, .9, .3, 0); % check parameters (n)
+end;
 if(all(fog_lev <= 0))
     disp('- Cannot find fog level, needed to compute Weber contrast. Proceeding using only Michelson');
     glob_fog = -1;
@@ -52,17 +56,15 @@ if(glob_fog ~= -1)
 end
 mContr = zeros(NIMG,NFEAT);
 for ii=1:NIMG % for each image
-    img = imread(imPaths(ii,:));
+    img = rgb2gray(imread(imPaths(ii,:)));
     for ff=1:NFEAT %for each feature
         if(glob_fog ~= -1)
-            wContr(ii,ff) = WeberContrast(glob_fog,feats(ii,ff),img);
+            wContr(ii,ff) = WeberContrast(glob_fog,img(round(feats(ii,ff).y),round(feats(ii,ff).x)));
         end
         mContr(ii,ff) = MichelsonContrast(feats(ii,ff),img);
     end
 end
 clear img;
-
-size(wContr)
 
 mImVisFeat = zeros(NFEAT,1);
 if(glob_fog ~= -1)
@@ -107,7 +109,6 @@ for jj=1:NFEAT
     end
 end
 
-showPlot=1; % TODO: rimuovere
 if(glob_fog~=-1)
     wMean = mean(wImpact);
     if(showPlot)
