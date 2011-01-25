@@ -3,33 +3,39 @@ function[w_contr] = WeberContrast(fog_level, feature, image)
 %--------------------------------------------------------------------------
 %[w_contr] = WEBER_CONTRAST(fog_level, feature, image)
 %
-%Determina il contrasto di Weber relativo alla feature e al livello di
-%grigio associato alla nebbia.
+% compute the Weber contrast level on the specified grayscale point
 %
 %INPUT
-%   'fog_level':livello di grigio associato alla nebbia;
-%   'feature':  coordinate omogenee della feature sull'immagine 'image';
-%   'image':    immagine in cui calcolare il contrasto della feature.
+%   'fog_level':    graylevel in the vanishing point
+%   'feature':      feat coords struct or uint value
+%   'image':        image (path or matrix). Parameter eeded if 'features'
+%                   if 'feature' is a coordinates struct
 %
 %OUTPUT
-%   'w_contr':  contrasto di Weber riferito alla feature e al livello della
-%               nebbia.
+%   'w_contr':      Weber contrast level
 %--------------------------------------------------------------------------
 
 
-% Normalize
-feature.x = feature.x/feature.z;
-feature.y = feature.y/feature.z;
-
-image = im2double(rgb2gray(image));
-
-
-%__________________________________________________________________________
-%Determinazione contrasto di Weber
-%__________________________________________________________________________
-
-% Feature intensity
-If = image(round(feature.y), round(feature.x));
+if isstruct(feature) % if are coordinates...
+    % Normalize
+    feature.x = feature.x/feature.z;
+    feature.y = feature.y/feature.z;
+    if size(image,1)==1 % if ==1 is a string...
+        image = imread(image);
+    end
+    if size(image,3)==3 % if ==3 RGB. FIXME: use the new function when isrgb will be replaced
+        image = rgb2gray(image);
+    end
+    
+%--------------------------------------------------------------------------
+% Find Weber contrast
+%--------------------------------------------------------------------------
+    
+    % Feature intensity
+    If = double(image(round(feature.y), round(feature.x)));
+else % else, if is the value...
+    If = im2double(feature);
+end
 
 % Weber contrast
 w_contr = abs((If - fog_level) / fog_level);

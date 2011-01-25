@@ -9,7 +9,7 @@ function[t_imp] = timeImpact(x1, x2, vp, dt, showPlot, imPath)
 %               frame
 %   'x2':       struct containing the coords of the feature in the second
 %               frame
-%   'vp':       coords of the vanishing point
+%   'vp':       coords struct of the vanishing point
 %   'dt':       time between the two images
 %   'showPlot': =1 to show plots, 0 else
 %
@@ -34,7 +34,7 @@ end
 % Normalize
 x1.x = x1.x/x1.z; x1.y = x1.y/x1.z;
 x2.x = x2.x/x2.z; x2.y = x2.y/x2.z;
-vp = vp/vp(3);
+vp = [[vp.x vp.y]/vp.z 1];
 
 % mean
 xm.x = mean([x1.x,x2.x]);
