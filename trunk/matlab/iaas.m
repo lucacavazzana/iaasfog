@@ -43,10 +43,10 @@ end
 % checks the image list
 imPaths = getPaths(imFolder,imName,imNum);
 
-% if(system([exec_path,' -v -f ',imFolder,' -i ',imName,' -n', num2str(imNum),' -t' num2str(imTime),' -o',outFile])~=0)
-%     disp('    - ERROR in finding features. Exit');
-%     return;
-% end
+if(system([exec_path,' -v -f ',imFolder,' -i ',imName,' -n', num2str(imNum),' -t' num2str(imTime),' -o',outFile])~=0)
+    disp('    - ERROR in finding features. Exit');
+    return;
+end
 
 
 [vp,feats] = parseFeatures(outFile); % re-parsing features
@@ -55,6 +55,7 @@ imTime = imTime*ones(1,imNum); imTime(1)=0; % time vector
 
 disp(['Found ', num2str(size(feats,1)), ' features over ', num2str(size(feats,2)), ' images']);
 
-% impactTime1(imPaths, feats', vp_st, imTime, 0);
-impactTime2(imPaths, feats', vp_st, imTime, 0);
+% checkFeatures(imPaths, feats');
+% impactTime1(imPaths, feats', vp_st, imTime, 1);
+impactTime2(imPaths, feats', vp_st, imTime, 1);
 end
