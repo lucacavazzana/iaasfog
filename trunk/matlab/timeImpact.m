@@ -1,8 +1,8 @@
 function[t_imp] = timeImpact(x1, x2, vp, dt, showPlot, imPath)
 %
 %--------------------------------------------------------------------------
-%Determina il tempo all'impatto della feature considerata rispetto
-%all'immagine in cui la feature ha coordinate pari a x1.
+% Determina il tempo all'impatto della feature considerata rispetto
+% all'immagine in cui la feature ha coordinate pari a x1.
 %
 %INPUT
 %	'x1':       struct containing the coords of the feature in the first
@@ -12,10 +12,11 @@ function[t_imp] = timeImpact(x1, x2, vp, dt, showPlot, imPath)
 %   'vp':       coords struct of the vanishing point
 %   'dt':       time between the two images
 %   'showPlot': =1 to show plots, 0 else
+%   'imPath':   path of the image, needed if plotting
 %
 %OUTPUT
 %'t_imp':   tempo di impatto dell'oggetto considerato rispetto all'istante
-%           in cui la feature si trova nel punto x1, l'unit� di misura
+%           in cui la feature si trova nel punto x1, l'unità di misura
 %           corrisponde a quella con cui è stato inserito il parametro
 %           'time'.
 %--------------------------------------------------------------------------

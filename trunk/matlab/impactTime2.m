@@ -50,7 +50,10 @@ end
 clear im;
 
 for ff=1:NFEAT
-    imageVisibleExpn(mCFeat(:,ff),time,1);
+    imageVisibleExpn(mCFeat(:,ff),time,feats(:,ff)',vp,glob_fog,1);
+end
+if showPlot
+    close;
 end
 
 end
