@@ -1,4 +1,4 @@
-function[im_vis] = imageVisibleExpn(contr, time, showPlot)
+function[im_vis] = imageVisibleExpn(contr, time, coords, vp, fog_lev, showPlot)
 
 % WIP
 %[im_vis] = IMAGEVISIBLEEXPN(contr, time, showPlot)
@@ -9,6 +9,9 @@ function[im_vis] = imageVisibleExpn(contr, time, showPlot)
 %   'contr':    vector containing the value of the feature in the Ith
 %               image
 %   'time:      vector array containing the time from image I-1 to I.
+%   'coords':   vector of coord struct (x,y,z) of the feature
+%   'vp':       coord struct of the vanishing point (x,y,z)
+%   'fog_lev':  contrast value associated to the vanishing point
 %   'showPlot': if >=1 shows plot, no if <1
 %
 % OUTPUT
@@ -24,13 +27,11 @@ function[im_vis] = imageVisibleExpn(contr, time, showPlot)
 %               becomes visible
 %--------------------------------------------------------------------------
 
+%FIXME: remove me-----------------------------------
+TEST = 0; % EXP = 0 | TANH = 1
 
-%__________________________________________________________________________
-%Determinazione tempo all'impatto rispetto all'ultima immagine in cui
-%compare l'immagine
-%__________________________________________________________________________
 
-NIMG = size(contr,1);
+NIMGS = size(contr,1);
 
 if size(time,1)==1
     time = time';
@@ -46,103 +47,57 @@ else
 end
 
 inTime = cumsum(time);
+% contr = contr - fog_lev;
+tImpact = abs(timeImpact(coords(1),coords(NIMGS),vp,inTime(NIMGS),0)); % se usassi coords(NIMG) invece di 2 non aumenta la precisione?
 
 %--------------------------------------------------------------------------
 % Define function parameters
 %--------------------------------------------------------------------------
 
-% EXP
-% def_fun = 'h * exp(-x/lamb)'; % exp
-% h_sp = max(contr);
-% lamb_sp = NIMG/2;
+% TODO: rivedere le funzioni in modo da diminuire se possibile il numero di
+% parametri in gioco
 
-% TANH
-def_fun = 'tanh(x+x0)'; % tanh
-x0_sp = mean(inTime);
+if TEST == 0 % EXP -----------------------------------
+    def_fun = '1-exp((-x+x0)/lamb)';
+    lamb_sp = inTime(NIMGS)/(max(contr)-min(contr)); % discrete derivative seems a good point to star
+    x0_sp = 0;
+    start_point = [lamb_sp x0_sp];
+elseif TEST == 1 % TANH ------------------------------------WIP
+    def_fun = 'tanh(x+x0)';
+    x0_sp = mean(inTime);
+    start_point = x0_sp;
+end
 
 fun = fittype(def_fun);
 option = fitoptions('Method', 'NonlinearLeastSquares',...
-                    ...'StartPoint', [h_sp, lamb_sp]); % exp
-                    'StartPoint', x0_sp); % tanh
+                    'StartPoint', start_point);
 
 % find function
-interp_fn = fit(inTime, contr, fun, option);
+interp_fn = fit(inTime, contr, fun, option); 
 
 %--------------------------------------------------------------------------
 % Nearest frame
 %--------------------------------------------------------------------------
 
-% [asd im_vis] = min(abs(inTime-1/interp_fn.lamb)); % exp
-[asd im_vis] = min(abs(time-interp_fn.x0)); % tanh
-
-
-
-if ~showPlot
-    return;
+if TEST == 0 % EXP
+    [asd im_vis] = min(abs(inTime-1/interp_fn.lamb-interp_fn.x0));
+elseif TEST == 1 % TANH
+    [asd im_vis] = min(abs(time-interp_fn.x0));
 end
+
+
+
 %--------------------------------------------------------------------------
 % Plotting
 %--------------------------------------------------------------------------
+if ~showPlot
+    return;
+end
 
 plot(interp_fn, 'b'); hold on;
 plot(inTime, contr, 's', 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'g'); title 'exponential fitting discrete function';
 plot(inTime(im_vis), contr(im_vis),  'sr', 'LineWidth', 2);
 xlabel 'time'; ylabel 'contrast'; hold off;
 pause();
-
-return;
-
-
-
-
-
-
-
-
-% here be n00bs
-t_impXn = Time_impact(featCoord(NIMG-1), featCoord(NIMG), vp, time(NIMG)) - featCon(NIMG);
-
-
-%__________________________________________________________________________
-%Determinazione coordinate funzione discreta
-%__________________________________________________________________________
-
-dist = t_impXn;
-for i = 1:size_m_contr(1)
-    if i == 1
-        dist = dist;
-    else
-        dist = dist + contrast_m(size_m_contr(1)-i+2,3);
-    end
-    fun_discr(size_m_contr(1)-i+1,:) = [dist (contrast_m(size_m_contr(1)-i+1,2)-contr_fog)];
-end
-    
-
-%__________________________________________________________________________
-%Determinazione funzione continua e parametro lambda
-%__________________________________________________________________________
-
-%Tipo di funzione esponenziale negativa
-fun_expn = fittype('h * exp(-x/lambda)');
-option = fitoptions('Method', 'NonlinearLeastSquares');
-h_sp = max(fun_discr(:,2));
-lambda_sp = min(fun_discr(:,1)) + (max(fun_discr(:,1)) - min(fun_discr(:,1)))/2;
-option.StartPoint = [h_sp lambda_sp];
-%Funzione esponenziale negativa che meglio approssima i dati dicreti
-expn_fit = fit(fun_discr(:,1), fun_discr(:,2), fun_expn, option);
-
-
-%__________________________________________________________________________
-%Determinazione immagine in cui feature diventa visibile
-%__________________________________________________________________________
-delta_dist = abs(fun_discr(:,1) - expn_fit.lambda);
-min_distlambda = min(delta_dist);
-
-for i = 1:size_m_contr(1)
-    if delta_dist(i) == min_distlambda
-        im_vis = contrast_m(i,1);
-        break;
-    end
-end
 
 end

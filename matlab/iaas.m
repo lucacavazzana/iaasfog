@@ -43,10 +43,10 @@ end
 % checks the image list
 imPaths = getPaths(imFolder,imName,imNum);
 
-if(system([exec_path,' -v -f ',imFolder,' -i ',imName,' -n', num2str(imNum),' -t' num2str(imTime),' -o',outFile])~=0)
-    disp('    - ERROR in finding features. Exit');
-    return;
-end
+% if(system([exec_path,' -v -f ',imFolder,' -i ',imName,' -n', num2str(imNum),' -t' num2str(imTime),' -o',outFile])~=0)
+%     disp('    - ERROR in finding features. Exit');
+%     return;
+% end
 
 
 [vp,feats] = parseFeatures(outFile); % re-parsing features

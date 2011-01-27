@@ -34,13 +34,13 @@ function[im_vis] = Image_visible_expn(contrast_m, coord_feat, van_p, contr_fog)
 size_m_contr = size(contrast_m);
 
 t_impXn = Time_impact(coord_feat(1,:)', coord_feat(2,:)', van_p, contrast_m(2,3)) - contrast_m(size_m_contr(1),3);
-
+% tempo di impatto rispetto all'ultima immagine
 
 %__________________________________________________________________________
 %Determinazione coordinate funzione discreta
 %__________________________________________________________________________
 
-dist = t_impXn;
+dist = t_impXn;  % e ti sei pure laureato? lol
 for i = 1:size_m_contr(1)
     if i == 1
         dist = dist;
@@ -49,14 +49,17 @@ for i = 1:size_m_contr(1)
     end
     fun_discr(size_m_contr(1)-i+1,:) = [dist (contrast_m(size_m_contr(1)-i+1,2)-contr_fog)];
 end
-    
+
+% quindi contrasto come funzione exp negativa decr nel tempo (negativo...
+% come tempo rimanente all'impatto). Ma così com'è proposta non c'è
+% saturazione, in t_impatto il contrasto sarebbe infinito.
 
 %__________________________________________________________________________
 %Determinazione funzione continua e parametro lambda
 %__________________________________________________________________________
 
 %Tipo di funzione esponenziale negativa
-fun_expn = fittype('h * exp(-x/lambda)');
+fun_expn = fittype('h * exp(-x/lambda)'); %funzione decrescente per approssimare dati crescenti? Suvvia...
 option = fitoptions('Method', 'NonlinearLeastSquares');
 h_sp = max(fun_discr(:,2));
 lambda_sp = min(fun_discr(:,1)) + (max(fun_discr(:,1)) - min(fun_discr(:,1)))/2;
