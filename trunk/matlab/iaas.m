@@ -12,15 +12,11 @@ else
     bin_name = 'iaasfog';
 end
 
-exec_path = ['c++/Debug/', bin_name]; % path of the c++ part of the project. Make sure it exists
-if exist(exec_path,'file')~=2
-    error('- ERROR: cannot find the feature-finding executable. Click on this message to fix the path');
-end
-
 % REMEMBER TO REMOVE ------------------------------------------------------
 SHOWPLOTS = 0;
 DEFPATHS = 1;
 if regexp(path,'/home/luca/','once')
+    root = '/home/luca/Matlab/iaasfog/';
     imFolder = '/home/luca/Matlab/iaasfog/Images';
     outFile = 'outFile.txt';
 else
@@ -32,6 +28,10 @@ imTime = 0.1;
 speed = 0;
 % -------------------------------------------------------------------------
 
+exec_path = [root, 'c++/Debug/', bin_name]; % path of the c++ part of the project. Make sure it exists
+if exist(exec_path,'file')~=2
+    error('- ERROR: cannot find the feature-finding executable. Click on this message to fix the path');
+end
 
 if ~DEFPATHS
     imFolder = getFolder;
@@ -55,7 +55,7 @@ imTime = imTime*ones(1,imNum); imTime(1)=0; % time vector
 
 disp(['Found ', num2str(size(feats,1)), ' features over ', num2str(size(feats,2)), ' images']);
 
-% checkFeatures(imPaths, feats');
+checkFeatures(imPaths, feats');
 % impactTime1(imPaths, feats', vp_st, imTime, 1);
-impactTime2(imPaths, feats', vp_st, imTime, 1);
+% impactTime2(imPaths, feats', vp_st, imTime, 1);
 end

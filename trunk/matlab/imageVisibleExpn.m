@@ -48,7 +48,7 @@ end
 
 inTime = cumsum(time);
 % contr = contr - fog_lev;
-tImpact = abs(timeImpact(coords(1),coords(NIMGS),vp,inTime(NIMGS),0)); % se usassi coords(NIMG) invece di 2 non aumenta la precisione?
+tImpact = abs(timeImpact(coords(1),coords(NIMGS),vp,inTime(NIMGS),0)); %oppure usare due immagini consecutive invece che prima e ultima
 
 %--------------------------------------------------------------------------
 % Define function parameters

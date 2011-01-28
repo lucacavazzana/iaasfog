@@ -1,6 +1,5 @@
 function[w_contr] = WeberContrast(fog_level, feature, image)
-%
-%--------------------------------------------------------------------------
+
 %[w_contr] = WEBER_CONTRAST(fog_level, feature, image)
 %
 % compute the Weber contrast level on the specified grayscale point
@@ -13,13 +12,14 @@ function[w_contr] = WeberContrast(fog_level, feature, image)
 %
 %OUTPUT
 %   'w_contr':      Weber contrast level
-%--------------------------------------------------------------------------
 
 
 if isstruct(feature) % if are coordinates...
     % Normalize
-    feature.x = feature.x/feature.z;
-    feature.y = feature.y/feature.z;
+    if feature.z~=1
+        feature.x = feature.x/feature.z;
+        feature.y = feature.y/feature.z;
+    end
     if size(image,1)==1 % if ==1 is a string...
         image = imread(image);
     end
