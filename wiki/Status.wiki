@@ -1,0 +1,14 @@
+== WIP ==
+  * Riscrivere il mondo
+  * Sistemare funzione approssimante
+  * ...
+
+== TODO ==
+  * Testare contrasto rms
+  * ...
+
+== DONE ==
+  * Scherzone a Stefano
+  * Aggiunto contrasto root mean square
+  * Filtro features che non si muovono nell'immagine
+  * ...
