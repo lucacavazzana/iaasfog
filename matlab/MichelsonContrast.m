@@ -29,12 +29,12 @@ end
 %--------------------------------------------------------------------------
 
 % Frame size
-n = 20;
+n = 10;
 % Frame coords
-xi = max(round(feature.x - n/2),1);
-xf = min(round(feature.x + n/2),size(image,2));
-yi = max(round(feature.y - n/2),1);
-yf = min(round(feature.y + n/2),size(image,1));
+xi = max(round(feature.x - n),1);
+xf = min(round(feature.x + n),size(image,2));
+yi = max(round(feature.y - n),1);
+yf = min(round(feature.y + n),size(image,1));
 
 % Frame extraction
 quad_im = image(yi:yf,xi:xf);

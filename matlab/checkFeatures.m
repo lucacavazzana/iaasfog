@@ -9,7 +9,7 @@ function [] = checkFeatures(imPaths, feats)
 %               (x,y,z)
 
 [NIMGS, NFEATS] = size(feats);
-WIND = 20;
+WIND = 40;
 
 
 imInfo = imfinfo(imPaths(1,:));
