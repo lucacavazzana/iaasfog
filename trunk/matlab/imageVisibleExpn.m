@@ -16,16 +16,11 @@ function[im_vis] = imageVisibleExpn(contr, time, coords, vp, fog_lev, showPlot)
 %
 % OUTPUT
 %   'im_vis':   number of the image where the feature become visible
-%--------------------------------------------------------------------------
-%   'coord_feat': le due righe contengono rispettivamente le coordinate della
-%   feature nella penultima e nell'ultima immagine;
-%   'vp':   	vanishing point coords
-%   'vpCont':     fog contrast in the vanishing point
 %
-% OUTPUT
-%   'im_vis':   number of the frame nearest to the instant the image
-%               becomes visible
-%--------------------------------------------------------------------------
+%   See also IMAGEVISIBLEP3
+
+%   Copyright 2011 Stefano Cadario, Cavazzana Luca.
+%   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 %FIXME: remove me-----------------------------------
 TEST = 0; % EXP = 0 | TANH = 1

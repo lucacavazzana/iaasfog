@@ -3,9 +3,10 @@ function [imgFolder] = getFolder()
 %GETFOLDER  Query the user for folder path and check it until a valid one is inserted.
 %
 %   GETFOLDER returns a string containing the valid folder path.
-%
-%   Copyright 1985-2010 Stefano Cadario, Luca Cavazzana
-%   $Revision: 0.0.0.1 $  $Date: 2010/12/11 14:03:08 $
+
+%   Copyright 2011 Stefano Cadario, Cavazzana Luca.
+%   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
+
 
 badFolder = 1;
 

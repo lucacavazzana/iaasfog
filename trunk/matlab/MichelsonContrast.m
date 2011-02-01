@@ -1,6 +1,5 @@
 function[contr] = MichelsonContrast(feature, image)
-%
-%--------------------------------------------------------------------------
+
 %[contr] = MICHELSON_CONTRAST(feature, image)
 %
 % Finds the contrast level of the given feature
@@ -11,7 +10,11 @@ function[contr] = MichelsonContrast(feature, image)
 %
 %OUTPUT
 %   'contr':    contrasto di Michelson riferito alla feature considerata.
-%--------------------------------------------------------------------------
+%
+%   See also RMSCONTRAST, WEBERCONTRAST.
+
+%   Copyright 2011 Stefano Cadario, Cavazzana Luca.
+%   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 % Normalize
 feature.x = feature.x/feature.z;

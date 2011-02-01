@@ -1,8 +1,6 @@
 function[level] = zoneHom(vp, im, n, low_t, high_t, sigma, showPlot)
-%
-%--------------------------------------------------------------------------
+
 %[level] = ZONEHOM(van_p, im1, n, low_t, high_t, sigma)
-%
 %Checks if the frame around VAN_P is homogeneous (no borders are found
 %using Canny filter) and returns the mean value of the grayscale pixels.
 %Returns -1 if the frame is not homogeneous.
@@ -20,9 +18,9 @@ function[level] = zoneHom(vp, im, n, low_t, high_t, sigma, showPlot)
 %OUTPUT
 %   'level':    double representing the average level in the frame around
 %               the point, -1 if not homogeneous
-%--------------------------------------------------------------------------
-%   Copyright 1985-2010 Stefano Cadario, Luca Cavazzana
-%   $Revision: 0.0.0.1 $  $Date: 2010/12/ 18:22:08 $
+
+%   Copyright 2011 Stefano Cadario, Cavazzana Luca.
+%   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 
 %Normalize

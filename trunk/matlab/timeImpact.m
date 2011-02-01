@@ -1,8 +1,7 @@
 function[t_imp] = timeImpact(x1, x2, vp, dt, showPlot, imPath)
-%
-%--------------------------------------------------------------------------
-% Determina il tempo all'impatto della feature considerata rispetto
-% all'immagine in cui la feature ha coordinate pari a x1.
+
+%Determina il tempo all'impatto della feature considerata rispetto
+%all'immagine in cui la feature ha coordinate pari a x1.
 %
 %INPUT
 %	'x1':       struct containing the coords of the feature in the first
@@ -19,8 +18,9 @@ function[t_imp] = timeImpact(x1, x2, vp, dt, showPlot, imPath)
 %           in cui la feature si trova nel punto x1, l'unità di misura
 %           corrisponde a quella con cui è stato inserito il parametro
 %           'time'.
-%--------------------------------------------------------------------------
 
+%   Copyright 2011 Stefano Cadario, Cavazzana Luca.
+%   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 % Check for plot
 if (showPlot && ~exist(imPath,'file'))

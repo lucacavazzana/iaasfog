@@ -1,6 +1,6 @@
 function [] = impactTime2(imPaths, feats, vp,  time, showPlot)
 
-% IMPACTTIME2
+%IMPACTTIME2
 % testing the algorithm using an exponential to approximate the discrete
 % contrast function.
 %   'imPaths':  MxN matrix, containing the complete paths of the M images
@@ -13,6 +13,11 @@ function [] = impactTime2(imPaths, feats, vp,  time, showPlot)
 %               frame i and i-1
 %   showPlot:   =1 or ='true' to show various graphs (otherwise just ignore
 %               it)
+%
+%   See also IMPACTTIME1.
+
+%   Copyright 2011 Stefano Cadario, Cavazzana Luca.
+%   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 [NIMG NFEAT] = size(feats);
 

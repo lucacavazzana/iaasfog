@@ -3,9 +3,9 @@ function [imgName] = getImagesName(imgPath)
 %GETFOLDER  Query the user the name
 %
 %   GETIMAGESNAME('A') returns:
-%
-%   Copyright 1985-2010 Stefano Cadario, Luca Cavazzana
-%   $Revision: 0.0.0.1 $  $Date: 2010/12/11 14:03:08 $
+
+%   Copyright 2011 Stefano Cadario, Cavazzana Luca.
+%   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 badName = 1;
 regex = '[0-9]{4}\.(jpg|png|tiff|bmp)$';

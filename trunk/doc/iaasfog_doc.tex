@@ -1,19 +1,21 @@
 \documentclass[12pt]{article}
 \usepackage{url}
+\usepackage{biblatex}
 
+\bibliography{bib}
 
 \title {IaasFog}
 \author{Stefano Cadario, Luca Cavazzana}
+\data{\date}
 
 \begin{document}
 \maketitle
-\data{\date}
 
 \tableofcontents
 
 \chapter{Introduzione}
 \chapter{Installazione}
-\section{OpenCV}
+\section{OpenCV \cite{opencvInstallation}}
 OpenCV (Open Source Computer Vision) \'e una libreria di funzioni per la computer vision, inizialmente sviluppata da Intel e ora distribuita sotto licenza open source. \'E possibile scaricare l'ultima versione all'indirizzo \url{http://sourceforge.net/projects/opencvlibrary/} \footnote{guida d'installazione ufficiale all'indirizzo \url{http://opencv.willowgarage.com/wiki/InstallGuide}}.
 
 \subsection{Windows}
@@ -76,5 +78,7 @@ Per compilare la libreria \'e necessario installare degli header offerti da MinG
 \noindent Il progetto è disponibile via SVN alla pagina \url{http://code.google.com/p/iaasfog}.\\
 \noindent Importare i sorgenti nella cartella \verb|c++| in Eclipse, aggiungere le librerie di OpenCV mediante Project $\rightarrow$ Properties  $\rightarrow$ C\slash C++ Editor $\rightarrow$ Settings $\rightarrow$ GCC C++ Compiler $\rightarrow$ Directories ed aggiungendo il percorso \verb|/usr/local/include/opencv| e sotto GCC C\slash C++ Linker $\rightarrow$ Libraries le librerie \verb|...| e \verb|...| sotto \verb|/usr/local/lib| (o qualunque path sia stato utilizzato per l'installazione\dots Cazzo arrangiatevi un po'\dots).\\
 \noindent Aggiungere al path di Matlab la cartella \verb|matlab|.
+
+\printbibliography
 
 \end{document}
