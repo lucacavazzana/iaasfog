@@ -52,9 +52,9 @@ line_inf = [0 0 1]';
 line_ort_linef = [line_f(2) -line_f(1) 0]';
 % line_ort_linef point at inf
 pinf_lineOrtLinef = cross(line_ort_linef, line_inf);
-% line orth to line_f by per x1
+% line orth to line_f by x1
 line_ortLinef_x1 = cross([x1.x x1.y x1.z], pinf_lineOrtLinef);
-% line orth to line_f by per x2
+% line orth to line_f by x2
 line_ortLinef_x2 = cross([x2.x x2.y x2.z], pinf_lineOrtLinef);
 
 % Proiezione del punto x1 sulla retta line_f
