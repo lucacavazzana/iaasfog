@@ -1,6 +1,10 @@
-\documentclass[12pt]{article}
+\documentclass[12pt]{report}
+
+\usepackage[italian]{babel}
+\usepackage[latin1]{inputenc}
 \usepackage{url}
 \usepackage{biblatex}
+\usepackage{amsmath}
 
 \bibliography{bib}
 
@@ -14,17 +18,38 @@
 \tableofcontents
 
 \chapter{Introduzione}
+
+\chapter{Funzioni}
+
+Viene qui presentata una panoramica delle funzioni realizzate. Per informazioni pi\`u dettagliate circa il loro utilizzo consultare l'\verb|help| delle funzioni.
+
+\section[C++]{C\verb_++_}
+
+\paragraph*{\verb_iaas:FindFeatures:_}
+
+\section{Matlab}
+
+\paragraph*{\verb_iaas:_}
+
+\paragraph*{\verb_fogLevel:_} date le coordinate del punto di fuga calcola il livello della nebbia come il livello di grigio medio nell'intorno se questi \`e omogeneo.
+
+\paragraph*{\verb_MichelsonContrast:_} date le coordinate di una feature e la relative immagine restituisce il livello di contrasto nell'intorno come $$\frac{I_{max}-I_{min}}{I_{max}+I_{min}}$$
+\paragraph*{\verb_rsmContrast:_} date le coordinate di una feature e la relativa immagine calcola il livello di contrasto nell'intorno come $$\sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(I_{ij}-\bar{I})^2}$$
+\paragraph*{\verb_WeberContrast:_} date le coordinate di una feature e la relative immagine calcola il livello di contrasto come $$\frac{I-I_b}{I_b}$$ dove $I_b$ \`e il livello della nebbia.
+
+\paragraph*{\verb_timeImpact:_} date le coordinate del punto di fuga, di una feature in due differenti immagini e il relativo lasso tempo, stima il tempo mancante affinch\'e la feature attraversi il piano focale. %TODO:giusto il termine?
+
 \chapter{Installazione}
-\section{OpenCV \cite{opencvInstallation}}
-OpenCV (Open Source Computer Vision) \'e una libreria di funzioni per la computer vision, inizialmente sviluppata da Intel e ora distribuita sotto licenza open source. \'E possibile scaricare l'ultima versione all'indirizzo \url{http://sourceforge.net/projects/opencvlibrary/} \footnote{guida d'installazione ufficiale all'indirizzo \url{http://opencv.willowgarage.com/wiki/InstallGuide}}.
+\section{OpenCV}
+OpenCV (Open Source Computer Vision) \`e una libreria di funzioni per la computer vision, inizialmente sviluppata da Intel e ora distribuita sotto licenza open source. \`E possibile scaricare l'ultima versione all'indirizzo \url{http://sourceforge.net/projects/opencvlibrary/} \footnote{guida d'installazione ufficiale all'indirizzo \url{http://opencv.willowgarage.com/wiki/InstallGuide}}.
 
 \subsection{Windows}
-Per compilare la libreria \'e necessario installare degli header offerti da MinGW (\url{http://http://www.mingw.org/}) e CMake (\url{http://www.cmake.org/cmake/resources/software.html}).\\
-\noindent Una volta assicuratisi che il path dei binari di MinGW \'e fra le variabili di ambiente configurare OpenCV mediante l'interfaccia di CMake.
+Per compilare la libreria \`e necessario installare degli header offerti da MinGW (\url{http://http://www.mingw.org/}) e CMake (\url{http://www.cmake.org/cmake/resources/software.html}).\\
+\noindent Una volta assicuratisi che il path dei binari di MinGW \`e fra le variabili di ambiente configurare OpenCV mediante l'interfaccia di CMake.
 
 \subsection{Linux / MacOSX}
 
-\noindent Per l'installazione \'e necessario disporre di \verb|cmake|, inoltre devono essere soddisfatte le seguenti dipendenze:
+\noindent Per l'installazione \`e necessario disporre di \verb|cmake|, inoltre devono essere soddisfatte le seguenti dipendenze:
 \begin{itemize}
 \item \verb|ffmpeg|
 \item \verb|libxine-ffmpeg|
@@ -45,11 +70,11 @@ Per compilare la libreria \'e necessario installare degli header offerti da MinG
 \noindent Lanciare quindi il comando
 
 \begin{verbatim}
-	cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local
+	$ cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local
 	-D BUILD_PYTHON_SUPPORT=ON -D BUILD_EXAMPLES=ON ..
 \end{verbatim}
 
-\noindent per configurare la libreria. Il valore della flag \verb|CMAKE_INSTALL_PREFIX| sar\'a l'indirizzo in cui si vorr\'a poi installare OpenCV. Se i sorgenti non dovessero trovarsi nella directory superiore, sostituire i due punti con il path corretto.\\
+\noindent per configurare la libreria. Il valore della flag \verb|CMAKE_INSTALL_PREFIX| sar\`a l'indirizzo in cui si vorr\`a poi installare OpenCV. Se i sorgenti non dovessero trovarsi nella directory superiore, sostituire i due punti con il path corretto.\\
 
 \noindent A questo punto non rimane che compilare ed installare le librerie mediante i comandi
 
@@ -72,10 +97,10 @@ Per compilare la libreria \'e necessario installare degli header offerti da MinG
 	$ sudo ldconfig
 \end{verbatim}
 
-\noindent dove \verb|<opencv_dir>| \'e la cartella dove abbiamo compilato il le librerie, nel nostro caso \verb|~/OpenCV-2.2.0/release|.
+\noindent dove \verb|<opencv_dir>| \`e la cartella dove abbiamo compilato il le librerie, nel nostro caso \verb|~/OpenCV-2.2.0/release|.
 
 \section{Installazione progetto}
-\noindent Il progetto è disponibile via SVN alla pagina \url{http://code.google.com/p/iaasfog}.\\
+\noindent Il progetto \`e disponibile via SVN alla pagina \url{http://code.google.com/p/iaasfog}.\\
 \noindent Importare i sorgenti nella cartella \verb|c++| in Eclipse, aggiungere le librerie di OpenCV mediante Project $\rightarrow$ Properties  $\rightarrow$ C\slash C++ Editor $\rightarrow$ Settings $\rightarrow$ GCC C++ Compiler $\rightarrow$ Directories ed aggiungendo il percorso \verb|/usr/local/include/opencv| e sotto GCC C\slash C++ Linker $\rightarrow$ Libraries le librerie \verb|...| e \verb|...| sotto \verb|/usr/local/lib| (o qualunque path sia stato utilizzato per l'installazione\dots Cazzo arrangiatevi un po'\dots).\\
 \noindent Aggiungere al path di Matlab la cartella \verb|matlab|.
 

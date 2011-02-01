@@ -1,4 +1,21 @@
-\contentsline {section}{\numberline {1}OpenCV \cite {opencvInstallation}}{1}
-\contentsline {subsection}{\numberline {1.1}Windows}{1}
-\contentsline {subsection}{\numberline {1.2}Linux / MacOSX}{2}
-\contentsline {section}{\numberline {2}Installazione progetto}{3}
+\boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}
+\defcounter {refsection}{0}
+\select@language {italian}
+\defcounter {refsection}{0}
+\contentsline {chapter}{\numberline {1}Introduzione}{2}
+\defcounter {refsection}{0}
+\contentsline {chapter}{\numberline {2}Funzioni}{3}
+\defcounter {refsection}{0}
+\contentsline {section}{\numberline {2.1}C++}{3}
+\defcounter {refsection}{0}
+\contentsline {section}{\numberline {2.2}Matlab}{3}
+\defcounter {refsection}{0}
+\contentsline {chapter}{\numberline {3}Installazione}{5}
+\defcounter {refsection}{0}
+\contentsline {section}{\numberline {3.1}OpenCV}{5}
+\defcounter {refsection}{0}
+\contentsline {subsection}{\numberline {3.1.1}Windows}{5}
+\defcounter {refsection}{0}
+\contentsline {subsection}{\numberline {3.1.2}Linux / MacOSX}{5}
+\defcounter {refsection}{0}
+\contentsline {section}{\numberline {3.2}Installazione progetto}{7}
