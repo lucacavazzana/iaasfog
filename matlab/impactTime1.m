@@ -1,6 +1,6 @@
 function [] = impactTime1 (imPaths, feats, vp,  time, showPlot)
 
-% IMPACTTIME1
+%IMPACTTIME1
 % testing the algorithm using a 3rd degree polynomial to approximate the
 % discrete contrast function.
 %
@@ -14,6 +14,11 @@ function [] = impactTime1 (imPaths, feats, vp,  time, showPlot)
 %               frame i and i-1
 %   showPlot:   =1 or ='true' to show various graphs (otherwise just ignore
 %               it)
+%
+%   See also IMPACTTIME2.
+
+%   Copyright 2011 Stefano Cadario, Cavazzana Luca.
+%   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 [NIMG, NFEAT] = size(feats);
 

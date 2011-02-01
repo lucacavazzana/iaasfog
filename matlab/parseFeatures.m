@@ -5,6 +5,9 @@ function [vp,feats2] = parseFeatures(fileName)
 %   vp = 3x1
 %   feats = array N_FEATURESxN_IMAGES, with fields x,y and z
 
+%   Copyright 2011 Stefano Cadario, Cavazzana Luca.
+%   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
+
 f = fopen(fileName,'r');
 
 coord_regex = '-?\d+(\.\d+)?';

@@ -8,6 +8,9 @@ function [] = checkFeatures(imPaths, feats)
 %   'feats':    N_IMG x N_FEATS matrix containg features' coords structs
 %               (x,y,z)
 
+%   Copyright 2011 Stefano Cadario, Cavazzana Luca.
+%   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
+
 [NIMGS, NFEATS] = size(feats);
 WIND = 40;
 

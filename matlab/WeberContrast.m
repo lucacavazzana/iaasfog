@@ -1,7 +1,6 @@
 function[w_contr] = WeberContrast(fog_level, feature, image)
 
 %[w_contr] = WEBER_CONTRAST(fog_level, feature, image)
-%
 % compute the Weber contrast level on the specified grayscale point
 %
 %INPUT
@@ -12,6 +11,11 @@ function[w_contr] = WeberContrast(fog_level, feature, image)
 %
 %OUTPUT
 %   'w_contr':      Weber contrast level
+%
+%   See also MICHELSONCONTRAST, RMSCONTRAST.
+
+%   Copyright 2011 Stefano Cadario, Cavazzana Luca.
+%   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 
 if isstruct(feature) % if are coordinates...

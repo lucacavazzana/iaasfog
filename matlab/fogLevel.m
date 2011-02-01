@@ -1,6 +1,5 @@
 function[level] = fogLevel(vp, im1, im2, showPlot)
-%
-%--------------------------------------------------------------------------
+
 %[level, find_lev] = FOG_LEVEL(van_p, im1, im2)
 %Determina il livello di grigio associato alla nebbia se l'intorno del
 %punto di fuga è omogeneo almeno in una delle due immagini, in caso 
@@ -16,9 +15,9 @@ function[level] = fogLevel(vp, im1, im2, showPlot)
 %OUTPUT
 %   'level':    livello di grigio associato alla nebbia; -1 indica che non 
 %	     è stato possibile calcolarlo.
-%--------------------------------------------------------------------------
-%   Copyright 1985-2010 Stefano Cadario, Luca Cavazzana
-%   $Revision: 0.0.0.1 $  $Date: 2010/12/ 18:22:08 $
+
+%   Copyright 2011 Stefano Cadario, Cavazzana Luca.
+%   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 
 % Frame size

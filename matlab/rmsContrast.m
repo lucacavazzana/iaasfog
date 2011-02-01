@@ -8,6 +8,11 @@ function [contr] = rmsContrast(feature, image)
 %   'image':    image path or matrix
 %OUTPUT
 %   'contr':    rms contrast level
+%
+%   See also MICHELSONCONTRAST, WEBERCONTRAST.
+
+%   Copyright 2011 Stefano Cadario, Cavazzana Luca.
+%   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 
 n = 10; % feature window

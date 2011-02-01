@@ -1,7 +1,5 @@
 function [im_vis] = imageVisibleP3(contr, time, showPlot)
 
-%
-%--------------------------------------------------------------------------
 %[im_vis] = IMAGEVISIBLEP3(contr, time, showPlot)
 % Given the discrete contrast function returns the number of the image
 % where the feature becomes visible, choosen as the nearest to the point of
@@ -15,7 +13,11 @@ function [im_vis] = imageVisibleP3(contr, time, showPlot)
 %
 % OUTPUT
 %   'im_vis':   number of the image where the feature become visible
-%--------------------------------------------------------------------------
+%
+%   See also IMAGEVISIBLEEXPN
+
+%   Copyright 2011 Stefano Cadario, Cavazzana Luca.
+%   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 % Check
 if size(time,1)==1
