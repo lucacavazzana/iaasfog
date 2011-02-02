@@ -147,7 +147,7 @@ void iaasDrawStraightLine(IplImage* image, CvMat* line) {
 	}
 
 	if(num_intersections != 2){
-#ifdef _DEBUG
+#ifdef DEBUG
 		printf("Line [%.2f %.2f %.2f]' is not visible\n", a, b, c);
 #endif
 		return;

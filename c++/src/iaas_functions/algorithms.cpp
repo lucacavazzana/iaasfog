@@ -123,21 +123,16 @@ void iaasFindCorners(IplImage *image, CvPoint2D32f *corners, int *corner_count, 
 }
 
 void iaasTrackCorners(IplImage *imageA, IplImage *imageB, CvPoint2D32f *cornersA, CvPoint2D32f *cornersB, float *track_errors, char* track_status, int corner_count){
-	//LK parameters
-	CvSize pyr_sz;
-	int win_size = WIN_SIZE;
-	IplImage *pyrA, *pyrB;
-	int pyr_layers = PYR_LEVELS;
 
-	pyr_sz = cvSize(imageA->width+8, imageB->height/3);
-	pyrA = cvCreateImage(pyr_sz, IPL_DEPTH_32F, 1);
-	pyrB = cvCreateImage(pyr_sz, IPL_DEPTH_32F, 1);
+	//LK parameters
+	int win_size = WIN_SIZE;
+	int pyr_layers = PYR_LEVELS;
 
 	cvCalcOpticalFlowPyrLK(
 			imageA,
 			imageB,
-			pyrA,
-			pyrB,
+			NULL, //pyrA,
+			NULL, //pyrB,
 			cornersA,
 			cornersB,
 			corner_count,
@@ -149,9 +144,14 @@ void iaasTrackCorners(IplImage *imageA, IplImage *imageB, CvPoint2D32f *cornersA
 			0
 	);
 
-	//Release resources
-	cvReleaseImage(&pyrA);
-	cvReleaseImage(&pyrB);
+	// Delete corners too close
+	for(int i=0; i<corner_count; i++) {
+		if(track_status[i]) {
+			double distance =  iaasTwoPointsDistance(cornersA[i], cornersB[i]);
+			if(distance<MIN_FEATURE_DISTANCE)
+				track_status[i] = 0;
+		}
+	}
 }
 
 int iaasNumberFoundCorners(char* track_status, int num_elements){

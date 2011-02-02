@@ -40,7 +40,7 @@
 /**
  * Lukas Kanade algorithm search window size
  */
-#define WIN_SIZE 10
+#define WIN_SIZE 50
 /**
  * Number of pyramid layers used in LK algorithm
  */

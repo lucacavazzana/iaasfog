@@ -9,6 +9,8 @@
 #ifndef ALGORITHMS_H_
 #define ALGORITHMS_H_
 
+#define MIN_FEATURE_DISTANCE 2
+
 #include "parameters.h"
 /**
  * Given a sequence of two images, finds corners in the first one and tracks them in the second one.
