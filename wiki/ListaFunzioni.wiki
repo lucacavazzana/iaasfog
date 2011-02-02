@@ -4,7 +4,7 @@ lista e descrizione delle funzioni. Tenere aggiornata, in modo da poterla poi co
 
  * {{{FindFeatures}}}: dato un set di immagini calcola lo spostamento delle features e ne salva le coordinate in un file di testo.
 
-* {{{iaasJoiningLine}}}: calcola in coordinate omogenee la retta passante per due punti
+ * {{{iaasJoiningLine}}}: calcola in coordinate omogenee la retta passante per due punti.
 
 ==Matlab==
 
