@@ -6,6 +6,7 @@
 \usepackage{biblatex}
 \usepackage{amsmath}
 
+
 \bibliography{bib}
 
 \title {IaasFog}
@@ -25,7 +26,9 @@ Viene qui presentata una panoramica delle funzioni realizzate. Per informazioni 
 
 \section[C++]{C\verb_++_}
 
-\paragraph*{\verb_iaas:FindFeatures:_}
+\paragraph*{\verb_FindFeatures:_}
+
+\paragraph*{\verb_iaasJoiningLine:_} calcola in coordinate omogenee la retta passante per due punti.
 
 \section{Matlab}
 
@@ -101,8 +104,11 @@ Per compilare la libreria \`e necessario installare degli header offerti da MinG
 
 \section{Installazione progetto}
 \noindent Il progetto \`e disponibile via SVN alla pagina \url{http://code.google.com/p/iaasfog}.\\
-\noindent Importare i sorgenti nella cartella \verb|c++| in Eclipse, aggiungere le librerie di OpenCV mediante Project $\rightarrow$ Properties  $\rightarrow$ C\slash C++ Editor $\rightarrow$ Settings $\rightarrow$ GCC C++ Compiler $\rightarrow$ Directories ed aggiungendo il percorso \verb|/usr/local/include/opencv| e sotto GCC C\slash C++ Linker $\rightarrow$ Libraries le librerie \verb|...| e \verb|...| sotto \verb|/usr/local/lib| (o qualunque path sia stato utilizzato per l'installazione\dots Cazzo arrangiatevi un po'\dots).\\
-\noindent Aggiungere al path di Matlab la cartella \verb|matlab|.
+Importare i sorgenti nella cartella \verb|c++| in Eclipse, importare gli header delle funzioni di OpenCV mediante Project $\rightarrow$ Properties  $\rightarrow$ C\slash C\verb|++| Editor $\rightarrow$ Settings $\rightarrow$ GCC C\verb|++| Compiler $\rightarrow$ Directories aggiungendo il percorso \verb|/usr/local/include/| e sotto GCC C\slash C\verb|++| Linker $\rightarrow$ Libraries le librerie \verb|opencv_core|, \verb|opencv_video|, \verb|opencv_highgui| e \verb|opencv_imgproc| in \verb|/usr/local/lib| (o qualunque path sia stato utilizzato per l'installazione).\\
+Compilare.\\
+
+\noindent In Matlab aggiungere il path degli m-file ed assicurarsi che il percorso specificato dalla varibile \verb|exec_path| in \verb|iaas.m| corrisponda alla cartella dell'eseguibile del codice C\verb|++|.\\
+Per eseguire il programma lanciare nella console di Matlab il comando \verb|iaas|.
 
 \printbibliography
 
