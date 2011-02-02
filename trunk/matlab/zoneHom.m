@@ -1,12 +1,12 @@
-function[level] = zoneHom(vp, im, n, low_t, high_t, sigma, showPlot)
+function[level] = zoneHom(feat, im, n, low_t, high_t, sigma, showPlot)
 
-%[level] = ZONEHOM(van_p, im1, n, low_t, high_t, sigma)
+%[level] = ZONEHOM(feat, im1, n, low_t, high_t, sigma)
 %Checks if the frame around VAN_P is homogeneous (no borders are found
 %using Canny filter) and returns the mean value of the grayscale pixels.
 %Returns -1 if the frame is not homogeneous.
 %
 %INPUT
-%   'vp':    vanishing point coordinates [X,Y,Z];
+%   'feat':    vanishing point coordinates [X,Y,Z];
 %   'im':       image path;
 %   'n':        frame size;
 %   'low_t':    low threshold;
@@ -24,7 +24,7 @@ function[level] = zoneHom(vp, im, n, low_t, high_t, sigma, showPlot)
 
 
 %Normalize
-vp.x = round(vp.x/vp.z); vp.y=round(vp.y/vp.z);
+feat.x = round(feat.x/feat.z); feat.y=round(feat.y/feat.z);
 
 im = rgb2gray(imread(im));
 
@@ -33,11 +33,11 @@ im = rgb2gray(imread(im));
 %-------------------------------------
 size_im = size(im);
 
-% VP frame boundaries
-xi = max(round(vp.x - n/2),1);
-xf = min(round(vp.x + n/2),size_im(2));
-yi = max(round(vp.y - n/2),1);
-yf = min(round(vp.y + n/2),size_im(1));
+% feat frame boundaries
+xi = max(round(feat.x - n/2),1);
+xf = min(round(feat.x + n/2),size_im(2));
+yi = max(round(feat.y - n/2),1);
+yf = min(round(feat.y + n/2),size_im(1));
 
 % extracting
 quad_im = im(yi:yf, xi:xf);

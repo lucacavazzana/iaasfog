@@ -44,7 +44,7 @@ end
 %     end
 for ii=1:NIMG
     % proviamo così
-    fog_lev(ii) = zoneHom(vp, imPaths(ii,:), 20, .895, .9, .3, 0); % check parameters (n)
+    fog_lev(ii) = zoneHom(vp, imPaths(ii,:), 20, .895, .9, .3, 0); % FIXME: check parameters (n)
 end;
 if(all(fog_lev <= 0))
     disp('- Cannot find fog level, needed to compute Weber contrast. Proceeding using only Michelson');

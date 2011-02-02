@@ -2,6 +2,8 @@
 
 #define NAME_WINDOW "^0^"
 
+#define _DEBUG 1
+
 
 void Find_features(std::vector<std::string> pathImages, std::string pathOutFile, bool verb){
 	TrackRecord *a_records;
@@ -44,7 +46,7 @@ void Find_features(std::vector<std::string> pathImages, std::string pathOutFile,
 			corner_count = max_corners;//This value can change
 			iaasFindCorners(imageA, cornersA, &corner_count);
 			//std::cout << "Find_features --- dopo iaasFindCorners --- corner_count: " << corner_count << std::endl;
-		}else{
+		} else {
 			//Size of new arrays
 			max_corners = iaasNumberFoundCorners(track_status, corner_count);
 			//Fill cornerA
@@ -121,7 +123,7 @@ void Find_features(std::vector<std::string> pathImages, std::string pathOutFile,
 			cornersB = new CvPoint2D32f[sel_corners];
 			iaasGetTrackedPoints(a_records, cornersA, cornersB, pathImages.size());
 
-			//First vp estimation by vote system
+			//First vp estimation
 			int patchSize = 20;
 			vp = iaasHoughMostCrossedPoint(cornersA, cornersB, sel_corners, true, image0->width, image0->height, patchSize);
 

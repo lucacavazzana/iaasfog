@@ -6,6 +6,8 @@
  *
  */
 
+#define _DEBUG 1
+
 #include <iostream>
 #include <cstdlib>
 #include <string>
@@ -18,6 +20,11 @@
 #include "IAS_features.h"
 #include "matlabfunctions.h"
 
+
+using namespace cv;
+using namespace std;
+
+
 // convert into real the number. Returns 0 if not a number.
 double checkTime(char *timeCh) {
 	return atof(timeCh);
@@ -29,7 +36,7 @@ int checkNum(char *in){
 
 
 // return the position of the mark. -1 if filename is not in the form name####.ext
-int checkFile(string str){
+int checkFile(string str) {
 	int pos_mark;
 
 	// Check for mark position
@@ -42,13 +49,12 @@ int checkFile(string str){
 	return pos_mark;
 }
 
-
-
 int main (int argc, char **argv) {
 
-	bool verbose = false;
+	bool verbose = true;
 	string folder, firstImage, outFile;
-	char *inTime, *inNum;
+	char *inTime = NULL;
+	char *inNum;
 	double time=0;
 	vector<string> vectPathImages;
 
@@ -69,6 +75,8 @@ int main (int argc, char **argv) {
 		std::cout << "-v          : verbose mode, shows infos and images" << endl;
 		return 0;
 	}
+
+
 
 	if (argc < 7) {
 		std::cout << "usage "<< argv[0] <<": -f <folder_pat> -i <first_image_name> -n <number_images> [-t <time_period>] [-o <output>]" << std::endl;
@@ -135,9 +143,11 @@ int main (int argc, char **argv) {
 	}
 
 	// Check time. Must be positive real. =0 if not a number.
-	if((time=checkTime(inTime))<=0){
-		std::cout << "- Error: time parameter (-t) needed to be positive real" << std::endl;
-		exit(1);
+	if(inTime) {
+		if((time=checkTime(inTime))<=0) {
+			std::cout << "- Error: time parameter (-t) needed to be positive real" << std::endl;
+			exit(1);
+		}
 	}
 
 	// Check and parse img number
@@ -147,11 +157,15 @@ int main (int argc, char **argv) {
 		exit(-1);
 	}
 
+
 	// Check the output file. Use default name if not inserted
 	if (!outFile.size()){
 		outFile = "fileFeatures.txt";
 	} // TODO: check folder existence too
 
+
+	std::cout << "SPAM" << std::endl;
+	std::flush(std::cout);
 
 	int start = atoi(firstImage.substr(mark_pos-4,4).c_str()); // in case the series doesn't start at img 0000
 	vectPathImages.push_back(folder + "/" + firstImage);
@@ -168,9 +182,10 @@ int main (int argc, char **argv) {
 		vectPathImages.push_back(folder + "/" + firstImage.substr(0,mark_pos-ss.str().size()) + ss.str() +  firstImage.substr(mark_pos,firstImage.length()));
 #ifdef _DEBUG
 		std::cout << vectPathImages.back() << std::endl;
-#endif // _DEBUG
+#endif
 		// TODO: check image exists
 	}
+
 
 	try {
 		Find_features(vectPathImages, outFile, verbose);
