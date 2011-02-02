@@ -1,14 +1,15 @@
 == WIP ==
-  * Riscrivere il mondo
-  * Sistemare funzione approssimante
-  * ...
+ * Riscrivere il mondo
+ * Sistemare funzione approssimante
+ * ...
 
 == TODO ==
-  * Testare contrasto rms
-  * ...
+ * Testare contrasto rms
+ * ...
 
 == DONE ==
-  * Scherzone a Stefano
-  * Aggiunto contrasto root mean square
-  * Filtro features che non si muovono nell'immagine
-  * ...
+ * Scherzone a Stefano
+ * Aggiunto contrasto root mean square
+ * Filtro features che non si muovono nell'immagine
+ * Aumentata finestra per la correlazione features  
+ * ...
