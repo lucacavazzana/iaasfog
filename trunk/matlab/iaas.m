@@ -1,6 +1,6 @@
 function [] = iaas()
-% IAAS
-%
+%IAAS
+
 %   Copyright 2011 Stefano Cadario, Cavazzana Luca.
 %   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
@@ -15,9 +15,8 @@ end
 % REMEMBER TO REMOVE ------------------------------------------------------
 SHOWPLOTS = 0;
 DEFPATHS = 1;
-if ~regexp(path,'/home/luca/','once')
+if regexp(path,'/home/luca/','once')
     imFolder = '/home/luca/Matlab/iaasfog/Images';
-    alg = 0;
 elseif regexp(path,'/home/stefano/','once')
     imFolder = '/home/stefano/Matlab/iaasfog/Images';
 else
@@ -40,8 +39,8 @@ if ~DEFPATHS % FIXME: delete this condition in the final release
     imName = getImagesName(imFolder);
     imNum = getNumImages;
     imTime = getPeriod;
-    alg = selectAlg;
 end
+alg = selectAlg;
 
 % checks the image list
 imPaths = getPaths(imFolder,imName,imNum);
@@ -61,12 +60,14 @@ imTime = imTime*ones(1,imNum); imTime(1)=0; % time vector
 disp(['Found ', num2str(size(feats,1)), ' features over ', num2str(size(feats,2)), ' images']);
 
 switch alg
-    case 0,
-        checkFeatures(imPaths, feats'); % visually check features
-    case 1,
-        impactTime1(imPaths, feats', vp_st, imTime, 1); % polynomial interpolation
-    case 2,
-        impactTime2(imPaths, feats', vp_st, imTime, 1); % exp interpolation
+    case 0, % visually check features
+        checkFeatures(imPaths, feats');
+    case 1, % polynomial interpolation
+        impactTime1(imPaths, feats', vp_st, imTime, 1);
+    case 2, % exp interpolation
+        impactTime2(imPaths, feats', vp_st, imTime, 1);
 end
+
+return;
 
 end

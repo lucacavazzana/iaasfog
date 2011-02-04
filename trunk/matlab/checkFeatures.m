@@ -1,12 +1,18 @@
 function [] = checkFeatures(imPaths, feats)
 
-%[] = CHECKFEATURES(images, feats)
-% test function to visually check features consistency
-% 
-% INPUT
-%   'imPahts':  column vector of N_IMG string containing images' paths
-%   'feats':    N_IMG x N_FEATS matrix containg features' coords structs
-%               (x,y,z)
+%CHECKFEATURES   displays the computed features
+%   CHECKFEATURES(IMAGES, FEATURES) displays each features in the sequence
+%   of images. IMAGES is a column vector of strings containing the images'
+%   paths, while FEATS is a matrix where in the i,j cell there is a struct
+%   representing the coordinates (fields x,y,z) of the j-th feature in the
+%   i-th image.
+%
+%   Example
+%       images = ['image01.jpg'; 'image02.jpg'];
+%       f1.x=1; f1.y=1; f1.z=1;
+%       f2.x=2; f2.y=2; f2.z=2;
+%       feat = [f1; f2];
+%       checkFeatures(images,feat);
 
 %   Copyright 2011 Stefano Cadario, Cavazzana Luca.
 %   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
