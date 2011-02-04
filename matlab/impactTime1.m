@@ -1,9 +1,11 @@
-function [] = impactTime1 (imPaths, feats, vp,  time, showPlot)
+function [wMean mMean] = impactTime1 (imPaths, feats, vp,  time, showPlot)
 
 %IMPACTTIME1
+%
 % testing the algorithm using a 3rd degree polynomial to approximate the
 % discrete contrast function.
 %
+%INPUT:
 %   'imPaths':  MxN matrix, containing the complete paths of the M images
 %               in the serie.
 %   'feats':    MxN matrix containint the coordinates of the features as a
@@ -14,6 +16,9 @@ function [] = impactTime1 (imPaths, feats, vp,  time, showPlot)
 %               frame i and i-1
 %   showPlot:   =1 or ='true' to show various graphs (otherwise just ignore
 %               it)
+%OUTPUT:
+%   'wMean':    mean impact time computed using Weber contrast
+%   'mMean':    mean impact time computed using Michelson contrast
 %
 %   See also IMPACTTIME2.
 
@@ -66,7 +71,8 @@ for ii=1:NIMG % for each image
         if(glob_fog ~= -1)
             wContr(ii,ff) = WeberContrast(glob_fog,img(round(feats(ii,ff).y),round(feats(ii,ff).x)));
         end
-        mContr(ii,ff) = MichelsonContrast(feats(ii,ff),img);
+%         mContr(ii,ff) = MichelsonContrast(feats(ii,ff),img);
+        mContr(ii,ff) = rmsContrast(feats(ii,ff),img); % provando RMS
     end
 end
 clear img;

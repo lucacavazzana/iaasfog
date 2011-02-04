@@ -1,5 +1,13 @@
 function [alg] = selectAlg()
 
+%SELECTALG   ask the user to choose a function
+%   SELECTALG() displays a menu of the available functions in the IAAS
+%   projectand waits for the user to choose one. Returns the integer
+%   associated to the chosen function.
+
+%   Copyright 2011 Stefano Cadario, Cavazzana Luca.
+%   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
+
 N = 2;
 alg = -1;
 
