@@ -8,7 +8,7 @@ function [alg] = selectAlg()
 %   Copyright 2011 Stefano Cadario, Cavazzana Luca.
 %   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
-N = 2;
+N = 3;
 alg = -1;
 
 while (alg==-1)
@@ -17,6 +17,7 @@ while (alg==-1)
     disp('0: check features');
     disp('1: compute impact time by polynomial interpolation');
     disp('2: compute impact time by exponential interpolation');
+    disp('3: compare contrast algorightms');
     alg = str2double(input('select: ','s'));
     
     if all(alg~=(0:N))

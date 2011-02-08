@@ -66,6 +66,8 @@ switch alg
         impactTime1(imPaths, feats', vp_st, imTime, 1);
     case 2, % exp interpolation
         impactTime2(imPaths, feats', vp_st, imTime, 1);
+    case 3, % compare contrast algs
+        compareContrasts(imPaths, feats', vp_st);
 end
 
 return;
