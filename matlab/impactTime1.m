@@ -79,7 +79,7 @@ clear img;
 
 mImVisFeat = zeros(NFEAT,1);
 if(glob_fog ~= -1)
-    wImVisFeat = zeros(NFEAT,1);
+    wImVisFeat = mImVisFeat;
 end
 for ii=1:NFEAT % for each feature
     if (showPlot) % if we wanna plot...
