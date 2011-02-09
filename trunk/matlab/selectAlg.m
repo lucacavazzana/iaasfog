@@ -1,27 +1,40 @@
-function [alg] = selectAlg()
+function [sel] = selectAlg(algs)
 
-%SELECTALG   ask the user to choose a function
-%   SELECTALG() displays a menu of the available functions in the IAAS
-%   projectand waits for the user to choose one. Returns the integer
-%   associated to the chosen function.
+%SELECTALG   display a selection menu
+%   SELECTALG(LINES) displays a text menu of item given with the LINES
+%   parameter as cell array of strings, then prompts the user for a valid
+%   selection.
+%
+%   Example:
+%       sel = {'selection1', 'selection'};
+%       selectAlg(sel);
+%       
+%       - select a function:
+%       1: selection1
+%       2: selection2
+%       select:
 
 %   Copyright 2011 Stefano Cadario, Cavazzana Luca.
 %   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
-N = 3;
-alg = -1;
+N = max(size(algs));
 
-while (alg==-1)
+if N==0
+    error('non-empty items list needed');
+end
+
+sel = -1;
+
+while (sel==-1)
     disp(' ');
     disp('- Select a function:');
-    disp('0: check features');
-    disp('1: compute impact time by polynomial interpolation');
-    disp('2: compute impact time by exponential interpolation');
-    disp('3: compare contrast algorightms');
-    alg = str2double(input('select: ','s'));
+    for ii=1:N
+        disp([num2str(ii),': ',algs{ii}]);
+    end
+    sel = str2double(input('select: ','s'));
     
-    if all(alg~=(0:N))
-        alg=-1;
+    if all(sel~=(1:N))
+        sel=-1;
         disp('- ERROR: bad selection');
     else
         disp(' ' );

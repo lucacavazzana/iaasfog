@@ -44,15 +44,18 @@ end
 for ff=1:NFEAT % shows graphs
     if glob_fog~=-1
         plot([mContr(:,ff),rmsContr(:,ff),wContr(:,ff)]);
+        legend('Michelson','RMS','Weber');
     else
         plot([mContr(:,ff),rmsContr(:,ff)]);
+        legend('Michelson','RMS']);
     end
-    legend('Michelson','RMS','Weber');
+    title(['feature ', num2str(ff), ' of (', num2str(NFEAT),')']);
     pause;
 end
 
 for ff=1:NFEAT % now shows only RMS
     plot(mContr(:,ff)); legend('RMS');
+    title(['feature ', num2str(ff), ' of (', num2str(NFEAT),')']);
     pause;
 end
 end
