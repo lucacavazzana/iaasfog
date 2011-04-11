@@ -1,23 +1,66 @@
-function [feat]  = newParser()
+function [feats]  = newParser(fileName)
 
-%   dummy function: restituisce una struct di coordinate di prova in forma
+%%
+% parse the output file of the feature finder
+% INPUT:
+%   'fileName'  :   valid name of the output file
+%
+% OUTPUT:
+%   'feats'     :   list of struct representing the features as
+%                   f.start - first frame the feature appears
+%                   f.num - # of frame the feature is tracked
+%                   f.x - x coords of the features in each frame appears
+%                   f.y - x coords of the features in each frame appears
+%                   f.contr - contrast value of the feat for each frame
 
-%   feat.c[]    - lista livello contrasto
-% non serve altro alla fine!
+%   Copyright 2011 Stefano Cadario, Cavazzana Luca.
+%   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
-lam = 5;
-
-for ii = 1:40;
-    %     num = 2+ceil(rand()*3) % numero random di frame tra 3 e 5
-    num = 5;
-    feat(ii).c = 1-exp(-(1:num)/lam)+random('Normal',0,.05,1,num); % genero contrasto + noise
-    %     plot(feat(ii).c);
+if ~exist('fileName','var')
+    error '    - ERROR: fileName needed'
+% elseif ~exist('fileName','file') % FIXME: it doesn't work... why?
+%     error(['    - ERROR: ', fileName, ' does not exist']);
 end
 
-syms x;
-figure;
-hold on;
-ezplot('1-exp(-x/5)',[0,6]);
-for ff=feat(1:end)
-    plot(ff.c,'ro');
+f = fopen(fileName,'r');
+coord_regex = '\d+(\.\d+)?';
+
+tline = fgets(f);
+% parses the output of the c++ program, each line representes a feature in
+% the form:
+% #ImageFeatFirstAppears #ImagesFeatIsTracked [xValue yValue contrastValue ]+
+while (tline~=-1)
+    if(exist('feats','var'))
+        parsed = str2double(regexp(tline,coord_regex,'match'));
+        new.start = parsed(1); new.num = parsed(2);
+        new.x = parsed(3:3:end); new.y = parsed(4:3:end); new.contr = parsed(5:3:end);
+        feats = [feats, new]; %#ok
+    else
+        parsed = str2double(regexp(tline,coord_regex,'match'));
+        feats.start = parsed(1); feats.num = parsed(2);
+        feats.x = parsed(3:3:end); feats.y = parsed(4:3:end); feats.contr = parsed(5:3:end);
+    end
+    tline = fgets(f);
+end
+
+fclose(f);
+
+% for ii = 1:max(size(feats))
+%     disp(ii);
+%     disp(feats(ii).start);
+%     disp(feats(ii).num);
+%     disp(feats(ii).x);
+%     disp(feats(ii).y);
+%     disp(feats(ii).contr);
+%     pause;
+% end
+
+% colors = ['y','m','c','r','g','b','w','k'];
+% figure; hold on;
+% for ii = 1:max(size(feats))
+% %     plot(feats(ii).start:feats(ii).start+feats(ii).num-1,feats(ii).contr)
+%     plot(feats(ii).start:feats(ii).start+feats(ii).num-1, feats(ii).contr, colors(rem(ii,8)+1));
+%     pause(.3);
+% end
+
 end
