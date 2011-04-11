@@ -30,8 +30,8 @@ else
     DEFPATHS = 0; % se non sei ne Luca ne Stefano ti tocca inserire a mano i path
 end
 outFile = 'outFile.txt';
-imName = 'frame0020.jpg';
-imNum = 6;
+imName = 'frame0000.jpg';
+imNum = 16;
 imTime = 0.1;
 speed = 0;
 % -------------------------------------------------------------------------
@@ -81,9 +81,10 @@ switch alg
     case 3, % exp interpolation
         impactTime2(imPaths, feats', vp_st, imTime, 1);
     case 4, % compare contrast algs
-        compareContrasts(imPaths, feats', vp_st);
+%         compareContrasts(imPaths, feats', vp_st);
+        newCompareContrasts(imPaths, newParser('outFile1.txt'));
     case 5, % new test alg
-        theNewWay(imPaths, feats', vp_st, 1);
+        theNewWay(imPaths, newParser('outFile1.txt'), 1);
 end
 
 return;
