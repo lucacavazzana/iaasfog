@@ -26,7 +26,6 @@ if regexp(path,'/home/luca/','once')
 elseif regexp(path,'/Users/stefanocadario','once')
     imFolder = '../Images';
     exec_path = ['../Debug/', bin_name]; % path of the c++ part of the project. Make sure it exists
-    %imFolder = '/home/stefano/Matlab/iaasfog/Images';
 else
     DEFPATHS = 0; % se non sei ne Luca ne Stefano ti tocca inserire a mano i path
 end
@@ -50,7 +49,8 @@ end
 alg = selectAlg({'check features';...
                  'compute impact time by polynomial interpolation';...
                  'compute impact time by exponential interpolation';...
-                 'compare contrast algorightms'});
+                 'compare contrast algorightms';...
+                 'new experiment'});
 
 % checks the image list
 imPaths = getPaths(imFolder,imName,imNum);
@@ -67,6 +67,10 @@ end
 vp_st.x=vp(1); vp_st.y=vp(2); vp_st.z=vp(3); clear vp;
 imTime = imTime*ones(1,imNum); imTime(1)=0; % time vector
 
+if strcmp(arch,'glnxa64') % that's because Luca's computer sucks and is unable to compute the vp correctly
+    vp_st.x=190; vp_st.y=120; vp_st.z=1;
+end
+
 disp(['Found ', num2str(size(feats,1)), ' features over ', num2str(size(feats,2)), ' images']);
 
 switch alg
@@ -78,6 +82,8 @@ switch alg
         impactTime2(imPaths, feats', vp_st, imTime, 1);
     case 4, % compare contrast algs
         compareContrasts(imPaths, feats', vp_st);
+    case 5, % new test alg
+        theNewWay(imPaths, feats', vp_st, 1);
 end
 
 return;

@@ -47,8 +47,6 @@ double fogLevel(std::vector<double> *van_p, std::string *im1, std::string *im2, 
  */
 double zoneHom(std::vector<double> *van_p, std::string *im, bool showPlot);
 
-double asd(std::vector <double> *van_p, std::string *im);
-
 void removeIsolate(IplImage *img);
 
 #endif /* _MATLABFUNCTIONS_H_ */
