@@ -47,7 +47,7 @@ for ff=1:NFEAT % shows graphs
         legend('Michelson','RMS','Weber');
     else
         plot([mContr(:,ff),rmsContr(:,ff)]);
-        legend('Michelson','RMS']);
+        legend('Michelson','RMS');
     end
     title(['feature ', num2str(ff), ' of (', num2str(NFEAT),')']);
     pause;
