@@ -1,9 +1,11 @@
-function [feats]  = newParser(fileName)
+function [feats]  = newParser(fileName, cleanFeats)
 
 %%
 % parse the output file of the feature finder
 % INPUT:
 %   'fileName'  :   valid name of the output file
+%   'cleanFeats':   temporary parameter, if 1 removes redundant features
+%                   (since the until the C++ function is fixed)
 %
 % OUTPUT:
 %   'feats'     :   list of struct representing the features as
@@ -20,6 +22,12 @@ if ~exist('fileName','var')
     error '    - ERROR: fileName needed'
 % elseif ~exist('fileName','file') % FIXME: it doesn't work... why?
 %     error(['    - ERROR: ', fileName, ' does not exist']);
+end
+
+if exist('cleanFeats','var') && cleanFeats~=0
+    cleanFeats=1;
+else
+    cleanFeats=0;
 end
 
 f = fopen(fileName,'r');
@@ -44,6 +52,21 @@ while (tline~=-1)
 end
 
 fclose(f);
+
+%% TODO: remove this when the c function will be fixed---------------------
+if cleanFeats
+    for ii=size(feats,2):-1:1
+        for jj=ii-1:-1:1
+            if (feats(ii).num==feats(jj).num && ...
+                    all(round(feats(ii).x)==round(feats(jj).x)) && ...
+                    all(round(feats(ii).y)==round(feats(jj).y)))
+                feats(ii)=[]; % deleting feature
+                break;
+            end
+        end
+    end
+end
+%--------------------------------------------------------------------------
 
 % for ii = 1:max(size(feats))
 %     disp(ii);
