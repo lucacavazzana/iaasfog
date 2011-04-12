@@ -20,6 +20,22 @@ typedef struct{
 	float *contrast;
 } TrackRecord;
 
+typedef enum {
+	ALIVE,
+	NEW,
+	UNDEAD,
+	DELETE
+} featureStatus;
+
+typedef struct {
+	int startFrame;
+	vector <CvPoint2D32f> positions;
+	vector <float> contrast;
+	int index;
+	featureStatus status;
+} featureMovement;
+
+
 /**
  * Creates a new instance of a TrackRecord structure and stores it in an array at the specified position.
  *

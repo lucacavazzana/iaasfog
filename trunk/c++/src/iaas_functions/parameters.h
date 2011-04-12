@@ -6,6 +6,11 @@
  * Essential parameters for library algorithms. Changes here affects the whole execution
  */
 
+/*
+ * Define the direction of process the images (forward or backward if defined)
+ */
+#define REVERSE_IMAGE
+
 //Image parameters
 /**
  * Frame width.
@@ -22,15 +27,15 @@
 /**
  * Number of corners searched in the first frame
  */
-#define MAX_CORNERS 500
+#define MAX_CORNERS 50
 /**
  * Quality of corner
  */
-#define QUALITY_LEVEL 0.01
+#define QUALITY_LEVEL 0.1//0.01
 /**
  * Minimum distance between two tracked points
  */
-#define MIN_DISTANCE 10.0
+#define MIN_DISTANCE 10//10.0
 /**
  * Auto-correlation matrix size
  */
@@ -40,7 +45,7 @@
 /**
  * Lukas Kanade algorithm search window size
  */
-#define WIN_SIZE 50
+#define WIN_SIZE 20//50
 /**
  * Number of pyramid layers used in LK algorithm
  */

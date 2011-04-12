@@ -1,9 +1,205 @@
 #include "IAS_features.h"
 
-#define NAME_WINDOW "^0^"
+#define NAME_WINDOW "iaasFog"
 
-#define _DEBUG 1
+// Wrote by real programmers (powered by kebab)
+void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile, bool verb){
+	TrackRecord *a_records;
 
+	IplImage *image0;			// Previous image
+	IplImage *image1; 			// Current image
+
+	CvPoint2D32f *newCorners;	// New corners found
+	int newCornersCount;		// number of new corners found
+
+	float *track_errors;
+	float *track_contrast;
+
+	char *track_status;
+	int key;
+
+	vector<CvPoint2D32f> featuresAlive;
+	vector<CvPoint2D32f> tmpFeatures;
+
+	list<featureMovement> listFeatures;
+
+	cvNamedWindow(NAME_WINDOW, CV_WINDOW_AUTOSIZE);
+
+	// Load first image before cycle
+#ifdef REVERSE_IMAGE
+	image0 = cvLoadImage(pathImages[pathImages.size()-1].c_str(), CV_LOAD_IMAGE_GRAYSCALE);
+#else
+	image0 = cvLoadImage(pathImages[0].c_str(), CV_LOAD_IMAGE_GRAYSCALE);
+#endif
+	//cvNormalize(image0, image0, 0.0f, 255.0f, cv::NORM_MINMAX);
+
+	// Extract features for the first image
+	newCorners = new CvPoint2D32f[MAX_CORNERS];
+	newCornersCount = MAX_CORNERS;					// This value can change
+
+	iaasFindCorners(image0, newCorners, &newCornersCount);
+	cout << "Corners found: " << newCornersCount << endl;
+
+	/*
+	drawFeatures(image0, newCorners, newCornersCount);
+	cvShowImage(NAME_WINDOW, image0);
+	key = cvWaitKey(0);*/
+	//exit(1);
+#ifdef REVERSE_IMAGE
+	for(int frameIndex=pathImages.size()-2; frameIndex >= 0; frameIndex--) {
+#else
+	for(int frameIndex=1; frameIndex < pathImages.size(); frameIndex++) {
+#endif
+
+		// Load new image
+		image1 = cvLoadImage(pathImages[frameIndex].c_str(), CV_LOAD_IMAGE_GRAYSCALE);
+		//cvNormalize(image1, image1, 0.0f, 255.0f, cv::NORM_MINMAX);
+
+		// Track NEW features from image0 in image1
+
+		tmpFeatures.reserve(newCornersCount);
+		track_errors = new float[newCornersCount];
+		track_status = new char[newCornersCount];
+		iaasTrackCorners(image0, image1, newCorners, &tmpFeatures[0], track_errors, track_status, newCornersCount);
+
+		int asd = 0;
+		// Count number of corners matching in the second image
+		for(int i=0; i<newCornersCount; i++) {
+			asd += track_status[i];
+			// Add corner
+			if(track_status[i]) {
+				featureMovement ft;
+				ft.startFrame = frameIndex;
+				ft.positions.push_back(newCorners[i]);
+				ft.positions.push_back(tmpFeatures[i]);
+				ft.status = NEW;
+
+				// Get contrast from image
+				ft.contrast.push_back(getAroundContrast(image0, &newCorners[i]));
+				ft.contrast.push_back(getAroundContrast(image1, &tmpFeatures[i]));
+
+				listFeatures.push_back(ft);
+			}
+		}
+		cout << "New corners matching: " << asd << endl;
+
+		//delete cornersB;
+		delete track_errors;
+		delete track_status;
+		// Track OLD (existing BEFORE image0) features from image0 in image1
+
+		tmpFeatures.reserve(featuresAlive.size());
+		track_errors = new float[featuresAlive.size()];
+		track_status = new char[featuresAlive.size()];
+		iaasTrackCorners(image0, image1, &featuresAlive[0], &tmpFeatures[0], track_errors, track_status, featuresAlive.size());
+
+		// Add new features to features to track
+		featuresAlive.clear();
+
+		// TODO: merge the next two loops
+
+		list<featureMovement>::iterator feat = listFeatures.begin();
+
+		while (feat != listFeatures.end()) {
+			bool erase = false;
+
+			// If feature in array is still alive
+			if (feat->status == ALIVE) {
+				int actualIndex = feat->index;
+
+				erase = !verifyNewFeatureIsOk(feat, tmpFeatures[actualIndex], track_status[actualIndex]);
+
+				if(feat->status == ALIVE) { // Feature is still alive and new point is ok
+
+					// Add new position
+					feat->positions.push_back(tmpFeatures[actualIndex]);
+
+					// Add contrast
+					feat->contrast.push_back(getAroundContrast(image1, &tmpFeatures[actualIndex]));
+				}
+
+			}
+			if(erase)
+				feat = listFeatures.erase(feat);
+			else
+				feat++;
+		}
+
+		feat = listFeatures.begin();
+		// Prepare new array of features/point to track in the next frame
+		featuresAlive.clear();
+		int ind=0;
+		while (feat != listFeatures.end()) {
+			// If features is not dead (is alive or to add)
+			if(feat->status != UNDEAD) {
+				feat->index = ind++;					// set new index
+				feat->status = ALIVE;					// set all as alive
+				int lastElementIndex = feat->positions.size() - 1;
+				featuresAlive.push_back(feat->positions[lastElementIndex]);		// get last index
+			}
+			feat++;
+		}
+
+		tmpFeatures.clear();
+
+		delete newCorners;
+
+		// Find new features in image1
+		newCorners = new CvPoint2D32f[MAX_CORNERS];
+		newCornersCount = MAX_CORNERS;				// This value can change
+		iaasFindCorners(image1, newCorners, &newCornersCount);
+		cout << "Corners found: " << newCornersCount << endl;
+
+		// Deallocate image0 (not useful anymore)
+		cvReleaseImage(&image0);
+
+		// Set previous image (image0) as actual image (image1) for the next cycle
+		image0 = image1;
+
+	}
+
+	list<featureMovement>::iterator feat = listFeatures.begin();
+	// Prepare new array of features/point to track in the next frame
+	int i=0;
+	while (feat != listFeatures.end()) {
+		if(verifyValidFeature(*feat)) {
+			// OK
+			cout << "Feature " << i++ << ": ";
+			for(int j=0; j<feat->contrast.size(); j++) {
+				cout << feat->contrast[j] << "\t";
+			}
+			cout << endl;
+			feat++;
+		}
+		else {
+			feat = listFeatures.erase(feat);	// Delete
+		}
+
+	}
+
+	if(verb) {
+		//Draw flaw field
+
+		/*
+		double min, max;
+		cvMinMaxLoc(image0, &max, &min);
+		cout << "Bounds: " << max << " " << min << endl;
+		cvNormalize(image0, image0, 0.0f, 255.0f, cv::NORM_MINMAX);
+		cvMinMaxLoc(image1, &max, &min);
+		cout << "Bounds: " << max << " " << min << endl;*/
+		iaasDrawFlowFieldNew(image0, listFeatures, CV_RGB(255, 0, 0));
+
+		cvShowImage(NAME_WINDOW, image0);
+		key = cvWaitKey(0);
+	}
+
+	printFeatures(pathOutFile, listFeatures);
+
+	//Releasing Resources
+	cvReleaseImage(&image0);
+
+	cvDestroyWindow(NAME_WINDOW);
+}
 
 void Find_features(std::vector<std::string> pathImages, std::string pathOutFile, bool verb){
 	TrackRecord *a_records;
@@ -23,7 +219,7 @@ void Find_features(std::vector<std::string> pathImages, std::string pathOutFile,
 	//Allocate Track Record space
 	a_records = new TrackRecord[pathImages.size()];
 
-	for(int track_frame=0; track_frame<(pathImages.size()-1); track_frame++){
+	for(int track_frame=0; track_frame<(pathImages.size()-1); track_frame++) {
 		int frameA, frameB;
 
 		frameA = track_frame;
@@ -60,8 +256,8 @@ void Find_features(std::vector<std::string> pathImages, std::string pathOutFile,
 		imageB = cvLoadImage(pathImages[frameB].c_str(), CV_LOAD_IMAGE_GRAYSCALE);
 
 #ifdef _DEBUG
-		cvShowImage(NAME_WINDOW, imageB);
-		key = cvWaitKey(0);
+		//cvShowImage(NAME_WINDOW, imageB);
+		//key = cvWaitKey(0);
 #endif
 
 		//Track corners in 2nd frame
@@ -152,7 +348,7 @@ void Find_features(std::vector<std::string> pathImages, std::string pathOutFile,
 			//Compute mean time to impact
 			//double avg_tti = iaasMeanTimeToImpact(vp, cornersA, cornersB, sel_corners);
 
-			if(verb){
+			if(verb) {
 				//Draw flaw field
 				iaasDrawFlowField(image1, cornersA, cornersB, sel_corners, track_status, CV_RGB(255, 0, 0));
 
@@ -180,6 +376,28 @@ void Find_features(std::vector<std::string> pathImages, std::string pathOutFile,
 	cvReleaseImage(&imageA);
 	cvReleaseImage(&imageB);
 	cvDestroyWindow(NAME_WINDOW);
+}
+
+void printFeatures(std::string filePath, list<featureMovement> listFeatures) {
+
+	// Open file to write
+	std::ofstream f_out;
+	f_out.open(filePath.c_str(), std::ios::out);
+
+	// If ok write
+	if(f_out.is_open()){
+		//char *status = a_records[num_records-1].track_status;
+		list<featureMovement>::iterator feat = listFeatures.begin();
+		while (feat != listFeatures.end()) {
+			f_out << feat->startFrame << "\t" << feat->contrast.size() << "\t";
+			for(int rec = 0; rec < feat->contrast.size(); rec++) {
+				f_out << feat->positions[rec].x << "\t"<< feat->positions[rec].y << "\t" << feat->contrast[rec] << "\t";
+			}
+			f_out << std::endl;
+			feat++;
+		}
+	}
+	f_out.close();
 }
 
 void Print_vp_and_features(std::string filePath, int num_records, CvPoint2D32f vp, TrackRecord *a_records){

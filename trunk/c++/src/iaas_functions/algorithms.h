@@ -9,7 +9,9 @@
 #ifndef ALGORITHMS_H_
 #define ALGORITHMS_H_
 
-#define MIN_FEATURE_DISTANCE 2
+#define MIN_FEATURE_DISTANCE 0//1
+#define RECTANGLE_SIZE	2
+#define MINIMUM_LIFE	5
 
 #include "parameters.h"
 /**
@@ -192,5 +194,11 @@ double iaasTimeToImpact(CvPoint2D32f vanishing_point, CvPoint2D32f p_t0, CvPoint
  * @return Mean time to impact
  */
 double iaasMeanTimeToImpact(CvPoint2D32f vanishing_point, CvPoint2D32f *cornersA, CvPoint2D32f *cornersB, int n_corners);
+
+bool verifyValidFeature(featureMovement feat);
+
+double getAroundContrast(const IplImage *img, CvPoint2D32f *point);
+
+bool verifyNewFeatureIsOk(list<featureMovement>::iterator feat, const CvPoint2D32f newPoint, const int trackStatus=1);
 
 #endif //ALGORITHMS_H_

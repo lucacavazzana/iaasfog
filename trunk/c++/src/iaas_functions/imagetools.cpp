@@ -1,9 +1,13 @@
 /**
  * @file imagetools.cpp
- * @author Alessandro Stranieri
+ * @author Alessandro Stranieri, Stefano Cadario, Luca Cavazzana
  * @date Feb 04, 2009
  */
 #include "iaas.h"
+
+CvPoint2D32f iaasGetCollinearPoint(CvPoint2D32f *list, CvMat *line) {
+
+}
 
 double iaasTwoLinesAngle(CvMat* line1, CvMat* line2) {
 	double angle;
@@ -44,6 +48,11 @@ CvPoint2D32f iaasIntersectionPoint(CvMat *line1, CvMat *line2) {
 	return result;
 }
 
+/* iaasJoiningLine
+ * Computer the joining line (CvMat* joinLine) between
+ * two points (CvPoint2D32f p1, CvPoint2D32f p2)
+ * using cross product in homogeneous coordinates
+ */
 void iaasJoiningLine(CvPoint2D32f p1, CvPoint2D32f p2, CvMat* joinLine) {
 	//First point in homogeneous coordinates
 	double* a = new double[3];
@@ -157,6 +166,49 @@ void iaasDrawStraightLine(IplImage* image, CvMat* line) {
 	p1 = intersections[1];
 
 	cvLine(image, p0, p1, CV_RGB(0, 0, 0), 1);
+}
+
+void drawFeatures(IplImage *image, CvPoint2D32f *points, int size) {
+	for(int i=0; i<size; i++) {
+		cvCircle(image, cvPoint(cvRound(points[i].x), cvRound(points[i].y)), 2, CV_RGB(255, 255, 255));
+	}
+}
+
+void iaasDrawFlowFieldNew(IplImage* image, list<featureMovement> listFeatures,
+		CvScalar color, bool f_line) {
+	CvPoint p, q;
+	double angle, pq_distance;
+
+	list<featureMovement>::iterator feat = listFeatures.begin();
+	while (feat != listFeatures.end()) {
+
+		int lastValue = feat->positions.size()-1;
+		p = cvPoint(cvRound(feat->positions[0].x), cvRound(feat->positions[0].y));
+
+		q = cvPoint(cvRound(feat->positions[lastValue].x), cvRound(feat->positions[lastValue].y));
+
+		//Draw Line
+		int line_thickness = 1;
+		cvLine(image, p, q, color, line_thickness, CV_AA, 0);
+
+		if (f_line) {
+			CvMat line;
+			iaasJoiningLine(cvPointTo32f(p), cvPointTo32f(q), &line);
+			iaasDrawStraightLine(image, &line);
+		}
+		//Draw arrow tips
+		angle = atan2((double) p.y - q.y, (double) p.x - q.x);
+		pq_distance = iaasTwoPointsDistance<CvPoint>(p, q);
+		p.x = cvRound(q.x + pq_distance * .6 * cos(angle + PI / 4));
+		p.y = cvRound(q.y + pq_distance * .6 * sin(angle + PI / 4));
+		cvLine(image, p, q, color, line_thickness, CV_AA, 0);
+
+		p.x = cvRound(q.x + pq_distance * .6 * cos(angle - PI / 4));
+		p.y = cvRound(q.y + pq_distance * .6 * sin(angle - PI / 4));
+		cvLine(image, p, q, color, line_thickness, CV_AA, 0);
+
+		feat++;
+	}
 }
 
 void iaasDrawFlowField(IplImage* image, CvPoint2D32f *cornersA,

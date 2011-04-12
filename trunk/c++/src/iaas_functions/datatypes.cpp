@@ -127,7 +127,8 @@ int iaasSelectCloseFlowVectors(TrackRecord *a_records, CvPoint2D32f vp, int num_
 			double dist = iaasPointLineDistance(&line, vp);
 			if(dist > dist_th){
 				status[p] = 0;
-			}else{
+			}
+			else {
 				counter++;
 			}
 		}
@@ -146,7 +147,8 @@ int iaasSelectInFOVFeatures(TrackRecord *a_records, int num_records){
 				if(!iaasPointIsInFOV(p0)){
 					status[p] = 0;
 					break;
-				}else{
+				}
+				else {
 					if(rec == num_records-1)
 						counter++;
 				}
