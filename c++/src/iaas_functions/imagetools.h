@@ -203,6 +203,9 @@ void iaasDrawStraightLine(IplImage* image, CvMat* line);
  */
 void iaasDrawFlowField(IplImage* image, CvPoint2D32f *cornersA, CvPoint2D32f *cornersB, int corners_count, char *track_status, CvScalar color = CV_RGB(255,0,0), bool f_line = false);
 
+void iaasDrawFlowFieldNew(IplImage* image, list<featureMovement> listFeatures, CvScalar color, bool f_line=false);
+void drawFeatures(IplImage *image, CvPoint2D32f *points, int size);
+
 /**
  * Draw ROI on image. Useful for debugging purposes.
  *

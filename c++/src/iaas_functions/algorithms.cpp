@@ -1,11 +1,132 @@
 /**
  * @file algorithms.h
- * @author Alessandro Stranieri
+ * @author Alessandro Stranieri && Stefano Cadario, Luca Cavazzana
  * @date Feb 04, 2009
  */
 #include "iaas.h"
 #include <iostream>
 #include <vector>
+
+double getAroundContrast(const IplImage *img, CvPoint2D32f *point) {
+
+	IplImage *rect = cvCreateImage(cvSize(RECTANGLE_SIZE, RECTANGLE_SIZE), IPL_DEPTH_32F, 1);
+	IplImage *rectDiff = cvCreateImage(cvSize(RECTANGLE_SIZE, RECTANGLE_SIZE), IPL_DEPTH_32F, 1);
+
+	double contrast;
+
+	// Get the area around the point
+	cvGetRectSubPix(img, rect, *point);
+
+	// Get Mean
+	cvNormalize(rect, rectDiff);
+	CvScalar tmp = cvAvg(rectDiff);
+
+	// Sub Mean from image
+	cvSubS(rectDiff, tmp, rect);
+
+	// Pow
+	cvPow(rect, rectDiff, 2);
+
+	// Sum elements
+	tmp = cvSum(rectDiff);
+	contrast = sqrt(tmp.val[0]/(RECTANGLE_SIZE*RECTANGLE_SIZE));
+
+	return contrast;
+}
+
+// Verify that the last point found is coherent with others
+bool verifyNewFeatureIsOk(list<featureMovement>::iterator feat, const CvPoint2D32f newPoint, const int trackStatus) {
+
+	bool pointOk = true;
+	int nPoints = feat->positions.size();
+	double distance = 0, angle = 0;
+
+	// Check if new point is tracked correctly
+	if(!trackStatus) {
+		pointOk = false;
+		goto endCheck;
+	}
+
+	// Check if new point is negative
+	if(newPoint.x < 0 || newPoint.y < 0 || newPoint.x > FRAME_WIDTH || newPoint.y > FRAME_HEIGHT) {
+		pointOk = false;
+		goto endCheck;
+	}
+
+	// Get distance of two points before
+	distance = iaasTwoPointsDistance(feat->positions[nPoints-2], feat->positions[nPoints-1]);
+
+	// Check if distance from last two points is less than previous points
+#ifdef REVERSE_IMAGE
+	if(distance < iaasTwoPointsDistance(feat->positions[nPoints-1], newPoint)) {
+#else
+	if(distance > iaasTwoPointsDistance(feat->positions[nPoints-1], newPoint)) {
+#endif
+		pointOk = false;
+		goto endCheck;
+	}
+
+	// Check angle
+	CvMat line1, line2;
+	iaasJoiningLine(feat->positions[nPoints-2], feat->positions[nPoints-1], &line1);
+	iaasJoiningLine(feat->positions[nPoints-1], newPoint, &line2);
+	angle = iaasTwoLinesAngle(&line1, &line2);
+	if(angle < 0.95) {
+		//cout << "angle: " << angle << endl;
+		pointOk = false;
+		goto endCheck;
+	}
+
+	if(nPoints > 3) {
+		// TODO: check collinearity (cross-ratio)
+	}
+
+endCheck:
+	if(!pointOk) {
+		// Point not valid, check if we can keep only the previous points
+		if(nPoints > MINIMUM_LIFE) {
+			// Set as undead
+			feat->status = UNDEAD;
+			return true;
+		}
+		else {
+			// Too short life, drop feature
+			feat->status = DELETE;
+			return false;
+		}
+	}
+	else {
+		// New point ok, keep tracking
+		//feat->status = ALIVE;
+		return true;
+	}
+}
+
+bool verifyValidFeature(featureMovement feat) {
+	int nPoints = feat.positions.size();
+	if(nPoints < MINIMUM_LIFE) {
+		return false;
+	}
+	else {
+		CvMat line;
+		double ptsDistance;
+		iaasJoiningLine(feat.positions[0], feat.positions[nPoints-1], &line);
+		ptsDistance = iaasTwoPointsDistance(feat.positions[0], feat.positions[nPoints-1]) / 50;
+
+		vector<CvPoint2D32f>::iterator point = feat.positions.begin() + 1;
+		while(point != feat.positions.end()) {
+
+			double distance = iaasPointLineDistance(&line, *point);
+
+			// If distance of point is too far from line drop that feature
+			if(ptsDistance < distance) {
+				return false;
+			}
+			point++;
+		}
+	}
+	return true;
+}
 
 void iaasFindAndTrackCorners(double quality_level, IplImage *imageA, IplImage *imageB, int *track_count, CvPoint2D32f *cornersA, CvPoint2D32f *cornersB, float *track_errors, char* track_status){
 	//Shi-Tomasi parameters
@@ -78,10 +199,12 @@ void iaasFindAndTrackCorners(double quality_level, IplImage *imageA, IplImage *i
 	cvReleaseImage(&pyrB);
 }
 
-void iaasFindCorners(IplImage *image, CvPoint2D32f *corners, int *corner_count, double quality){
+void iaasFindCorners(IplImage *image, CvPoint2D32f *corners, int *corner_count, double quality) {
 	//Shi-Tomasi parameters
 	CvSize img_sz;
-	IplImage *eig_image, *temp_image;
+	static IplImage *eig_image, *temp_image;
+	static int firstTime = 0;
+
 	double min_distance = MIN_DISTANCE;
 	int block_size = BLOCK_SIZE;
 
@@ -89,10 +212,11 @@ void iaasFindCorners(IplImage *image, CvPoint2D32f *corners, int *corner_count, 
 	int win_size = WIN_SIZE;
 
 	//Shi-Tomasi temporary work data-structures
-	img_sz = cvGetSize(image);
-	eig_image = cvCreateImage(img_sz, IPL_DEPTH_32F, 1);
-	temp_image = cvCreateImage(img_sz, IPL_DEPTH_32F, 1);
-
+	if(firstTime==0) {
+		img_sz = cvGetSize(image);
+		eig_image = cvCreateImage(img_sz, IPL_DEPTH_32F, 1);
+		temp_image = cvCreateImage(img_sz, IPL_DEPTH_32F, 1);
+	}
 
 	cvGoodFeaturesToTrack(
 		image,
@@ -116,10 +240,11 @@ void iaasFindCorners(IplImage *image, CvPoint2D32f *corners, int *corner_count, 
 		cvSize(-1, -1),
 		cvTermCriteria(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 20, .03)
 	);
+	firstTime = 1;
 
 	//Release resources
-	cvReleaseImage(&eig_image);
-	cvReleaseImage(&temp_image);
+	//cvReleaseImage(&eig_image);
+	//cvReleaseImage(&temp_image);
 }
 
 void iaasTrackCorners(IplImage *imageA, IplImage *imageB, CvPoint2D32f *cornersA, CvPoint2D32f *cornersB, float *track_errors, char* track_status, int corner_count){
@@ -140,7 +265,7 @@ void iaasTrackCorners(IplImage *imageA, IplImage *imageB, CvPoint2D32f *cornersA
 			pyr_layers,
 			track_status,
 			track_errors,
-			cvTermCriteria(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 20, .3),
+			cvTermCriteria(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 40, .1),
 			0
 	);
 
@@ -396,6 +521,8 @@ CvPoint2D32f iaasMinimumDistantPoint(CvPoint2D32f *points0, CvPoint2D32f *points
 	//Solution matrix
 	CvMat X;
 	double data_X[2];
+
+	// Init matrix X with 2 Row, 1 Column with dataX
 	cvInitMatHeader(&X, 2, 1, CV_64FC1, data_X);
 
 	//A and B matrices
@@ -413,10 +540,9 @@ CvPoint2D32f iaasMinimumDistantPoint(CvPoint2D32f *points0, CvPoint2D32f *points
 	cvInitMatHeader(&A, nPoints, 2, CV_64FC1, data_A);
 	cvInitMatHeader(&B, nPoints, 1, CV_64FC1, data_B);
 
-
-
 	//Solve system with Least Square Method
 	cvSolve(&A, &B, &X, CV_SVD);
+
 
 	if(data_X[2] == 0){
 #ifdef DEBUG

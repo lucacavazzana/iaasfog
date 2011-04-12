@@ -7,6 +7,14 @@
 #include "iaas_functions/iaas.h"
 
 
+/* New function
+ *
+ */
+void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile, bool verb);
+
+void printFeatures(std::string filePath, list<featureMovement> listFeatures);
+
+
 /*Use the functions that are in the folder 'iaas_functions' to find features.
  *The vanishing point calculated and the features found are written in the file 'pathOutFile'.
  *To write the date the function 'Print_vp_and_features' is used.

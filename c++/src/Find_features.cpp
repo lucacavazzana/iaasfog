@@ -163,10 +163,6 @@ int main (int argc, char **argv) {
 		outFile = "fileFeatures.txt";
 	} // TODO: check folder existence too
 
-
-	std::cout << "SPAM" << std::endl;
-	std::flush(std::cout);
-
 	int start = atoi(firstImage.substr(mark_pos-4,4).c_str()); // in case the series doesn't start at img 0000
 	vectPathImages.push_back(folder + "/" + firstImage);
 	// TODO: check image exists
@@ -188,7 +184,7 @@ int main (int argc, char **argv) {
 
 
 	try {
-		Find_features(vectPathImages, outFile, verbose);
+		nuFindFeatures(vectPathImages, outFile, verbose);
 	} catch (cv::Exception e){
 		if (e.code == -5) {
 			std::cout << "- ERROR: no features was present all images, try with a smaller set" << std::endl;
