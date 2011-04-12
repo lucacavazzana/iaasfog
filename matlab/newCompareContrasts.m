@@ -10,6 +10,7 @@ function [] = newCompareContrasts(imPaths, feats)
 %   $Revision: xxxxx $  $Date: 2011/04/11 17:20:22 $
 
 NFEAT = size(feats,2);
+WIN = 40 /2; % size of the window
 
 fig = figure;
 for ff = 1:NFEAT
@@ -19,21 +20,27 @@ for ff = 1:NFEAT
     plot(t,feats(ff).contr); % plot contrast graph
     hold on;
     for ii = 1:feats(ff).num
+        
+        % print current contrast
         subplot(2,2,1);
         hold on;
-        plot(t(ii),feats(ff).contr(ii),'ro'); % print current contrast
-        
-        subplot(2,2,2);
-        img = rgb2gray(imread(imPaths(t(ii),:)));
+        plot(t(ii),feats(ff).contr(ii),'ro');
         
         % print detail of the current feature
-        imshow(img(max(1,uint16(feats(ff).y(ii)-20)):min(size(img,1),uint16(feats(ff).y(ii))+20),...
-            max(1,uint16(feats(ff).x(ii)-20)):min(size(img,2),uint16(feats(ff).x(ii))+20)));
+        subplot(2,2,2);
+        img = rgb2gray(imread(imPaths(t(ii),:)));
+        hold off;
+        imshow(img(max(1,uint16(feats(ff).y(ii)-WIN)):min(size(img,1),uint16(feats(ff).y(ii))+WIN),...
+            max(1,uint16(feats(ff).x(ii)-WIN)):min(size(img,2),uint16(feats(ff).x(ii))+WIN)));
+        hold on;
+        plot(min(uint16(feats(ff).x(ii)),WIN+1),min(uint16(feats(ff).y(ii)),WIN+1),'ro');
         
+        % plot overview of the image
         subplot(2,2,[3,4]);
-        imshow(img); % plot overview of the image
+        imshow(img);
         hold on;
         plot(feats(ff).x(ii),feats(ff).y(ii),'ro');
+        title(['feat ',num2str(ii),'/',num2str(max(feats(ff).num)),', set ',num2str(ff),'/',num2str(max(size(feats)))]);
         pause;
     end
 end

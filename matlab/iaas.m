@@ -50,7 +50,8 @@ alg = selectAlg({'check features';...
                  'compute impact time by polynomial interpolation';...
                  'compute impact time by exponential interpolation';...
                  'compare contrast algorightms';...
-                 'new experiment'});
+                 'new experiment';...
+                 'new compare contrasts'});
 
 % checks the image list
 imPaths = getPaths(imFolder,imName,imNum);
@@ -81,10 +82,11 @@ switch alg
     case 3, % exp interpolation
         impactTime2(imPaths, feats', vp_st, imTime, 1);
     case 4, % compare contrast algs
-%         compareContrasts(imPaths, feats', vp_st);
-        newCompareContrasts(imPaths, newParser('outFile1.txt'));
+        compareContrasts(imPaths, feats', vp_st);
     case 5, % new test alg
-        theNewWay(imPaths, newParser('outFile1.txt'), 1);
+        theNewWay(newParser('outFile1.txt',1));
+    case 6, % new test to visually check contrasts
+        newCompareContrasts(imPaths, newParser('outFile1.txt',1));
 end
 
 return;
