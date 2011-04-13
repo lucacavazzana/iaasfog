@@ -1,4 +1,4 @@
-function [] = theNewWay(feats)
+function [] = theNewWay(feats,showPlots)
 
 %THENEWWAY
 %
@@ -10,7 +10,7 @@ function [] = theNewWay(feats)
 %% COMMENTI:
 % frequenza fra i frames fissata => dt fisso ($\frac{1}{25}$ ... $\frac{1}{30}$)
 
-myRansac(feats,0)
+myRansac(feats,showPlots)
 
 
 end
