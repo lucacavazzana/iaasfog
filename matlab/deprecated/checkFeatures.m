@@ -1,5 +1,6 @@
 function [] = checkFeatures(imPaths, feats)
 
+%% OBSOLETE SINCE UPDATE OF THE OUTPUT FILE
 %CHECKFEATURES   displays the computed features
 %   CHECKFEATURES(IMAGES, FEATURES) displays each features in the sequence
 %   of images. IMAGES is a column vector of strings containing the images'
