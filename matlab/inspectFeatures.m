@@ -1,4 +1,4 @@
-function [] = newCompareContrasts(imPaths, feats)
+function [] = inspectFeatures(imPaths, feats)
 
 %%COMPARECONTRASTS shows contrast levels.
 %   COMPARECONTRASTS(IMPATHS, FEATS, VP) visually compare the computed
@@ -13,7 +13,7 @@ NFEAT = size(feats,2);
 WIN = 40 /2; % size of the window
 
 fig = figure;
-for ff = 1:NFEAT
+for ff = 30:NFEAT
     t = feats(ff).start:(feats(ff).start+feats(ff).num-1);
     subplot(2,2,1);
     hold off;
@@ -25,6 +25,7 @@ for ff = 1:NFEAT
         subplot(2,2,1);
         hold on;
         plot(t(ii),feats(ff).contr(ii),'ro');
+        title('contrast');
         
         % print detail of the current feature
         subplot(2,2,2);
@@ -34,6 +35,7 @@ for ff = 1:NFEAT
             max(1,uint16(feats(ff).x(ii)-WIN)):min(size(img,2),uint16(feats(ff).x(ii))+WIN)));
         hold on;
         plot(min(uint16(feats(ff).x(ii)),WIN+1),min(uint16(feats(ff).y(ii)),WIN+1),'ro');
+        title('detail');
         
         % plot overview of the image
         subplot(2,2,[3,4]);
@@ -41,7 +43,7 @@ for ff = 1:NFEAT
         hold on;
         plot(feats(ff).x(ii),feats(ff).y(ii),'ro');
         title(['feat ',num2str(ii),'/',num2str(max(feats(ff).num)),', set ',num2str(ff),'/',num2str(max(size(feats)))]);
-        pause;
+        pause(.1);
     end
 end
 clear img;

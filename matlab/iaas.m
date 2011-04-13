@@ -1,13 +1,23 @@
-function [] = iaas()
-%IAAS
+function [] = iaas(showPlots)
+%%IAAS
+%   bla bla bla bla
+%
+%INPUT:
+%   'showPlot'  :   if 1 shows some cool visual feedback, if 2 shows a lot
+%                   more graphs (mainly for testing purposes, can become
+%                   veeery boring), if 0 plots nothing
 
 %   Copyright 2011 Stefano Cadario, Cavazzana Luca.
 %   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 % OPTIONS
-REFIND_FEATURES = 0;   % = 1 to call the exe to recompute the features (useless and costly for multiple run on the same set of images)
-SHOWPLOTS = 0; % = 1 to show some cool animations
+REFINDFEATURES = 0;   % = 1 to call the exe to recompute the features (useless and costly for multiple run on the same set of images)
 
+if ~exist('showPlots','var')
+    showPlots=0;
+else
+    showPlots = str2double(showPlots);
+end
 
 arch = computer('arch');
 
@@ -46,17 +56,14 @@ if ~DEFPATHS % FIXME: delete this condition in the final release
     imNum = getNumImages;
     imTime = getPeriod;
 end
-alg = selectAlg({'check features';...
-                 'compute impact time by polynomial interpolation';...
-                 'compute impact time by exponential interpolation';...
-                 'compare contrast algorightms';...
-                 'new experiment';...
-                 'new compare contrasts'});
+alg = selectAlg({'inspect features';...
+                 'plot contrasts';...
+                 'new experiment'});
 
 % checks the image list
 imPaths = getPaths(imFolder,imName,imNum);
 
-if REFIND_FEATURES || exist(outFile,'file')~=2
+if REFINDFEATURES || exist(outFile,'file')~=2
     disp('Computing image features. Could take some time and open funny windows...');
     if(system([exec_path,' -v -f ',imFolder,' -i ',imName,' -n', num2str(imNum),' -t' num2str(imTime),' -o',outFile])~=0)
         disp('    - ERROR in finding features. Exit');
@@ -64,8 +71,7 @@ if REFIND_FEATURES || exist(outFile,'file')~=2
     end
 end
 
-[vp,feats] = parseFeatures(outFile); % re-parsing features
-vp_st.x=vp(1); vp_st.y=vp(2); vp_st.z=vp(3); clear vp;
+feats = parseFeatures(outFile); % re-parsing features
 imTime = imTime*ones(1,imNum); imTime(1)=0; % time vector
 
 if strcmp(arch,'glnxa64') % that's because Luca's computer sucks and is unable to compute the vp correctly
@@ -76,17 +82,11 @@ disp(['Found ', num2str(size(feats,1)), ' features over ', num2str(size(feats,2)
 
 switch alg
     case 1, % visually check features
-        checkFeatures(imPaths, feats');
-    case 2, % polynomial interpolation
-        impactTime1(imPaths, feats', vp_st, imTime, 1);
+        inspectFeatures(imPaths, feats);
+    case 2, % plots contrast
+        plotContrasts(feats);
     case 3, % exp interpolation
-        impactTime2(imPaths, feats', vp_st, imTime, 1);
-    case 4, % compare contrast algs
-        compareContrasts(imPaths, feats', vp_st);
-    case 5, % new test alg
-        theNewWay(newParser('outFile1.txt',1));
-    case 6, % new test to visually check contrasts
-        newCompareContrasts(imPaths, newParser('outFile1.txt',1));
+        theNewWay(feats,showPlots);        
 end
 
 return;
