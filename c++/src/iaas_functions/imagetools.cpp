@@ -27,6 +27,18 @@ double iaasTwoLinesAngle(CvMat* line1, CvMat* line2) {
 	return angle;
 }
 
+
+CvPoint2D32f iaasPointAlongLine(CvMat *line, CvPoint2D32f startPoint, float pixelDistance) {
+	CvPoint2D32f newPoint;
+
+	// Slope (m) = -a/b
+	double m = -(line->data.db[0]/line->data.db[1]);
+	double magnitude = sqrt(1+m*m);
+	newPoint.x = startPoint.x + pixelDistance/magnitude;
+	newPoint.y = startPoint.y + pixelDistance*m/magnitude;
+	return newPoint;
+}
+
 CvPoint2D32f iaasIntersectionPoint(CvMat *line1, CvMat *line2) {
 	CvPoint2D32f result;
 	double* data = new double[3];
@@ -188,7 +200,7 @@ void iaasDrawFlowFieldNew(IplImage* image, list<featureMovement> listFeatures,
 		q = cvPoint(cvRound(feat->positions[lastValue].x), cvRound(feat->positions[lastValue].y));
 
 		//Draw Line
-		int line_thickness = 1;
+		int line_thickness = 0.5f;
 		cvLine(image, p, q, color, line_thickness, CV_AA, 0);
 
 		if (f_line) {
@@ -198,13 +210,14 @@ void iaasDrawFlowFieldNew(IplImage* image, list<featureMovement> listFeatures,
 		}
 		//Draw arrow tips
 		angle = atan2((double) p.y - q.y, (double) p.x - q.x);
-		pq_distance = iaasTwoPointsDistance<CvPoint>(p, q);
-		p.x = cvRound(q.x + pq_distance * .6 * cos(angle + PI / 4));
-		p.y = cvRound(q.y + pq_distance * .6 * sin(angle + PI / 4));
+		//pq_distance = iaasTwoPointsDistance<CvPoint>(p, q);
+		pq_distance = 15;
+		p.x = cvRound(q.x + pq_distance * .6 * cos(angle + PI / 6));
+		p.y = cvRound(q.y + pq_distance * .6 * sin(angle + PI / 6));
 		cvLine(image, p, q, color, line_thickness, CV_AA, 0);
 
-		p.x = cvRound(q.x + pq_distance * .6 * cos(angle - PI / 4));
-		p.y = cvRound(q.y + pq_distance * .6 * sin(angle - PI / 4));
+		p.x = cvRound(q.x + pq_distance * .6 * cos(angle - PI / 6));
+		p.y = cvRound(q.y + pq_distance * .6 * sin(angle - PI / 6));
 		cvLine(image, p, q, color, line_thickness, CV_AA, 0);
 
 		feat++;

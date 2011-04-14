@@ -87,6 +87,73 @@ endCheck:
 		if(nPoints > MINIMUM_LIFE) {
 			// Set as undead
 			feat->status = UNDEAD;
+
+			// Correct points positions (move points in order to lie
+			// on the line connecting first and last points)
+			CvPoint2D32f firstPt, lastPt;
+			firstPt = feat->positions[0];
+			lastPt = feat->positions[feat->positions.size()-1];
+			CvMat line;
+			iaasJoiningLine(firstPt, lastPt, &line);
+			double a, b, c;
+			a = line.data.db[0];
+			b = line.data.db[1];
+			c = line.data.db[2];
+			cout << "Line: " << a << " " << b << " " << c << endl;
+			// TODO: find best line connecting features
+
+			float *bestLine = new float[4];
+			CvMemStorage* storage = cvCreateMemStorage(0);
+
+			CvSeq* point_seq = cvCreateSeq(CV_32FC2, sizeof(CvSeq), sizeof(CvPoint2D32f), storage);
+			for (int i=0; i<feat->positions.size(); i++) {
+				cvSeqPush(point_seq, &feat->positions[i]);
+			}
+			cvFitLine(point_seq,CV_DIST_L2,0,0.01,0.01,bestLine);
+			fprintf(stdout,"v=(%f,%f),vy/vx=%f,(x,y)=(%f,%f) \n",bestLine[0],bestLine[1],bestLine[1]/bestLine[0],bestLine[2],bestLine[3]);
+			cvClearSeq(point_seq);
+			cvReleaseMemStorage(&storage);
+
+
+			for(int i=1; i < feat->positions.size()-1; i++) {
+				//cout << "distance " << iaasPointLineDistance(&line, feat->positions[i]);
+				feat->positions[i] = iaasProjectPointToLine(firstPt, lastPt, feat->positions[i]);
+				// TODO: function iaasProjectPointToLine where line is defined as CvMat
+				//cout << " " << iaasPointLineDistance(&line, feat->positions[i]) << endl;
+			}
+			// TODO: find best ratio between features distances
+			double ratio = 0;
+			double mean = 0;
+			double variance = 0;
+
+			//cout << "Ratio: ";
+			for(int i=0; i<feat->positions.size()-2; i++) {
+				double distance1 = iaasTwoPointsDistance(feat->positions[i],feat->positions[i+1]);
+				double distance2 = iaasTwoPointsDistance(feat->positions[i+1],feat->positions[i+2]);
+				ratio = distance1/distance2;
+				//cout << ratio << " ";
+				mean += ratio;
+				variance += ratio*ratio;
+			}
+			ratio = mean/(feat->positions.size()-2);
+			variance = variance/(feat->positions.size()-2);
+			variance = sqrt(variance - ratio*ratio);
+			// TODO: generate virtual features (computed not founded because inside fog)
+
+			feat->ratio = ratio;
+			//cout << endl;
+			cout << "Ratios: " << ratio << " " << variance << endl;
+			if(variance > 0.1) {
+				feat->status = DELETE;
+				//cout << "Ratio: " << ratio << endl;
+				return false;
+			}
+			else {
+				// Prolong line
+				for(int i=0; i<10; i++) {
+					feat->positions.push_back(iaasPointAlongLine(&line, feat->positions[feat->positions.size()-1], 10.0f));
+				}
+			}
 			return true;
 		}
 		else {

@@ -33,6 +33,7 @@ typedef struct {
 	vector <float> contrast;
 	int index;
 	featureStatus status;
+	double ratio;
 } featureMovement;
 
 
