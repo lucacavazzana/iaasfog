@@ -45,6 +45,7 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 	cvShowImage(NAME_WINDOW, image0);
 	key = cvWaitKey(0);*/
 	//exit(1);
+
 #ifdef REVERSE_IMAGE
 	for(int frameIndex=pathImages.size()-2; frameIndex >= 0; frameIndex--) {
 #else
