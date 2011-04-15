@@ -11,7 +11,9 @@ function [] = iaas(showPlots)
 %   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 % OPTIONS
-REFINDFEATURES = 0;   % = 1 to call the exe to recompute the features (useless and costly for multiple run on the same set of images)
+REFINDFEATURES = 1;   % = 1 to call the exe to recompute the features (useless and costly for multiple run on the same set of images)
+
+close all;
 
 if ~exist('showPlots','var')
     showPlots=0;
@@ -41,7 +43,7 @@ else
 end
 outFile = 'outFile.txt';
 imName = 'frame0000.jpg';
-imNum = 16;
+imNum = 30;
 imTime = 0.1;
 speed = 0;
 % -------------------------------------------------------------------------
@@ -58,7 +60,8 @@ if ~DEFPATHS % FIXME: delete this condition in the final release
 end
 alg = selectAlg({'inspect features';...
                  'plot contrasts';...
-                 'new experiment'});
+                 'new experiment';...
+                 'test contrasts'});
 
 % checks the image list
 imPaths = getPaths(imFolder,imName,imNum);
@@ -86,7 +89,9 @@ switch alg
     case 2, % plots contrast
         plotContrasts(feats);
     case 3, % exp interpolation
-        theNewWay(feats,showPlots);        
+        theNewWay(feats,showPlots);
+    case 4,
+        testContrasts(imPaths,feats);
 end
 
 return;

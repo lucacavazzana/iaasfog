@@ -1,6 +1,6 @@
 function [n] = getNumImages()
 
-% query for the number of image to analyse
+% prompts for the number of image to analyse
 
 %   Copyright 2011 Stefano Cadario, Cavazzana Luca.
 %   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $

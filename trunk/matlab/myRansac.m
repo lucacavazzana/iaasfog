@@ -29,11 +29,11 @@ NSET = size(feats,2);
 if NORMALIZE
     for ii = 1:NSET
         notZero = feats(ii).contr(feats(ii).contr~=0); % FIXME: this passage is necessary until the c function is fixed
-        feats(ii).contr = feats(ii).contr/notZero(end);
+        feats(ii).contr = feats(ii).contr/mean(2*notZero);
     end
 end
 
-if 0
+if showPlot>2
     fig = plotContrasts(feats);
     pause
     close(fig);
@@ -48,7 +48,9 @@ D = ceil(NSET*.75); % required number to assert the model fits well the data
 % some initializations...
 maxTrack = max([feats.num]);	% longest tracking
 
-f = '1-exp(-x/lam)';    % edit here the function we're using
+% edit here the function we're using
+f = '1-exp(-x/lam)';
+% f = '.5*tanh(x/lam)+.5';
 fun = fittype(f);
 options = fitoptions('Method', 'NonlinearLeastSquares');
 x = 1:.01:maxTrack;
@@ -88,7 +90,7 @@ for ii=1:K
     for ff=feats % for each feat tracked...
         % compute the MSE wrt the fitted function (I know, the regex part
         % is weird, but this way I can globally modify the function used
-        mse=sum((ff.contr-eval(regexprep(f,'-x','-(maxTrack-ff.num+1:maxTrack)'))).^2)^.5/ff.num;
+        mse=sum((ff.contr-eval(regexprep(f,'(?<!e)x','(maxTrack-ff.num+1:maxTrack)'))).^2)^.5/ff.num;   % (?<!e) is to avoid to replace the "x" in "exp"... regex FTW!
         %mse=sum((ff.contr-(1-exp(-(maxTrack-ff.num+1:maxTrack)/lam))).^2)^.5/ff.num
         
         % fancy plot

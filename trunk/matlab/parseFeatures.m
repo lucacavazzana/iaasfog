@@ -44,7 +44,8 @@ tline = fgets(f);
 while (tline~=-1)
     if(exist('feats','var'))
         parsed = str2double(regexp(tline,coord_regex,'match'));
-        new.start = parsed(1); new.num = parsed(2);
+        new.start = parsed(1)+1;    % since starts counting from 0
+        new.num = parsed(2);
         new.x = parsed(3:3:end); new.y = parsed(4:3:end); new.contr = parsed(5:3:end);
         feats = [feats, new]; %#ok
     else
@@ -58,6 +59,7 @@ end
 fclose(f);
 
 %% TODO: remove this when the c function will be fixed---------------------
+% clears too-close tracking set
 if cleanFeats
     for ii=size(feats,2):-1:1
         for jj=ii-1:-1:1
@@ -74,7 +76,7 @@ end
 
 if REVERSE
     for ii = 1:max(size(feats))
-        feats(ii).start = feats(ii).start-feats(ii).num+1;
+        feats(ii).start = 1; %feats(ii).start-feats(ii).num+1;
         feats(ii).x = feats(ii).x(end:-1:1);
         feats(ii).y = feats(ii).y(end:-1:1);
         feats(ii).contr = feats(ii).contr(end:-1:1);

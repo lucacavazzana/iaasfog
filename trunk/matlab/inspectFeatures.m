@@ -9,44 +9,48 @@ function [] = inspectFeatures(imPaths, feats)
 %   Copyright 2011 Stefano Cadario, Cavazzana Luca.
 %   $Revision: xxxxx $  $Date: 2011/04/11 17:20:22 $
 
-NFEAT = size(feats,2);
 WIN = 40 /2; % size of the window
 
 fig = figure;
-for ff = 30:NFEAT
-    t = feats(ff).start:(feats(ff).start+feats(ff).num-1);
+
+indf=1;
+for ff = feats
+    t = ff.start:ff.start+ff.num-1;
     subplot(2,2,1);
     hold off;
-    plot(t,feats(ff).contr); % plot contrast graph
+    plot(t,ff.contr); % plot contrast graph
     hold on;
-    for ii = 1:feats(ff).num
+    for ii = 1:ff.num
+        im = imread(imPaths(t(ii),:));
+        img = rgb2gray(im);
         
         % print current contrast
         subplot(2,2,1);
         hold on;
-        plot(t(ii),feats(ff).contr(ii),'ro');
+        plot(t(ii),ff.contr(ii),'o');
         title('contrast');
         
         % print detail of the current feature
         subplot(2,2,2);
-        img = rgb2gray(imread(imPaths(t(ii),:)));
         hold off;
-        imshow(img(max(1,uint16(feats(ff).y(ii)-WIN)):min(size(img,1),uint16(feats(ff).y(ii))+WIN),...
-            max(1,uint16(feats(ff).x(ii)-WIN)):min(size(img,2),uint16(feats(ff).x(ii))+WIN)));
+        imshow(img(max(1,uint16(ff.y(ii)-WIN)):min(size(img,1),uint16(ff.y(ii))+WIN),...
+            max(1,uint16(ff.x(ii)-WIN)):min(size(img,2),uint16(ff.x(ii))+WIN)));
         hold on;
-        plot(min(uint16(feats(ff).x(ii)),WIN+1),min(uint16(feats(ff).y(ii)),WIN+1),'ro');
+        plot(min(uint16(ff.x(ii)),WIN+1),min(uint16(ff.y(ii)),WIN+1),'o');
         title('detail');
         
         % plot overview of the image
         subplot(2,2,[3,4]);
         imshow(img);
         hold on;
-        plot(feats(ff).x(ii),feats(ff).y(ii),'ro');
-        title(['feat ',num2str(ii),'/',num2str(max(feats(ff).num)),', set ',num2str(ff),'/',num2str(max(size(feats)))]);
+        plot(ff.x(ii),ff.y(ii),'*');
+        title(['feat ',num2str(ii),'/',num2str(ff.num),', set ',num2str(indf),'/',num2str(size(feats,2))]);
         pause(.1);
     end
+    indf=indf+1;
+    pause(.3);
 end
-clear img;
 
 close(fig);
+
 end
