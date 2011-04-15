@@ -1,0 +1,77 @@
+#ifndef _IAS_IMPACTTIME_H_
+#define _IAS_IMPACTTIME_H_
+
+#include <iostream>
+#include <vector>
+//#include "IAS_matlabFunctions.h"
+
+#include "iaas_functions/iaas.h"
+
+/*Return the mean time to impact of a feature starting from the istant when it's considered visible.
+ *To determine the images when the features are considered visible the function used is alway 'Image_visible_p3'.
+ *IMPORTANT: call 'libiasInitialize()' before use this function.
+ *	pathImages:			path of the input images;
+ *	timeImages:			time between image i and image i-1 (=0 for the first image);
+ *	coord_feat:			vector of size [i][f][3] containing the homegeus coordinates of the 'f'+1 features in the 'i'+1 images;
+ *	van_p_v:			homogenues coordinates of the vanishing point of the direction of translation.
+ */
+double ImpactTimeFog_1stAlg(std::vector<std::string> pathImages, std::vector<double> timeImages,
+							std::vector<std::vector<std::vector<double> > > coord_feat,
+							std::vector<double> van_p_v);
+
+/*Return the mean time to impact of a feature starting from the istant when it's considered visible.
+ *To determine the images when the features are considered visible the function used is 'Image_visible_p3' when the 
+ *IMPORTANT: call 'libiasInitialize()' before use this function.
+ *fog level is not considered, otherwise is 'Image_visible_expn'.
+ *	pathImages:			path of the input images;
+ *	timeImages:			time between image i and image i-1 (=0 for the first image);
+ *	coord_feat:			vector of size [i][f][3] containing the homegeus coordinates of the 'f'+1 features in the 'i'+1 images;
+ *	van_p_v:			homogenues coordinates of the vanishing point of the direction of translation;
+ *	v_lambdas:			pointer to a vector that, at the end of the function execution will contain the lambdas of the exponential functions estimated; if there is no level associated to the fog the vector will be empty.
+ */
+double ImpactTimeFog_2ndAlg(std::vector<std::string> pathImages,
+							std::vector<double> timeImages,
+							std::vector<std::vector<std::vector<double> > > coord_feat,
+							std::vector<double> van_p_v,
+							std::vector<double> *v_lambdas);
+
+/*Plot on an image the lambdas given as input. The function draw only the valued that aren't considered as outliers.
+ *	v_lambdas:			vector containing the lambdas of the negative exponential functions calculated with the function 'ImpactTimeFog_2ndAlg'.
+ */
+void PlotLambdas(std::vector<double> v_lambdas);
+
+/*Return a vector containing the impact times of the input features.
+ *	coord_1st_f:		homogeneus coordinates of the features in the first image;
+ *	coord_2nd_f:		homogeneus coordinates of the features in the second image;
+ *	van_p_v:			homogenues coordinates of the vanishing point of the direction of translation;
+ *	time_images:		time between the two input images.
+ */
+std::vector<double> MeanImpactTimes(std::vector<std::vector<double> > coord_1st_f,
+									std::vector<std::vector<double> > coord_2nd_f,
+									std::vector<double> van_p_v, double time_images);
+
+/*Return the mean impact time given the impact times found for every features.
+ *Negative values and outliers are ignored.
+ *	v_impactTimes:		vector of impact times found.
+ */
+double MeanImpactTimeWithoutOutliers(std::vector<double> v_impactTimes);
+
+
+/*Return the mean impact time of the static features.
+ *Draw in orange the features that move near to the camera and in light blue the features that move away from the camera
+ *(or that move with the camera).
+ *	pImage0:			path of first image;
+ *	pImage1:			path of second image;
+ *	coord_1st_f:		homogeneus coordinates of the features in the first image;
+ *	coord_2nd_f:		homogeneus coordinates of the features in the second image;
+ *	van_p_v:			homogenues coordinates of the vanishing point of the direction of translation;	
+ *	time_images:		time between the two input images.
+ */
+double DrawMoveNearAndAwayFeatures(std::string pImage0,
+									std::string pImage1,
+									std::vector<std::vector<double> > coord_1st_f,
+									std::vector<std::vector<double> > coord_2nd_f,
+									std::vector<double> van_p_v,
+									double time_images);
+
+#endif //_IAS_IMPACTTIME_H_

@@ -1,0 +1,425 @@
+#include "IAS_impactTime.h"
+#include "cv.h"
+#include "highgui.h"
+
+double ImpactTimeFog_1stAlg(vector<string> pathImages, vector<double> timeImages,
+							vector<vector<vector<double> > > coord_feat,
+							vector<double> van_p_v){
+
+	double meanImpTime = 0;
+	vector<vector<double> > m_contrast_feat, w_contrast_feat;
+	bool foundFogLevel = false;
+		
+	//.-.-.-.-. Find fog level .-.-.-.-.
+	double fogLev_2im, fogLev_glob = -1;
+	double vp[3] = {van_p_v[0], van_p_v[1], van_p_v[2]};
+
+	for(int n=0; n<pathImages.size(); n=n+2){
+		int m;
+		//If n isn't the last image
+		if(n!=(pathImages.size()-1)){	
+			m=n+1;
+		}else{
+			m=n;
+		}
+		fogLev_2im = Fog_level(vp, pathImages[n], pathImages[m], false);
+		//std::cout << "ImpactTimeFog_1stAlg --- Fog level image " << n << " and image " << m << ": " << fogLev_2im << std::endl;
+		
+	if((fogLev_2im != -1) && (fogLev_glob != -1)){ // FIXME: not good! The weight of fogLev is not well balanced (1/2 the last, then 1/4,1/8...)
+			fogLev_glob = (fogLev_glob+fogLev_2im)/2;
+		//First valid level of fog level
+		}else if((fogLev_2im != -1) && (fogLev_glob == -1)){
+			fogLev_glob = fogLev_2im;
+		}
+	}
+	std::cout << "ImpactTimeFog_1stAlg --- Fog level of all images: " << fogLev_glob << std::endl;
+	//.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
+
+	//.-.-.-.-. Contrasts .-.-.-.-.
+	m_contrast_feat.resize(coord_feat.size());
+	w_contrast_feat.resize(coord_feat.size());
+	for(int i=0; i<m_contrast_feat.size(); i++){
+		m_contrast_feat[i].resize(coord_feat[0].size());
+		w_contrast_feat[i].resize(coord_feat[0].size());
+	}
+	
+	for(int nf=0; nf<coord_feat[0].size(); nf++){
+		for(int ni=0; ni<coord_feat.size(); ni++){
+  			double cFeat[3] = {coord_feat[ni][nf][0], coord_feat[ni][nf][1], coord_feat[ni][nf][2]};			
+			//If exist fog level
+			if(fogLev_glob != -1){
+				//.-.-.-.-. Weber contrast .-.-.-.-.
+				w_contrast_feat[ni][nf] = Weber_contrast(fogLev_glob, cFeat, pathImages[ni]);
+				foundFogLevel = true;
+				//.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
+			}
+			//.-.-.-.-. Michelson contrast .-.-.-.-.
+			m_contrast_feat[ni][nf] = Michelson_contrast(cFeat, pathImages[ni]);
+			//.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
+		}
+	}
+	//std::cout << "ImpactTimeFog_1stAlg --- fine contrast" << std::endl;
+	//.-.-.-.-.-.-.-.-.-.-.-.-.-.-.	
+
+	//.-.-.-.-. Impact times .-.-.-.-.	
+	std::vector<std::string> m_imVisibleFeatures, w_imVisibleFeatures;
+	std::vector<double> m_impactTimes, w_impactTimes;
+	m_imVisibleFeatures.resize(coord_feat[0].size());
+	w_imVisibleFeatures.resize(coord_feat[0].size());
+	m_impactTimes.resize(coord_feat[0].size());
+	w_impactTimes.resize(coord_feat[0].size());
+	
+	for(int nf=0; nf<coord_feat[0].size(); nf++){ // forall features
+		//.-.-.-.-. Image visible .-.-.-.-.
+		std::vector<double> m_contrast_nf, w_contrast_nf;
+		for(int ni=0; ni<coord_feat.size(); ni++){
+			m_contrast_nf.push_back(m_contrast_feat[ni][nf]);
+			if(foundFogLevel){
+				w_contrast_nf.push_back(w_contrast_feat[ni][nf]);
+			}
+		}
+		m_imVisibleFeatures[nf] = Image_visible_p3(pathImages, m_contrast_nf, timeImages, false);
+		if(foundFogLevel){
+			w_imVisibleFeatures[nf] = Image_visible_p3(pathImages, w_contrast_nf, timeImages, false);
+		}
+		//.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
+
+		//.-.-.-.-. Impact time .-.-.-.-.
+		int m_nImVis=0, w_nImVis=0;
+		bool m_lastIm=false, w_lastIm=false;
+		for(int ni=0; ni<pathImages.size(); ni++){
+			if(pathImages[ni] == m_imVisibleFeatures[nf]){
+				m_nImVis = ni;
+				//std::cout << "Michelson number image visible: " << ni+1 << std::endl;
+				//If the image in which the feature is considered visible is the last one,
+				//the images to take to calculate the impact time are the next to last and the last
+				if(ni == (pathImages.size()-1)){
+					m_nImVis = m_nImVis-1;
+					m_lastIm = true;
+				}
+			}
+			if(foundFogLevel && (pathImages[ni] == w_imVisibleFeatures[nf])){
+				w_nImVis = ni;
+				if(ni == (pathImages.size()-1)){
+					w_nImVis = w_nImVis-1;
+					w_lastIm = true;
+				}
+			}
+		}
+
+		double x1_m[3] = {coord_feat[m_nImVis][nf][0], coord_feat[m_nImVis][nf][1], coord_feat[m_nImVis][nf][2]};
+		double x2_m[3] = {coord_feat[m_nImVis+1][nf][0], coord_feat[m_nImVis+1][nf][1], coord_feat[m_nImVis+1][nf][2]};
+		m_impactTimes[nf] = Time_impact(x1_m, x2_m, vp, timeImages[m_nImVis+1], false);
+		if(m_lastIm){
+			m_impactTimes[nf] = m_impactTimes[nf]-timeImages[m_nImVis+1];
+		}
+		//std::cout << "Michelson impact time of features " << nf << ": " << m_impactTimes[nf] << std::endl;
+		if(foundFogLevel){	
+			double x1_w[3] = {coord_feat[w_nImVis][nf][0], coord_feat[w_nImVis][nf][1], coord_feat[w_nImVis][nf][2]};
+			double x2_w[3] = {coord_feat[w_nImVis+1][nf][0], coord_feat[w_nImVis+1][nf][1], coord_feat[w_nImVis+1][nf][2]};
+			w_impactTimes[nf] = Time_impact(x1_w, x2_w, vp, timeImages[w_nImVis+1], false);
+			if(w_lastIm){
+				w_impactTimes[nf] = w_impactTimes[nf]-timeImages[w_nImVis+1];
+			}
+			//std::cout << "Weber impact time of features " << nf << ": " << w_impactTimes[nf] << std::endl;
+		}
+		//.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
+	}
+
+	double m_meanImpTime=0, w_meanImpTime=0;
+	m_meanImpTime = MeanImpactTimeWithoutOutliers(m_impactTimes);
+	std::cout << "Michelson mean impact time: " << m_meanImpTime << std::endl;
+	meanImpTime = m_meanImpTime;
+	
+	if(foundFogLevel){
+		w_meanImpTime = MeanImpactTimeWithoutOutliers(w_impactTimes);
+		std::cout << "Weber mean impact time: " << w_meanImpTime << std::endl;
+		meanImpTime = (m_meanImpTime+w_meanImpTime)/2;
+	}
+	//.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
+
+	return meanImpTime;
+}
+
+double ImpactTimeFog_2ndAlg(std::vector<std::string> pathImages, std::vector<double> timeImages, 
+							std::vector<std::vector<std::vector<double> > > coord_feat, std::vector<double> van_p_v,
+							std::vector<double> *v_lambdas){
+	std::vector<double>::iterator itD, stD, endD;
+	double meanImpTime = 0;
+	std::vector<std::vector<double> > m_contrast_feat;
+	
+	double vp[3] = {van_p_v[0], van_p_v[1], van_p_v[2]};
+
+	//.-.-.-.-. Fog Michelson contrast .-.-.-.-.
+	double michFogContr=0;
+	std::vector<double> v_mFogContr;
+	for(int ni=0; ni<coord_feat.size(); ni++){
+		int n = 20;
+		double low_t=0.89, high_t=0.9, sigma=0.3;
+		double zH = Zone_hom(vp, pathImages[ni], n, low_t, high_t, sigma, false);
+		if(zH != -1){
+			double mFog = Michelson_contrast(vp, pathImages[ni]);
+			v_mFogContr.push_back(mFog);
+			//std::cout << "Michelson contrast fog: " << mFog << std::endl;
+		}
+	}
+	if(v_mFogContr.size() > 0){
+		stD = v_mFogContr.begin();
+		endD = v_mFogContr.end();
+		for(itD=stD; itD!=endD; itD++){
+			michFogContr += *itD;
+		}
+		michFogContr = michFogContr/v_mFogContr.size();
+		std::cout << "Mean Michelson contrast fog: " << michFogContr << std::endl;
+	}
+	//.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
+
+	//.-.-.-.-. Michelson contrast .-.-.-.-.
+	m_contrast_feat.resize(coord_feat.size());
+	for(int i=0; i<m_contrast_feat.size(); i++){
+		m_contrast_feat[i].resize(coord_feat[0].size());
+	}
+
+	for(int nf=0; nf<coord_feat[0].size(); nf++){
+		for(int ni=0; ni<coord_feat.size(); ni++){
+  			double cFeat[3] = {coord_feat[ni][nf][0], coord_feat[ni][nf][1], coord_feat[ni][nf][2]};			
+			m_contrast_feat[ni][nf] = Michelson_contrast(cFeat, pathImages[ni]);
+		}
+	}
+	//.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
+
+	//.-.-.-.-. Impact times .-.-.-.-.
+	std::vector<std::string> m_imVisibleFeatures, fexp_imVisibleFeatures;
+	std::vector<double> m_impactTimes, fexp_impactTimes;
+	std::vector<double> lambdas_expn, lambdas_expn_cp;
+	m_imVisibleFeatures.resize(coord_feat[0].size());
+	fexp_imVisibleFeatures.resize(coord_feat[0].size());
+	lambdas_expn.resize(coord_feat[0].size());
+	m_impactTimes.resize(coord_feat[0].size());
+	fexp_impactTimes.resize(coord_feat[0].size());
+
+	for(int nf=0; nf<coord_feat[0].size(); nf++){
+		//.-.-.-.-. Image visible .-.-.-.-.
+		std::vector<double> m_contrast_nf;
+		for(int ni=0; ni<coord_feat.size(); ni++){
+			m_contrast_nf.push_back(m_contrast_feat[ni][nf]);
+		}
+		//Coordinates of the feature 'nf' in the last but one and in the last image
+		std::vector<double> coordFeatLast2Im_1, coordFeatLast2Im_2;
+		coordFeatLast2Im_1 = coord_feat[pathImages.size()-2][nf];
+		coordFeatLast2Im_2 = coord_feat[pathImages.size()-1][nf];
+		//Image in which the feature is visible
+		m_imVisibleFeatures[nf] = Image_visible_p3(pathImages, m_contrast_nf, timeImages, false);
+		if(michFogContr > 0){
+			double lambda;
+			fexp_imVisibleFeatures[nf] = Image_visible_expn(&lambda, pathImages, m_contrast_nf, timeImages, coordFeatLast2Im_1, coordFeatLast2Im_2, vp, michFogContr, false);
+			//std::cout << "lambda: " << lambda << std::endl;
+			lambdas_expn[nf] = lambda;
+		}
+		//.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
+
+		//.-.-.-.-. Impact time .-.-.-.-.
+		int m_nImVis=0, fexp_nImVis=0;
+		bool m_lastIm=false, fexp_lastIm=false;
+		for(int ni=0; ni<pathImages.size(); ni++){
+			if(pathImages[ni] == m_imVisibleFeatures[nf]){
+				m_nImVis = ni;
+				//std::cout << "Michelson number image visible: " << ni+1 << std::endl;
+				//If the image in which the feature is considered visible is the last one,
+				//the images to take to calculate the impact time are the next to last and the last
+				if(ni == (pathImages.size()-1)){
+					m_nImVis = m_nImVis-1;
+					m_lastIm = true;
+				}
+			}
+			if(pathImages[ni] == fexp_imVisibleFeatures[nf]){
+				fexp_nImVis = ni;
+				//std::cout << "Exp number image visible: " << ni+1 << std::endl;
+				if(ni == (pathImages.size()-1)){
+					fexp_nImVis = fexp_nImVis-1;
+					fexp_lastIm = true;
+				}
+			}
+		}
+
+		double x1_m[3] = {coord_feat[m_nImVis][nf][0], coord_feat[m_nImVis][nf][1], coord_feat[m_nImVis][nf][2]};
+		double x2_m[3] = {coord_feat[m_nImVis+1][nf][0], coord_feat[m_nImVis+1][nf][1], coord_feat[m_nImVis+1][nf][2]};
+		m_impactTimes[nf] = Time_impact(x1_m, x2_m, vp, timeImages[m_nImVis+1], false);
+		if(m_lastIm){
+			m_impactTimes[nf] = m_impactTimes[nf]-timeImages[m_nImVis+1];
+		}
+		//std::cout << "Michelson impact time of features " << nf << ": " << m_impactTimes[nf] << std::endl;
+		if(michFogContr > 0){	
+			double x1_fexp[3] = {coord_feat[fexp_nImVis][nf][0], coord_feat[fexp_nImVis][nf][1], coord_feat[fexp_nImVis][nf][2]};
+			double x2_fexp[3] = {coord_feat[fexp_nImVis+1][nf][0], coord_feat[fexp_nImVis+1][nf][1], coord_feat[fexp_nImVis+1][nf][2]};
+			fexp_impactTimes[nf] = Time_impact(x1_fexp, x2_fexp, vp, timeImages[fexp_nImVis+1], false);
+			if(fexp_lastIm){
+				fexp_impactTimes[nf] = fexp_impactTimes[nf]-timeImages[fexp_nImVis+1];
+			}
+			//std::cout << "Exp impact time of features " << nf << ": " << fexp_impactTimes[nf] << std::endl;
+		}
+		//.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
+	}
+
+	//Mean impact time
+	double m_meanImpTime=0, fexp_meanImpTime=0;
+	m_meanImpTime = MeanImpactTimeWithoutOutliers(m_impactTimes);
+	std::cout << "Michelson mean impact time: " << m_meanImpTime << std::endl;
+	meanImpTime = m_meanImpTime;
+	
+	if(michFogContr > 0){
+		fexp_meanImpTime = MeanImpactTimeWithoutOutliers(fexp_impactTimes);
+		std::cout << "Exp mean impact time: " << fexp_meanImpTime << std::endl;
+		meanImpTime = (m_meanImpTime+fexp_meanImpTime)/2;
+	}
+	//.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
+	
+	*v_lambdas = lambdas_expn;
+
+	return meanImpTime;
+}
+
+void PlotLambdas(std::vector<double> v_lambdas){
+	std::vector<double>	lambdas_expn_cp;
+	std::string nameCVwind = "Lambdas of negative exponential functions";
+	cvNamedWindow(nameCVwind.c_str(), CV_WINDOW_AUTOSIZE);
+	
+	//Find the median
+	lambdas_expn_cp = v_lambdas;
+	sort(lambdas_expn_cp.begin(), lambdas_expn_cp.end());
+	double median_lambda = lambdas_expn_cp[(int) lambdas_expn_cp.size()/2];
+	//Max value of lambda considered
+	int max_lambda_cons = (int) median_lambda*2 + 1;
+	int x_mult = 1000/max_lambda_cons;
+	x_mult = x_mult-x_mult%2;
+	x_mult = x_mult-x_mult%5;
+	int x_lambdaIm = max_lambda_cons*x_mult+4;
+	int y_lambdaIm = v_lambdas.size()*4+10;
+	//Image to display
+	IplImage *imLambdas = cvCreateImage(cvSize(x_lambdaIm, y_lambdaIm), IPL_DEPTH_64F, 3);
+	CvFont font;
+	cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 0.3f, 0.25f);
+	cvSet(imLambdas, cvScalar(0,0,0));
+	for(int i=0; i<x_lambdaIm; i=i+x_mult/5){
+		char chNum[10];
+		double dNum = (double) i/x_mult;
+		sprintf(chNum, "%.1f", dNum);
+		cvPutText(imLambdas, chNum, cvPoint(i+2, y_lambdaIm-3), &font, cvScalar(255, 255, 255));
+	}
+	for(int i=0; i<v_lambdas.size(); i++){
+		cvCircle(imLambdas, cvPoint(cvRound(v_lambdas[i]*x_mult+2), cvRound(i*4+4)), 1, CV_RGB(255, 99, 0), 2);
+	}
+	cvShowImage(nameCVwind.c_str(), imLambdas);
+	int key = cvWaitKey(0);
+
+	cvDestroyWindow(nameCVwind.c_str());
+}
+
+std::vector<double> MeanImpactTimes(std::vector<std::vector<double> > coord_1st_f, std::vector<std::vector<double> > coord_2nd_f,
+									std::vector<double> van_p_v, double time_images){
+	std::vector<double> impactTimes;
+	impactTimes.resize(coord_1st_f.size());
+
+	double vp[3] = {van_p_v[0], van_p_v[1], van_p_v[2]};
+	for(int nf=0; nf<coord_1st_f.size(); nf++){
+		double x1[3] = {coord_1st_f[nf][0], coord_1st_f[nf][1], coord_1st_f[nf][2]};
+		double x2[3] = {coord_2nd_f[nf][0], coord_2nd_f[nf][1], coord_2nd_f[nf][2]};
+		impactTimes[nf] = Time_impact(x1, x2, vp, time_images, false);
+		//std::cout << "MeanImpactTimes ^o^ impactTimes[" << nf << "]: " << impactTimes[nf] << std::endl;
+	}
+	return impactTimes;
+}
+
+
+double MeanImpactTimeWithoutOutliers(std::vector<double> v_impactTimes){
+	std::vector<double>::iterator itD, stD, endD;
+	std::vector<double> imTimesWithoutOutliners;
+	int pos_med;
+	double meanImpTime = 0;
+
+	//Sort the impact times vector
+	sort(v_impactTimes.begin(), v_impactTimes.end());
+
+	stD = v_impactTimes.begin();
+	endD = v_impactTimes.end();
+	for(itD=stD; itD!=endD; itD++){
+		if(*itD >= 0){
+			imTimesWithoutOutliners.push_back(*itD);
+		}
+	}
+	pos_med = imTimesWithoutOutliners.size()/2;
+	//std::cout << "MeanImpactTimeWithoutOutliers --- pos_med: " << pos_med << std::endl;
+	//Check if the vector is even or odd
+	if(imTimesWithoutOutliners.size()%2 == 0){
+		meanImpTime = (imTimesWithoutOutliners[pos_med-1]+imTimesWithoutOutliners[pos_med])/2;
+	}else{
+		meanImpTime = imTimesWithoutOutliners[pos_med];
+	}
+	//std::cout << "MeanImpactTimeWithoutOutliers --- meanImpTime: " << meanImpTime << std::endl;
+	
+	//Select the values
+	imTimesWithoutOutliners.clear();
+	stD = v_impactTimes.begin();
+	endD = v_impactTimes.end();
+	for(itD=stD; itD!=endD; itD++){
+		if(*itD >= 0 && *itD <= 3*meanImpTime){
+			imTimesWithoutOutliners.push_back(*itD);
+		}
+	}
+	//Mean impact time
+	stD = imTimesWithoutOutliners.begin();
+	endD = imTimesWithoutOutliners.end();
+	meanImpTime = 0;
+	for(itD=stD; itD!=endD; itD++){
+		meanImpTime = meanImpTime + *itD;
+	}
+	meanImpTime = meanImpTime/imTimesWithoutOutliners.size();
+	//std::cout << "MeanImpactTimeWithoutOutliers --- meanImpTime: " << meanImpTime << std::endl;
+
+	return meanImpTime;
+}
+
+
+double DrawMoveNearAndAwayFeatures(std::string pImage0, std::string pImage1, std::vector<std::vector<double> > coord_1st_f, std::vector<std::vector<double> > coord_2nd_f, std::vector<double> van_p_v, double time_images){
+	double impTime;
+	IplImage *image0, *image1, *image;
+	int key;
+	std::vector<double> impactTimes;
+
+	double vp[3] = {van_p_v[0], van_p_v[1], van_p_v[2]};
+	
+	impactTimes = MeanImpactTimes(coord_1st_f, coord_2nd_f, van_p_v, time_images);
+	impTime = MeanImpactTimeWithoutOutliers(impactTimes);
+
+	std::string nameCVwind = "Features moving near and away";
+	cvNamedWindow(nameCVwind.c_str(), CV_WINDOW_AUTOSIZE);
+	
+	image0 = cvLoadImage(pImage0.c_str(), CV_LOAD_IMAGE_UNCHANGED);
+	image1 = cvLoadImage(pImage1.c_str(), CV_LOAD_IMAGE_UNCHANGED);
+
+	//Draw vanishing point
+	cvCircle(image0, cvPoint(cvRound(vp[0]), cvRound(vp[1])), 1, CV_RGB(255, 255, 255), 2);
+	cvCircle(image1, cvPoint(cvRound(vp[0]), cvRound(vp[1])), 1, CV_RGB(255, 255, 255), 2);
+
+	//Draw features
+	CvScalar colOrange = CV_RGB(255, 99, 0);
+	CvScalar colLBlue = CV_RGB(0, 169, 225);
+	for(int nf=0; nf<coord_1st_f.size(); nf++){
+		CvScalar *col = &colOrange;
+		if((impactTimes[nf]<0) || (impactTimes[nf]>3*impTime)){
+			col = &colLBlue;
+		}
+		cvCircle(image0, cvPoint(cvRound(coord_1st_f[nf][0]), cvRound(coord_1st_f[nf][1])), 1, *col, 2);
+		cvCircle(image1, cvPoint(cvRound(coord_2nd_f[nf][0]), cvRound(coord_2nd_f[nf][1])), 1, *col, 2);
+	}
+	image = iaasAddImage(image0, image1);
+
+	cvShowImage(nameCVwind.c_str(), image);
+	key = cvWaitKey(0);
+
+	cvDestroyWindow(nameCVwind.c_str());
+	cvReleaseImage(&image0);
+	cvReleaseImage(&image1);
+	cvReleaseImage(&image);
+	return impTime;
+}
