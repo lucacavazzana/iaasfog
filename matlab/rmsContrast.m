@@ -21,7 +21,7 @@ function [contr] = rmsContrast(feature, image)
 %   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 if exist('image','var')
-    n = 10; % feature window
+    n = 2; % feature window
     
     % Normalize
     if feature.z~=1
