@@ -66,6 +66,9 @@
  */
 #define FRAME_RATE 30
 
+#define CRtolleranceMax 4.0f/3.0f*1.05f
+#define CRtolleranceMin 4.0f/3.0f*0.95f
+
 #ifndef PARAMETERS_H_
 #define PARAMETERS_H_
 

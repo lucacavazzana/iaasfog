@@ -10,8 +10,8 @@
 #define ALGORITHMS_H_
 
 #define MIN_FEATURE_DISTANCE 0//1
-#define RECTANGLE_SIZE	20
-#define MINIMUM_LIFE	5
+#define RECTANGLE_SIZE	5
+#define MINIMUM_LIFE	6
 
 #include "parameters.h"
 /**
@@ -200,5 +200,9 @@ bool verifyValidFeature(featureMovement feat);
 double getAroundContrast(const IplImage *img, CvPoint2D32f *point);
 
 bool verifyNewFeatureIsOk(list<featureMovement>::iterator feat, const CvPoint2D32f newPoint, const int trackStatus=1);
+
+float getCrossRatioDistance(CvPoint2D32f a, CvPoint2D32f b, CvPoint2D32f c, float crossRatio);
+
+float getCrossRatio(CvPoint2D32f *points);
 
 #endif //ALGORITHMS_H_

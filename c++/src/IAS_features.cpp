@@ -228,22 +228,36 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 		cvNormalize(image0, image0, 0.0f, 255.0f, cv::NORM_MINMAX);
 		cvMinMaxLoc(image1, &max, &min);
 		cout << "Bounds: " << max << " " << min << endl;*/
+
+		/*
 		double contrast;
 		CvPoint2D32f lol;
-		lol.x = 180;
-		lol.y = 110;
+		cout << "Contrast: " << endl;
+		for(int i=0; i<320; i=i+5) {
+			for(int j=0; j<200; j=j+5) {
+
+				lol.x = i;
+				lol.y = j;
+				//lol.x = 20;
+				contrast = getAroundContrast(image0, &lol);
+				printf("%2d ", (int)(contrast*400));
+			}
+			cout << endl;
+		}
 		lol.x = 20;
+		lol.y = 50;
 		contrast = getAroundContrast(image0, &lol);
+		cout << "Contrast: " << contrast << endl;
+		//contrast = getAroundContrast(image0, &lol);
+		 */
 
-
-		CvMat rect;// = cvCreateImage(cvSize(100, 100), IPL_DEPTH_32F, 1);
+		/*CvMat rect;// = cvCreateImage(cvSize(100, 100), IPL_DEPTH_32F, 1);
 		IplImage *rectResize = cvCreateImage(cvSize(RECTANGLE_SIZE*10, RECTANGLE_SIZE*10), IPL_DEPTH_32F, 1);
 		cvGetRectSubPix(image0, &rect, lol);
 		//cvResize(rect, rectResize);
 		cvShowImage(NAME_WINDOW, &rect);
 		key = cvWaitKey(0);
-		cvCircle(image0, cvPoint(cvRound(lol.x), cvRound(lol.y)), 2, CV_RGB(255, 255, 255));
-		cout << "Contrast: " << contrast << endl;
+		cvCircle(image0, cvPoint(cvRound(lol.x), cvRound(lol.y)), 2, CV_RGB(255, 255, 255));*/
 
 		iaasDrawFlowFieldNew(image0, listFeatures, CV_RGB(255, 0, 0));
 
