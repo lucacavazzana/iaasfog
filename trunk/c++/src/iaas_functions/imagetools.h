@@ -66,6 +66,10 @@ template <class P> double iaasPointLineDistance(CvMat* line, P point) {
  * @param joinLine The joining line
  */
 void iaasJoiningLine(CvPoint2D32f p1, CvPoint2D32f p2, CvMat* joinLine);
+
+
+void iaasBestJoiningLine(CvPoint2D32f *list, int nPoints, CvMat* joinLine);
+
 /**
  * Returns the point where the two lines intersects
  *
@@ -85,7 +89,7 @@ CvPoint2D32f iaasIntersectionPoint(CvMat *line1, CvMat *line2);
  * @return
  */
 CvPoint2D32f iaasProjectPointToLine(CvPoint2D32f point1, CvPoint2D32f point2, CvPoint2D32f ppoint);
-
+CvPoint2D32f iaasProjectPointToLine(CvPoint2D32f oldPoint, CvMat *line);
 /**
  * Computes and return the centroid of a set points
  *

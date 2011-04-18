@@ -7,10 +7,29 @@
 #include <iostream>
 #include <vector>
 
+/*double getContrast(const IplImage *img) {
+
+	double contrast;
+	CvScalar tmp = cvAvg(img);
+
+	// Sub Mean from image
+	cvSubS(img, tmp, rectDiff);
+
+	// Pow
+	cvPow(rectDiff, rect, 2);
+
+	// Sum elements
+	tmp = cvSum(rect);
+	//contrast = sqrt(tmp.val[0]/(RECTANGLE_SIZE*RECTANGLE_SIZE));
+	contrast = sqrt(tmp.val[0])/(RECTANGLE_SIZE*RECTANGLE_SIZE);
+
+	return contrast;
+}*/
+
 double getAroundContrast(const IplImage *img, CvPoint2D32f *point) {
 
-	IplImage *rect = cvCreateImage(cvSize(RECTANGLE_SIZE, RECTANGLE_SIZE), IPL_DEPTH_32F, 1);
-	IplImage *rectDiff = cvCreateImage(cvSize(RECTANGLE_SIZE, RECTANGLE_SIZE), IPL_DEPTH_32F, 1);
+	IplImage *rect = cvCreateImage(cvSize(RECTANGLE_SIZE, RECTANGLE_SIZE), IPL_DEPTH_8U, 1);
+	IplImage *rectDiff = cvCreateImage(cvSize(RECTANGLE_SIZE, RECTANGLE_SIZE), IPL_DEPTH_8U, 1);
 
 	double contrast;
 
@@ -18,7 +37,7 @@ double getAroundContrast(const IplImage *img, CvPoint2D32f *point) {
 	cvGetRectSubPix(img, rect, *point);
 
 	//cvRectangle(rect, cvPoint(0,0), cvPoint(RECTANGLE_SIZE, RECTANGLE_SIZE), CV_RGB(10, 10, 10), -1);
-
+/*
 	// Get Mean
 	//cvNormalize(rect, rectDiff);
 	CvScalar tmp = cvAvg(rect);
@@ -31,7 +50,14 @@ double getAroundContrast(const IplImage *img, CvPoint2D32f *point) {
 
 	// Sum elements
 	tmp = cvSum(rect);
-	contrast = sqrt(tmp.val[0]/(RECTANGLE_SIZE*RECTANGLE_SIZE));
+	//contrast = sqrt(tmp.val[0]/(RECTANGLE_SIZE*RECTANGLE_SIZE));
+	contrast = sqrt(tmp.val[0])/(RECTANGLE_SIZE*RECTANGLE_SIZE);*/
+	CvScalar mean, sdv;
+	cvAvgSdv(rect, &mean, &sdv);
+	contrast = sdv.val[0];
+	double min, max;
+	cvMinMaxLoc(rect, &min, &max);
+	return (max-min)/(max+min);
 
 	return contrast;
 }
@@ -81,6 +107,11 @@ bool verifyNewFeatureIsOk(list<featureMovement>::iterator feat, const CvPoint2D3
 
 	if(nPoints > 3) {
 		// TODO: check collinearity (cross-ratio)
+		float crossRatio = getCrossRatio(&feat->positions[nPoints-4]);
+		if(crossRatio < CRtolleranceMin || crossRatio > CRtolleranceMax) {
+			pointOk = false;
+			goto endCheck;
+		}
 	}
 
 endCheck:
@@ -91,36 +122,27 @@ endCheck:
 			feat->status = UNDEAD;
 
 			// Correct points positions (move points in order to lie
-			// on the line connecting first and last points)
+			// on the best line fitting all points)
+
+			CvMat line;
+
+			/*
 			CvPoint2D32f firstPt, lastPt;
 			firstPt = feat->positions[0];
 			lastPt = feat->positions[feat->positions.size()-1];
-			CvMat line;
 			iaasJoiningLine(firstPt, lastPt, &line);
 			double a, b, c;
 			a = line.data.db[0];
 			b = line.data.db[1];
 			c = line.data.db[2];
-			cout << "Line: " << a << " " << b << " " << c << endl;
-			// TODO: find best line connecting features
+			//cout << "Line: " << a << " " << b << " " << c << endl;
+			cout << "Fist and last line: y=mx+c m=" << -(a/b) << " c=" << -(c/b) << endl;*/
 
-			float *bestLine = new float[4];
-			CvMemStorage* storage = cvCreateMemStorage(0);
-
-			CvSeq* point_seq = cvCreateSeq(CV_32FC2, sizeof(CvSeq), sizeof(CvPoint2D32f), storage);
-			for (int i=0; i<feat->positions.size(); i++) {
-				cvSeqPush(point_seq, &feat->positions[i]);
-			}
-			cvFitLine(point_seq,CV_DIST_L2,0,0.01,0.01,bestLine);
-			fprintf(stdout,"v=(%f,%f),vy/vx=%f,(x,y)=(%f,%f) \n",bestLine[0],bestLine[1],bestLine[1]/bestLine[0],bestLine[2],bestLine[3]);
-			cvClearSeq(point_seq);
-			cvReleaseMemStorage(&storage);
-
+			iaasBestJoiningLine(&feat->positions[0], feat->positions.size(), &line);
 
 			for(int i=1; i < feat->positions.size()-1; i++) {
-				//cout << "distance " << iaasPointLineDistance(&line, feat->positions[i]);
-				feat->positions[i] = iaasProjectPointToLine(firstPt, lastPt, feat->positions[i]);
-				// TODO: function iaasProjectPointToLine where line is defined as CvMat
+				//feat->positions[i] = iaasProjectPointToLine(firstPt, lastPt, feat->positions[i]);
+				feat->positions[i] = iaasProjectPointToLine(feat->positions[i], &line);
 				//cout << " " << iaasPointLineDistance(&line, feat->positions[i]) << endl;
 			}
 			// TODO: find best ratio between features distances
@@ -128,26 +150,23 @@ endCheck:
 			double mean = 0;
 			double variance = 0;
 
-			//cout << "Ratio: ";
-			for(int i=0; i<feat->positions.size()-2; i++) {
-				double distance1 = iaasTwoPointsDistance(feat->positions[i],feat->positions[i+1]);
-				double distance2 = iaasTwoPointsDistance(feat->positions[i+1],feat->positions[i+2]);
-				ratio = distance1/distance2;
+			for(int i=0; i<feat->positions.size()-4; i++) {
+				ratio = getCrossRatio(&feat->positions[i]);
 				//cout << ratio << " ";
 				mean += ratio;
 				variance += ratio*ratio;
 			}
-			ratio = mean/(feat->positions.size()-2);
-			variance = variance/(feat->positions.size()-2);
+			ratio = mean/(feat->positions.size()-4);
+			variance = variance/(feat->positions.size()-4);
 			variance = sqrt(variance - ratio*ratio);
 			// TODO: generate virtual features (computed not founded because inside fog)
 
 			feat->ratio = ratio;
 			//cout << endl;
-			cout << "Ratios: " << ratio << " " << variance << endl;
-			if(variance > 0.1) {
+			//cout << "Ratios: " << ratio << " " << variance << endl;
+			if(ratio < CRtolleranceMin || ratio > CRtolleranceMax || variance > 0.05) {
 				feat->status = DELETE;
-				//cout << "Ratio: " << ratio << endl;
+				cout << "Delete because mean " << ratio << " or variance " << variance << endl;
 				return false;
 			}
 			else {
@@ -156,9 +175,12 @@ endCheck:
 				cout << "Distance: ";
 				for(int i=0; i<maxAdd; i++) {
 					int lastIndex = feat->positions.size() -1;
-					float newDistance = iaasTwoPointsDistance(feat->positions[lastIndex],feat->positions[lastIndex-1]);
-					newDistance = newDistance / feat->ratio;
+					float newDistance;
+					newDistance = getCrossRatioDistance(feat->positions[lastIndex-2],feat->positions[lastIndex-1],feat->positions[lastIndex], (4.0f/3.0f));
 					cout << newDistance << " ";
+					// If next point distance is below 0.5 pixel stop
+					if(newDistance<0.5f)
+						break;
 					feat->positions.push_back(iaasPointAlongLine(&line, feat->positions[feat->positions.size()-1], newDistance));
 				}
 				cout << endl;
@@ -176,6 +198,23 @@ endCheck:
 		//feat->status = ALIVE;
 		return true;
 	}
+}
+
+float getCrossRatio(CvPoint2D32f *points) {
+	float ab = iaasTwoPointsDistance(points[0], points[1]);
+	float bc = iaasTwoPointsDistance(points[1], points[2]);
+	float cd = iaasTwoPointsDistance(points[2], points[3]);
+	return ((ab+bc)*(bc+cd))/((bc)*(ab+bc+cd));
+}
+
+float getCrossRatioDistance(CvPoint2D32f a, CvPoint2D32f b, CvPoint2D32f c, float crossRatio) {
+	float ab = iaasTwoPointsDistance(a, b);
+	float bc = iaasTwoPointsDistance(b, c);
+	float k = crossRatio*bc/(ab+bc);
+
+	float cd = ((1.0f/3.0f)*bc)/(1-k);
+	//cout << "ab: " << ab << " bc: " << bc << " CR: " << crossRatio << " k: " << k << " cd: " << cd << endl;
+	return cd;
 }
 
 bool verifyValidFeature(featureMovement feat) {

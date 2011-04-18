@@ -60,6 +60,31 @@ CvPoint2D32f iaasIntersectionPoint(CvMat *line1, CvMat *line2) {
 	return result;
 }
 
+void iaasBestJoiningLine(CvPoint2D32f *list, int nPoints, CvMat* joinLine) {
+	float *bestLine = new float[4];
+
+	CvMat point_mat = cvMat(1, nPoints, CV_32FC2, list);
+	cvFitLine(&point_mat, CV_DIST_L2 , 0, 0.01, 0.01, bestLine);
+
+	// Compute parameters
+	float m = bestLine[1]/bestLine[0];
+	float q = bestLine[3]-bestLine[2]*m;
+
+	delete bestLine;
+	//cout << "Best Line: y=m=vy/vx=" << m << "q= " << q << endl;
+
+	// TODO: segmentation fault if use float instead of double, why ?
+	// Init result array
+	double *data = new double[3];
+	*joinLine = cvMat(3, 1, CV_64FC1, data);
+
+	// Redefine parameter of line
+	joinLine->data.db[0] = -m;
+	joinLine->data.db[1] = 1;
+	joinLine->data.db[2] = -q;
+
+}
+
 /* iaasJoiningLine
  * Computer the joining line (CvMat* joinLine) between
  * two points (CvPoint2D32f p1, CvPoint2D32f p2)
@@ -85,6 +110,17 @@ void iaasJoiningLine(CvPoint2D32f p1, CvPoint2D32f p2, CvMat* joinLine) {
 	*joinLine = cvMat(3, 1, CV_64FC1, c);
 
 	cvCrossProduct(&pA, &pB, joinLine);
+}
+
+CvPoint2D32f iaasProjectPointToLine(CvPoint2D32f oldPoint, CvMat *line) {
+	CvPoint2D32f newPoint;
+	// y=mx+c m=-(a/b) c=-(c/b)
+	float m = -(line->data.db[0]/line->data.db[1]);
+	float q = -(line->data.db[2]/line->data.db[1]);
+
+	newPoint.x = (m*oldPoint.y + oldPoint.x - m*q)/(m*m + 1);
+	newPoint.y = (m*m*oldPoint.y + m*oldPoint.x + q)/(m*m + 1);
+	return newPoint;
 }
 
 CvPoint2D32f iaasProjectPointToLine(CvPoint2D32f point1, CvPoint2D32f point2, CvPoint2D32f point3){
