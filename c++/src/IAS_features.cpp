@@ -9,8 +9,8 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 	IplImage *image0;			// Previous image
 	IplImage *image1; 			// Current image
 
-	CvPoint2D32f *newCorners;	// New corners found
-	int newCornersCount;		// number of new corners found
+	CvPoint2D32f newCorners[MAX_CORNERS];	// New corners found, keep static
+	int newCornersCount;					// number of new corners found
 
 	float *track_errors;
 	float *track_contrast;
@@ -34,7 +34,6 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 	//cvNormalize(image0, image0, 0.0f, 255.0f, cv::NORM_MINMAX);
 
 	// Extract features for the first image
-	newCorners = new CvPoint2D32f[MAX_CORNERS];
 	newCornersCount = MAX_CORNERS;					// This value can change
 
 	iaasFindCorners(image0, newCorners, &newCornersCount);
@@ -45,6 +44,7 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 	cvShowImage(NAME_WINDOW, image0);
 	key = cvWaitKey(0);*/
 	//exit(1);
+	list<featureMovement>::iterator feat;
 
 #ifdef REVERSE_IMAGE
 	for(int frameIndex=pathImages.size()-2; frameIndex >= 0; frameIndex--) {
@@ -63,10 +63,10 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 		track_status = new char[newCornersCount];
 		iaasTrackCorners(image0, image1, newCorners, &tmpFeatures[0], track_errors, track_status, newCornersCount);
 
-		int asd = 0;
+		int cornersMatching = 0;
 		// Count number of corners matching in the second image
 		for(int i=0; i<newCornersCount; i++) {
-			asd += track_status[i];
+			cornersMatching += track_status[i];
 			// Add corner
 			if(track_status[i]) {
 				featureMovement ft;
@@ -87,13 +87,12 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 				listFeatures.push_back(ft);
 			}
 		}
-		cout << "New corners matching: " << asd << endl;
+		cout << "New corners matching: " << cornersMatching << endl;
 
-		//delete cornersB;
 		delete track_errors;
 		delete track_status;
-		// Track OLD (existing BEFORE image0) features from image0 in image1
 
+		// Track OLD (existing BEFORE image0) features from image0 in image1
 		tmpFeatures.reserve(featuresAlive.size());
 		track_errors = new float[featuresAlive.size()];
 		track_status = new char[featuresAlive.size()];
@@ -103,8 +102,7 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 		featuresAlive.clear();
 
 		// TODO: merge the next two loops
-
-		list<featureMovement>::iterator feat = listFeatures.begin();
+		feat = listFeatures.begin();
 
 		while (feat != listFeatures.end()) {
 			bool erase = false;
@@ -144,23 +142,24 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 		while (feat != listFeatures.end()) {
 			// If features is not dead (is alive or to add)
 			if(feat->status != UNDEAD) {
-				feat->index = ind++;					// set new index
-				feat->status = ALIVE;					// set all as alive
+				feat->index = ind++;										// set new index
+				feat->status = ALIVE;										// set all as alive
 				int lastElementIndex = feat->positions.size() - 1;
-				featuresAlive.push_back(feat->positions[lastElementIndex]);		// get last index
+				featuresAlive.push_back(feat->positions[lastElementIndex]);	// get last index
 			}
 			feat++;
 		}
 
-		tmpFeatures.clear();
-
-		delete newCorners;
-
 		// Find new features in image1
-		newCorners = new CvPoint2D32f[MAX_CORNERS];
 		newCornersCount = MAX_CORNERS;				// This value can change
 		iaasFindCorners(image1, newCorners, &newCornersCount);
 		cout << "Corners found: " << newCornersCount << endl;
+
+		// Delete points too close to others that already exist
+		// TODO: tmpFeatures include values not valid (depends on track_status, etc.)
+		filterFeaturesTooClose(newCorners, &newCornersCount, &tmpFeatures[0], featuresAlive.size());
+
+		tmpFeatures.clear();
 
 		// Deallocate image0 (not useful anymore)
 		cvReleaseImage(&image0);
@@ -170,7 +169,21 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 
 	}
 
-	// TODO: extract contrast for each point
+	// Filter features still alive
+	feat = listFeatures.begin();
+	while (feat != listFeatures.end()) {
+		// If features is not undead (still alive)
+		bool erase = false;
+		if(feat->status != UNDEAD) {
+			erase = !verifyFeatureConsistency(*feat);
+		}
+		if(erase)
+			feat = listFeatures.erase(feat);
+		else
+			feat++;
+	}
+
+	// Extract contrast for each point
 	for(int frameIndex=0; frameIndex < pathImages.size(); frameIndex++) {
 		// Load image
 		image0 = cvLoadImage(pathImages[frameIndex].c_str(), CV_LOAD_IMAGE_GRAYSCALE);
@@ -197,13 +210,15 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 		// Free memory
 		cvReleaseImage(&image0);
 	}
+
+
 	image0 = cvLoadImage(pathImages[0].c_str(), CV_LOAD_IMAGE_GRAYSCALE);
 
-	list<featureMovement>::iterator feat = listFeatures.begin();
-	// Prepare new array of features/point to track in the next frame
+	feat = listFeatures.begin();
+	// Print contrast from features in images
 	int i=0;
 	while (feat != listFeatures.end()) {
-		if(verifyValidFeature(*feat)) {
+		//if(verifyValidFeature(*feat)) {
 			// OK
 			cout << "Feature " << i++ << ": ";
 			for(int j=0; j<feat->contrast.size(); j++) {
@@ -211,54 +226,15 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 			}
 			cout << endl;
 			feat++;
-		}
+		/*}
 		else {
 			feat = listFeatures.erase(feat);	// Delete
-		}
-
+		}*/
 	}
 
 	if(verb) {
+
 		//Draw flaw field
-
-		/*
-		double min, max;
-		cvMinMaxLoc(image0, &max, &min);
-		cout << "Bounds: " << max << " " << min << endl;
-		cvNormalize(image0, image0, 0.0f, 255.0f, cv::NORM_MINMAX);
-		cvMinMaxLoc(image1, &max, &min);
-		cout << "Bounds: " << max << " " << min << endl;*/
-
-		/*
-		double contrast;
-		CvPoint2D32f lol;
-		cout << "Contrast: " << endl;
-		for(int i=0; i<320; i=i+5) {
-			for(int j=0; j<200; j=j+5) {
-
-				lol.x = i;
-				lol.y = j;
-				//lol.x = 20;
-				contrast = getAroundContrast(image0, &lol);
-				printf("%2d ", (int)(contrast*400));
-			}
-			cout << endl;
-		}
-		lol.x = 20;
-		lol.y = 50;
-		contrast = getAroundContrast(image0, &lol);
-		cout << "Contrast: " << contrast << endl;
-		//contrast = getAroundContrast(image0, &lol);
-		 */
-
-		/*CvMat rect;// = cvCreateImage(cvSize(100, 100), IPL_DEPTH_32F, 1);
-		IplImage *rectResize = cvCreateImage(cvSize(RECTANGLE_SIZE*10, RECTANGLE_SIZE*10), IPL_DEPTH_32F, 1);
-		cvGetRectSubPix(image0, &rect, lol);
-		//cvResize(rect, rectResize);
-		cvShowImage(NAME_WINDOW, &rect);
-		key = cvWaitKey(0);
-		cvCircle(image0, cvPoint(cvRound(lol.x), cvRound(lol.y)), 2, CV_RGB(255, 255, 255));*/
-
 		iaasDrawFlowFieldNew(image0, listFeatures, CV_RGB(255, 0, 0));
 
 		cvShowImage(NAME_WINDOW, image0);

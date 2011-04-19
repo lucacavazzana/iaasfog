@@ -28,14 +28,15 @@ double iaasTwoLinesAngle(CvMat* line1, CvMat* line2) {
 }
 
 
-CvPoint2D32f iaasPointAlongLine(CvMat *line, CvPoint2D32f startPoint, float pixelDistance) {
+CvPoint2D32f iaasPointAlongLine(CvMat *line, CvPoint2D32f firstPoint, CvPoint2D32f lastPoint, float pixelDistance) {
 	CvPoint2D32f newPoint;
-
+	int directionX = sign(firstPoint.x-lastPoint.x);
+	int directionY = sign(firstPoint.y-lastPoint.y);
 	// Slope (m) = -a/b
 	double m = -(line->data.db[0]/line->data.db[1]);
 	double magnitude = sqrt(1+m*m);
-	newPoint.x = startPoint.x + pixelDistance/magnitude;
-	newPoint.y = startPoint.y + pixelDistance*m/magnitude;
+	newPoint.x = lastPoint.x + (directionX)*pixelDistance/magnitude;
+	newPoint.y = lastPoint.y + (directionY)*pixelDistance*m/magnitude;
 	return newPoint;
 }
 
