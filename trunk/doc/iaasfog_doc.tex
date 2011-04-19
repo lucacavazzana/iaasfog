@@ -20,24 +20,63 @@
 
 \chapter{Introduzione}
 
+\chapter{Qualche titolo}
+\begin{itemize}
+	\item cambio approccio: dato che \`e un controsenso cercare features nella nebbia invertiamo il flusso\dots Immagini bufferizzate, features cercate dalla fine e trackkate a ritroso nel tempo. Quando scompaiono viene stimata la loro posizione (WIP).
+	
+	\item features filtrate in base a: direzione (WIP), lunghezza spostamento (rapporto circa costante, WIP), 
+	
+	\item uso di RMS per il calcolo del contrasto, che in teoria dovrebbe essere pi\'u resistente al rumore (DEBUG).
+	
+	\item  parametri della funzione (esponenziale) stimati usando RANSAC. Necessit\'a di normalizzare i valori del contrasto (WIP).
+\end{itemize}
+
 \chapter{Funzioni}
 
 Viene qui presentata una panoramica delle funzioni realizzate. Per informazioni pi\`u dettagliate circa il loro utilizzo consultare l'\verb|help| delle funzioni~\cite{lucaskanade81}.
 
 \section[C++]{C\verb_++_}
 
-\paragraph*{\verb_FindFeatures:_}
+\paragraph*{\verb_FindFeatures:_} main, parsa input e lancia nuFindFeatures
 
-\paragraph*{\verb_iaasJoiningLine:_} calcola in coordinate omogenee la retta passante per due punti.
+\paragraph*{\verb_nuFindFeatures:_} bla bla bla
+
+\paragraph*{\verb_iaasFindCorners:_} estrae i corner dall'immagine
+
+\paragraph*{\verb_iaasTrackCorners:_} cerca di rintracciare i corner della prima immagine (gi\'a calcolati) nella seconda
+
+\paragraph*{\verb_verifyNewFeatureIsOk:_} verifica che una sequenza di corner sia coerente in base a \dots
+
+\paragraph*{\verb_getAroundContrast:_} calcola il contrasto nell'intorno di una features usando RMS: $$contr = \sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(I_{ij}-\bar{I})^2}$$
+
+\paragraph*{\verb_verifyValidFeature:_} \dots
+
+
+\paragraph*{\verb_printFeatures:_} scrive sul file la lista di feature valide come:
+\begin{verbatim}
+	     primoFrame numeroFrame [xCoord yCoord contrasto]+
+\end{verbatim}
 
 \section{Matlab}
 
 \paragraph*{\verb_iaas:_}
 
+\paragraph*{\verb_inspectContrast:_} stampa a video le sequenze di features per un'ispezione visiva
+
+\paragraph*{\verb_myRansac:_} implementazione di RANSAC per calcolare il parametro lambda della funzione del contrasto
+
+
+
+
+
+
+
 \paragraph*{\verb_fogLevel:_} date le coordinate del punto di fuga calcola il livello della nebbia come il livello di grigio medio nell'intorno se questi \`e omogeneo.
 
 \paragraph*{\verb_MichelsonContrast:_} date le coordinate di una feature e la relative immagine restituisce il livello di contrasto nell'intorno come $$\frac{I_{max}-I_{min}}{I_{max}+I_{min}}$$
+
 \paragraph*{\verb_rsmContrast:_} date le coordinate di una feature e la relativa immagine calcola il livello di contrasto nell'intorno come $$\sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(I_{ij}-\bar{I})^2}$$
+
 \paragraph*{\verb_WeberContrast:_} date le coordinate di una feature e la relative immagine calcola il livello di contrasto come $$\frac{I-I_b}{I_b}$$ dove $I_b$ \`e il livello della nebbia.
 
 \paragraph*{\verb_timeImpact:_} date le coordinate del punto di fuga, di una feature in due differenti immagini e il relativo lasso tempo, stima il tempo mancante affinch\'e la feature attraversi il piano focale. %TODO:giusto il termine?

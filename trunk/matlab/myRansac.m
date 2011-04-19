@@ -13,7 +13,7 @@ function [bestLam, bestModel, bestError] = myRansac(feats, showPlot)
 %
 % See also NEWPARSER
 
-%   Copyright 2011 Stefano Cadario, Cavazzana Luca.
+%   Copyright 2011 Stefano Cadario, Luca Cavazzana.
 %   $Revision: xxxxx $  $Date: 2011/04/07 17:20:22 $
 
 

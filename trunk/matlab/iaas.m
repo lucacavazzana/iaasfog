@@ -7,7 +7,7 @@ function [] = iaas(showPlots)
 %                   more graphs (mainly for testing purposes, can become
 %                   veeery boring), if 0 plots nothing
 
-%   Copyright 2011 Stefano Cadario, Cavazzana Luca.
+%   Copyright 2011 Stefano Cadario, Luca Cavazzana.
 %   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 % OPTIONS

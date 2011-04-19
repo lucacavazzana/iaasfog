@@ -8,7 +8,7 @@ function [fig] = plotContrasts(feats)
 %OUTPUT
 %   'fig'   :   figure handler
 
-%   Copyright 2011 Stefano Cadario, Cavazzana Luca.
+%   Copyright 2011 Stefano Cadario, Luca Cavazzana.
 %   $Revision: xxxxx $  $Date: 2011/04/13 17:20:22 $
 
 colors = ['y','m','c','r','g','b','w','k'];

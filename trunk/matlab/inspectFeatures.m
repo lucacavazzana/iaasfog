@@ -6,7 +6,7 @@ function [] = inspectFeatures(imPaths, feats)
 %   paths of the M images in the serie, FEATS a vector of N features as
 %   rapresented by the output of the function newParser
 
-%   Copyright 2011 Stefano Cadario, Cavazzana Luca.
+%   Copyright 2011 Stefano Cadario, Luca Cavazzana.
 %   $Revision: xxxxx $  $Date: 2011/04/11 17:20:22 $
 
 WIN = 40 /2; % size of the window

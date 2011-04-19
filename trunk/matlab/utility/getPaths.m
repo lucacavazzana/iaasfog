@@ -5,7 +5,7 @@ function [paths] = getPaths(imFolder, imName, imNum)
 % path of each image, after checking they are valid. Images name must be
 % numbered sequentially, ending with a string of four digits
 
-%   Copyright 2011 Stefano Cadario, Cavazzana Luca.
+%   Copyright 2011 Stefano Cadario, Luca Cavazzana.
 %   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 paths(1,:)=[imFolder,'/',imName];
