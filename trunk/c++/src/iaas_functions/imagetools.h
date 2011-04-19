@@ -27,7 +27,7 @@ template <class P> double iaasTwoPointsDistance(P point1, P point2) {
 	return sqrt(iaasSquare<double>(y2 - y1) + iaasSquare<double>(x2 - x1));
 }
 
-CvPoint2D32f iaasPointAlongLine(CvMat *line, CvPoint2D32f startPoint, float pixelDistance);
+CvPoint2D32f iaasPointAlongLine(CvMat *line, CvPoint2D32f firstPoint, CvPoint2D32f lastPoint, float pixelDistance);
 
 /**
  * Returns the angle between two lines

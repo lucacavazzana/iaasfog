@@ -195,14 +195,16 @@ double iaasTimeToImpact(CvPoint2D32f vanishing_point, CvPoint2D32f p_t0, CvPoint
  */
 double iaasMeanTimeToImpact(CvPoint2D32f vanishing_point, CvPoint2D32f *cornersA, CvPoint2D32f *cornersB, int n_corners);
 
-bool verifyValidFeature(featureMovement feat);
+//bool verifyValidFeature(featureMovement feat);
 
 double getAroundContrast(const IplImage *img, CvPoint2D32f *point);
 
 bool verifyNewFeatureIsOk(list<featureMovement>::iterator feat, const CvPoint2D32f newPoint, const int trackStatus=1);
+bool verifyFeatureConsistency(featureMovement &feat);
 
 float getCrossRatioDistance(CvPoint2D32f a, CvPoint2D32f b, CvPoint2D32f c, float crossRatio);
-
+float getPointCDistance(CvPoint2D32f a, CvPoint2D32f b, CvPoint2D32f d, float crossRatio);
+void filterFeaturesTooClose(CvPoint2D32f *newPoints, int *nNewPoints, CvPoint2D32f *existingPoints, int nExistingPoints);
 float getCrossRatio(CvPoint2D32f *points);
 
 #endif //ALGORITHMS_H_

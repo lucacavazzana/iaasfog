@@ -7,25 +7,6 @@
 #include <iostream>
 #include <vector>
 
-/*double getContrast(const IplImage *img) {
-
-	double contrast;
-	CvScalar tmp = cvAvg(img);
-
-	// Sub Mean from image
-	cvSubS(img, tmp, rectDiff);
-
-	// Pow
-	cvPow(rectDiff, rect, 2);
-
-	// Sum elements
-	tmp = cvSum(rect);
-	//contrast = sqrt(tmp.val[0]/(RECTANGLE_SIZE*RECTANGLE_SIZE));
-	contrast = sqrt(tmp.val[0])/(RECTANGLE_SIZE*RECTANGLE_SIZE);
-
-	return contrast;
-}*/
-
 double getAroundContrast(const IplImage *img, CvPoint2D32f *point) {
 
 	IplImage *rect = cvCreateImage(cvSize(RECTANGLE_SIZE, RECTANGLE_SIZE), IPL_DEPTH_8U, 1);
@@ -36,22 +17,6 @@ double getAroundContrast(const IplImage *img, CvPoint2D32f *point) {
 	// Get the area around the point
 	cvGetRectSubPix(img, rect, *point);
 
-	//cvRectangle(rect, cvPoint(0,0), cvPoint(RECTANGLE_SIZE, RECTANGLE_SIZE), CV_RGB(10, 10, 10), -1);
-/*
-	// Get Mean
-	//cvNormalize(rect, rectDiff);
-	CvScalar tmp = cvAvg(rect);
-
-	// Sub Mean from image
-	cvSubS(rect, tmp, rectDiff);
-
-	// Pow
-	cvPow(rectDiff, rect, 2);
-
-	// Sum elements
-	tmp = cvSum(rect);
-	//contrast = sqrt(tmp.val[0]/(RECTANGLE_SIZE*RECTANGLE_SIZE));
-	contrast = sqrt(tmp.val[0])/(RECTANGLE_SIZE*RECTANGLE_SIZE);*/
 	CvScalar mean, sdv;
 	cvAvgSdv(rect, &mean, &sdv);
 	contrast = sdv.val[0];
@@ -60,6 +25,71 @@ double getAroundContrast(const IplImage *img, CvPoint2D32f *point) {
 	return (max-min)/(max+min);
 
 	return contrast;
+}
+
+bool verifyFeatureConsistency(featureMovement &feat) {
+	if(feat.positions.size() > MINIMUM_LIFE) {
+		// Set as undead
+		feat.status = UNDEAD;
+
+		// Correct points positions (move points in order to lie
+		// on the best line fitting all points)
+
+		CvMat line;
+
+		iaasBestJoiningLine(&feat.positions[0], feat.positions.size(), &line);
+
+		for(int i=1; i < feat.positions.size()-1; i++) {
+			feat.positions[i] = iaasProjectPointToLine(feat.positions[i], &line);
+			//cout << " " << iaasPointLineDistance(&line, feat.positions[i]) << endl;
+		}
+
+		double ratio = 0;
+		double mean = 0;
+		double variance = 0;
+
+		for(int i=0; i<feat.positions.size()-4; i++) {
+			ratio = getCrossRatio(&feat.positions[i]);
+			//cout << ratio << " ";
+			mean += ratio;
+			variance += ratio*ratio;
+		}
+		ratio = mean/(feat.positions.size()-4);
+		variance = variance/(feat.positions.size()-4);
+		variance = sqrt(variance - ratio*ratio);
+		// TODO: generate virtual features (computed not founded because inside fog)
+
+		feat.ratio = ratio;
+		//cout << endl;
+		//cout << "Ratios: " << ratio << " " << variance << endl;
+		if(ratio < CRtolleranceMin || ratio > CRtolleranceMax || variance > 0.05) {
+			feat.status = DELETE;
+			cout << "Delete because mean " << ratio << " or variance " << variance << endl;
+			return false;
+		}
+		else {
+			// TODO: Prolong line
+			int maxAdd = feat.startFrame - feat.positions.size() + 1;
+			cout << "Distance: ";
+			for(int i=0; i<maxAdd; i++) {
+				int lastIndex = feat.positions.size() -1;
+				float newDistance;
+				newDistance = getCrossRatioDistance(feat.positions[lastIndex-2],feat.positions[lastIndex-1],feat.positions[lastIndex], (4.0f/3.0f));
+				cout << newDistance << " ";
+				// If next point distance is below 0.5 pixel stop
+				if(newDistance<0.5f)
+					break;
+				feat.positions.push_back(iaasPointAlongLine(&line, feat.positions[feat.positions.size()-2],feat.positions[feat.positions.size()-1], newDistance));
+			}
+			cout << endl;
+		}
+		return true;
+	}
+	else {
+		// Too short life, drop feature
+		feat.status = DELETE;
+		return false;
+	}
 }
 
 // Verify that the last point found is coherent with others
@@ -106,7 +136,7 @@ bool verifyNewFeatureIsOk(list<featureMovement>::iterator feat, const CvPoint2D3
 	}
 
 	if(nPoints > 3) {
-		// TODO: check collinearity (cross-ratio)
+		// Check collinearity (crossRatio)
 		float crossRatio = getCrossRatio(&feat->positions[nPoints-4]);
 		if(crossRatio < CRtolleranceMin || crossRatio > CRtolleranceMax) {
 			pointOk = false;
@@ -115,87 +145,13 @@ bool verifyNewFeatureIsOk(list<featureMovement>::iterator feat, const CvPoint2D3
 	}
 
 endCheck:
+
 	if(!pointOk) {
 		// Point not valid, check if we can keep only the previous points
-		if(nPoints > MINIMUM_LIFE) {
-			// Set as undead
-			feat->status = UNDEAD;
-
-			// Correct points positions (move points in order to lie
-			// on the best line fitting all points)
-
-			CvMat line;
-
-			/*
-			CvPoint2D32f firstPt, lastPt;
-			firstPt = feat->positions[0];
-			lastPt = feat->positions[feat->positions.size()-1];
-			iaasJoiningLine(firstPt, lastPt, &line);
-			double a, b, c;
-			a = line.data.db[0];
-			b = line.data.db[1];
-			c = line.data.db[2];
-			//cout << "Line: " << a << " " << b << " " << c << endl;
-			cout << "Fist and last line: y=mx+c m=" << -(a/b) << " c=" << -(c/b) << endl;*/
-
-			iaasBestJoiningLine(&feat->positions[0], feat->positions.size(), &line);
-
-			for(int i=1; i < feat->positions.size()-1; i++) {
-				//feat->positions[i] = iaasProjectPointToLine(firstPt, lastPt, feat->positions[i]);
-				feat->positions[i] = iaasProjectPointToLine(feat->positions[i], &line);
-				//cout << " " << iaasPointLineDistance(&line, feat->positions[i]) << endl;
-			}
-			// TODO: find best ratio between features distances
-			double ratio = 0;
-			double mean = 0;
-			double variance = 0;
-
-			for(int i=0; i<feat->positions.size()-4; i++) {
-				ratio = getCrossRatio(&feat->positions[i]);
-				//cout << ratio << " ";
-				mean += ratio;
-				variance += ratio*ratio;
-			}
-			ratio = mean/(feat->positions.size()-4);
-			variance = variance/(feat->positions.size()-4);
-			variance = sqrt(variance - ratio*ratio);
-			// TODO: generate virtual features (computed not founded because inside fog)
-
-			feat->ratio = ratio;
-			//cout << endl;
-			//cout << "Ratios: " << ratio << " " << variance << endl;
-			if(ratio < CRtolleranceMin || ratio > CRtolleranceMax || variance > 0.05) {
-				feat->status = DELETE;
-				cout << "Delete because mean " << ratio << " or variance " << variance << endl;
-				return false;
-			}
-			else {
-				// TODO: Prolong line
-				int maxAdd = feat->startFrame - feat->positions.size() + 1;
-				cout << "Distance: ";
-				for(int i=0; i<maxAdd; i++) {
-					int lastIndex = feat->positions.size() -1;
-					float newDistance;
-					newDistance = getCrossRatioDistance(feat->positions[lastIndex-2],feat->positions[lastIndex-1],feat->positions[lastIndex], (4.0f/3.0f));
-					cout << newDistance << " ";
-					// If next point distance is below 0.5 pixel stop
-					if(newDistance<0.5f)
-						break;
-					feat->positions.push_back(iaasPointAlongLine(&line, feat->positions[feat->positions.size()-1], newDistance));
-				}
-				cout << endl;
-			}
-			return true;
-		}
-		else {
-			// Too short life, drop feature
-			feat->status = DELETE;
-			return false;
-		}
+		return verifyFeatureConsistency(*feat);
 	}
 	else {
 		// New point ok, keep tracking
-		//feat->status = ALIVE;
 		return true;
 	}
 }
@@ -207,16 +163,48 @@ float getCrossRatio(CvPoint2D32f *points) {
 	return ((ab+bc)*(bc+cd))/((bc)*(ab+bc+cd));
 }
 
+float getPointCDistance(CvPoint2D32f a, CvPoint2D32f b, CvPoint2D32f d, float crossRatio) {
+	float ab = iaasTwoPointsDistance(a, b);
+	float bd = iaasTwoPointsDistance(b, d);
+	float bc = ab / (crossRatio*(ab+bd)/bd-1);
+	return bc;
+}
+
 float getCrossRatioDistance(CvPoint2D32f a, CvPoint2D32f b, CvPoint2D32f c, float crossRatio) {
 	float ab = iaasTwoPointsDistance(a, b);
 	float bc = iaasTwoPointsDistance(b, c);
 	float k = crossRatio*bc/(ab+bc);
-
 	float cd = ((1.0f/3.0f)*bc)/(1-k);
-	//cout << "ab: " << ab << " bc: " << bc << " CR: " << crossRatio << " k: " << k << " cd: " << cd << endl;
 	return cd;
 }
 
+void filterFeaturesTooClose(CvPoint2D32f *newPoints, int *nNewPoints, CvPoint2D32f *existingPoints, int nExistingPoints) {
+	// Delete points too close to others that already exist
+	int nDelete = 0;
+	for(int i=0; i<(*nNewPoints); i++) {
+		bool erase = false;
+		// Check distance with all features already tracked
+		for(int j=0; j<nExistingPoints; j++) {
+			float distance = iaasTwoPointsDistance(newPoints[i],existingPoints[j]);
+			if(distance < MIN_DISTANCE) {
+				// Delete new feature
+				erase = true;
+				break;
+			}
+		}
+		if(erase) {
+			nDelete++;
+		}
+		else {
+			// Scale element with deleted
+			newPoints[i-nDelete] = newPoints[i];
+		}
+	}
+	// Set new size of array
+	*nNewPoints = *nNewPoints-nDelete;
+}
+
+/*
 bool verifyValidFeature(featureMovement feat) {
 	int nPoints = feat.positions.size();
 	if(nPoints < MINIMUM_LIFE) {
@@ -241,7 +229,7 @@ bool verifyValidFeature(featureMovement feat) {
 		}
 	}
 	return true;
-}
+}*/
 
 void iaasFindAndTrackCorners(double quality_level, IplImage *imageA, IplImage *imageB, int *track_count, CvPoint2D32f *cornersA, CvPoint2D32f *cornersB, float *track_errors, char* track_status){
 	//Shi-Tomasi parameters
