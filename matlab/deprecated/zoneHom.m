@@ -19,7 +19,7 @@ function[level] = zoneHom(feat, im, n, low_t, high_t, sigma, showPlot)
 %   'level':    double representing the average level in the frame around
 %               the point, -1 if not homogeneous
 
-%   Copyright 2011 Stefano Cadario, Cavazzana Luca.
+%   Copyright 2011 Stefano Cadario, Luca Cavazzana.
 %   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 

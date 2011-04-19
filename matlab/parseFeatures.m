@@ -15,7 +15,7 @@ function [feats]  = parseFeatures(fileName, cleanFeats)
 %                   f.y - x coords of the features in each frame appears
 %                   f.contr - contrast value of the feat for each frame
 
-%   Copyright 2011 Stefano Cadario, Cavazzana Luca.
+%   Copyright 2011 Stefano Cadario, Luca Cavazzana.
 %   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 

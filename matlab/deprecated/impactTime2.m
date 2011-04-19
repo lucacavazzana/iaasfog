@@ -16,7 +16,7 @@ function [] = impactTime2(imPaths, feats, vp,  time, showPlot)
 %
 %   See also IMPACTTIME1.
 
-%   Copyright 2011 Stefano Cadario, Cavazzana Luca.
+%   Copyright 2011 Stefano Cadario, Luca Cavazzana.
 %   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 [NIMG NFEAT] = size(feats);

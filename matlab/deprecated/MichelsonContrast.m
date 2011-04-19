@@ -13,7 +13,7 @@ function[contr] = MichelsonContrast(feature, image)
 %
 %   See also RMSCONTRAST, WEBERCONTRAST.
 
-%   Copyright 2011 Stefano Cadario, Cavazzana Luca.
+%   Copyright 2011 Stefano Cadario, Luca Cavazzana.
 %   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 % Normalize
