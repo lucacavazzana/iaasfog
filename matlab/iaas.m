@@ -43,7 +43,7 @@ else
 end
 outFile = 'outFile.txt';
 imName = 'frame0000.jpg';
-imNum = 30;
+imNum = 20;
 imTime = 0.1;
 speed = 0;
 % -------------------------------------------------------------------------
@@ -59,9 +59,9 @@ if ~DEFPATHS % FIXME: delete this condition in the final release
     imTime = getPeriod;
 end
 alg = selectAlg({'inspect features';...
-                 'plot contrasts';...
-                 'new experiment';...
-                 'test contrasts'});
+    'plot contrasts';...
+    'new experiment';...
+    'test contrasts'});
 
 % checks the image list
 imPaths = getPaths(imFolder,imName,imNum);
@@ -77,9 +77,9 @@ end
 feats = parseFeatures(outFile); % re-parsing features
 imTime = imTime*ones(1,imNum); imTime(1)=0; % time vector
 
-if strcmp(arch,'glnxa64') % that's because Luca's computer sucks and is unable to compute the vp correctly
-    vp_st.x=190; vp_st.y=120; vp_st.z=1;
-end
+% if strcmp(arch,'glnxa64') % that's because Luca's computer sucks and is unable to compute the vp correctly
+%     vp_st.x=190; vp_st.y=120; vp_st.z=1;
+% end
 
 disp(['Found ', num2str(size(feats,1)), ' features over ', num2str(size(feats,2)), ' images']);
 
@@ -90,10 +90,8 @@ switch alg
         plotContrasts(feats);
     case 3, % exp interpolation
         theNewWay(feats,showPlots);
-    case 4,
+    case 4, % lol test function
         testContrasts(imPaths,feats);
 end
-
-return;
 
 end

@@ -201,7 +201,7 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 #endif
 			// Get contrast of point
 			if(index >= 0 && index < feat->positions.size()) {
-				float contrast = getAroundContrast(image0, &feat->positions[index]);
+				float contrast = getRMSContrast(image0, &feat->positions[index]);
 				feat->contrast.push_back(contrast);
 			}
 			feat++;

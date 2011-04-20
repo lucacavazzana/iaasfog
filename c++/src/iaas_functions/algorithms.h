@@ -10,7 +10,7 @@
 #define ALGORITHMS_H_
 
 #define MIN_FEATURE_DISTANCE 0//1
-#define RECTANGLE_SIZE	5
+#define RECTANGLE_SIZE	4
 #define MINIMUM_LIFE	6
 
 #include "parameters.h"
@@ -197,7 +197,30 @@ double iaasMeanTimeToImpact(CvPoint2D32f vanishing_point, CvPoint2D32f *cornersA
 
 //bool verifyValidFeature(featureMovement feat);
 
-double getAroundContrast(const IplImage *img, CvPoint2D32f *point);
+/*
+ * Computes the mean the Root Mean Square coontrast at the given coordinates.
+ * Remember: unlike RMS value is not image-depth indipendent
+ * @param img image to analyze
+ * @oaram point coordinates
+ */
+double getRMSContrast(const IplImage *img, CvPoint2D32f *point);
+
+/*
+ * Computes the mean the Weber contrast at the given coordinates (using the
+ * mean luminance of the vanishing point if provided, using the mean luminance
+ * of the feature itself otherwise)
+ * @param img image to analyze
+ * @param point coordinates
+ * @param vanishing point coordinates
+ */
+double getWeberContrast(const IplImage *img, CvPoint2D32f *point, CvPoint2D32f *vp=NULL);
+
+/*
+ * Computes the mean the Michelson coontrast at the given coordinates
+ * @param img image to analyze
+ * @param point coordinates
+ */
+double getMichelsonContrast(const IplImage *img, CvPoint2D32f *point);
 
 bool verifyNewFeatureIsOk(list<featureMovement>::iterator feat, const CvPoint2D32f newPoint, const int trackStatus=1);
 bool verifyFeatureConsistency(featureMovement &feat);
