@@ -19,6 +19,7 @@ for ff = feats
     subplot(2,2,1);
     hold off;
     plot(t,ff.contr); % plot contrast graph
+    title(['contrast ', num2str(ff.start), ' - ', num2str(ff.start+ff.num-1)]);
     hold on;
     for ii = 1:ff.num
         im = imread(imPaths(t(ii),:));
@@ -28,7 +29,6 @@ for ff = feats
         subplot(2,2,1);
         hold on;
         plot(t(ii),ff.contr(ii),'o');
-        title('contrast');
         
         % print detail of the current feature
         subplot(2,2,2);
@@ -49,6 +49,9 @@ for ff = feats
     end
     indf=indf+1;
     pause(.3);
+    
+    disp([ff.x;ff.y]);
+    pause;
 end
 
 close(fig);

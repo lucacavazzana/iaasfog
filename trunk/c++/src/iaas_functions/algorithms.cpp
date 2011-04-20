@@ -7,24 +7,67 @@
 #include <iostream>
 #include <vector>
 
-double getAroundContrast(const IplImage *img, CvPoint2D32f *point) {
+double getRMSContrast(const IplImage *img, CvPoint2D32f *point) {
 
-	IplImage *rect = cvCreateImage(cvSize(RECTANGLE_SIZE, RECTANGLE_SIZE), IPL_DEPTH_8U, 1);
-	IplImage *rectDiff = cvCreateImage(cvSize(RECTANGLE_SIZE, RECTANGLE_SIZE), IPL_DEPTH_8U, 1);
+	// element out of the image
+	if (point->x < 0 || point->x > img->width || point->y < 0 || img->height > img->height) {
+		//std::cout << "- invalid feat" << std::endl;
+		return 0;
+	}
 
-	double contrast;
+	CvScalar avg, sdv;
+	//CvRect rect = cvRect(max(0.0f,point->x-RECTANGLE_SIZE/2), max(0.0f,point->y-RECTANGLE_SIZE/2), min((float)RECTANGLE_SIZE, img->width-point->x+RECTANGLE_SIZE/2), min((float)RECTANGLE_SIZE, img->height-point->y+RECTANGLE_SIZE/2));
 
-	// Get the area around the point
-	cvGetRectSubPix(img, rect, *point);
+	//cvSetImageROI((IplImage *)img, cvRect((int)max(0.0f,point->x-RECTANGLE_SIZE/2), (int)max(0.0f,point->y-RECTANGLE_SIZE/2), (int) min((float)RECTANGLE_SIZE, img->width-point->x+RECTANGLE_SIZE/2), (int) min((float)RECTANGLE_SIZE, img->height-point->y+RECTANGLE_SIZE/2)));
+	cvSetImageROI((IplImage *)img, cvRect(max(0,(int)point->x-RECTANGLE_SIZE/2), max(0,(int)point->y-RECTANGLE_SIZE/2), min(RECTANGLE_SIZE, img->width-(int)point->x+RECTANGLE_SIZE/2), min(RECTANGLE_SIZE, img->height-(int)point->y+RECTANGLE_SIZE/2)));
+	cvAvgSdv(img, &avg, &sdv);
+	cvResetImageROI((IplImage *)img);
 
-	CvScalar mean, sdv;
-	cvAvgSdv(rect, &mean, &sdv);
-	contrast = sdv.val[0];
-	double min, max;
-	cvMinMaxLoc(rect, &min, &max);
-	return (max-min)/(max+min);
+	std::cout << sdv.val[0] << std::endl;
+	return sdv.val[0];
+}
 
-	return contrast;
+double getWeberContrast(const IplImage *img, CvPoint2D32f *point, CvPoint2D32f *vp) {
+
+	// element out of the image
+	if (point->x < 0 || point->x > img->width || point->y < 0 || img->height > img->height) {
+		//std::cout << "- invalid feat" << std::endl;
+		return 0;
+	}
+
+	CvScalar avg;
+	//CvRect rect = cvRect(max(0.0f,point->x-RECTANGLE_SIZE/2), max(0.0f,point->y-RECTANGLE_SIZE/2), min((float)RECTANGLE_SIZE, img->width-point->x+RECTANGLE_SIZE/2), min((float)RECTANGLE_SIZE, img->height-point->y+RECTANGLE_SIZE/2));
+
+	if (vp==NULL)
+		cvSetImageROI((IplImage *)img, cvRect(max(0,(int)point->x-RECTANGLE_SIZE/2), max(0,(int)point->y-RECTANGLE_SIZE/2), min(RECTANGLE_SIZE, img->width-(int)point->x+RECTANGLE_SIZE/2), min(RECTANGLE_SIZE, img->height-(int)point->y+RECTANGLE_SIZE/2)));
+		//cvSetImageROI((IplImage *)img, cvRect((int)max(0.0f,point->x-RECTANGLE_SIZE/2), (int)max(0.0f,point->y-RECTANGLE_SIZE/2), (int)min((float)RECTANGLE_SIZE, img->width-point->x+RECTANGLE_SIZE/2), (int)min((float)RECTANGLE_SIZE, img->height-point->y+RECTANGLE_SIZE/2)));
+	else
+		cvSetImageROI((IplImage *)img, cvRect(max(0,(int)vp->x-RECTANGLE_SIZE/2), max(0,(int)vp->y-RECTANGLE_SIZE/2), min(RECTANGLE_SIZE, img->width-(int)vp->x+RECTANGLE_SIZE/2), min(RECTANGLE_SIZE, img->height-(int)vp->y+RECTANGLE_SIZE/2)));
+		//cvSetImageROI((IplImage *)img, cvRect((int)max(0.0f,vp->x-RECTANGLE_SIZE/2), (int)max(0.0f,vp->y-RECTANGLE_SIZE/2), (int)min((float)RECTANGLE_SIZE, img->width-vp->x+RECTANGLE_SIZE/2), (int)min((float)RECTANGLE_SIZE, img->height-vp->y+RECTANGLE_SIZE/2)));
+
+	//TODO: test
+	avg = cvAvg(img);
+	cvResetImageROI((IplImage *)img);
+
+	return abs((double)*((uchar*)img->imageData + (int)point->y*img->widthStep + (int)point->x)-avg.val[0])/avg.val[0];
+}
+
+double getMichelsonContrast(const IplImage *img, CvPoint2D32f *point) {
+
+	// element out of the image
+	if (point->x < 0 || point->x > img->width || point->y < 0 || img->height > img->height) {
+		//std::cout << "- invalid feat" << std::endl;
+		return 0;
+	}
+
+	double maxV, minV;
+	cvSetImageROI((IplImage *)img, cvRect(max(0,(int)point->x-RECTANGLE_SIZE/2), max(0,(int)point->y-RECTANGLE_SIZE/2), min(RECTANGLE_SIZE, img->width-(int)point->x+RECTANGLE_SIZE/2), min(RECTANGLE_SIZE, img->height-(int)point->y+RECTANGLE_SIZE/2)));
+	//cvSetImageROI((IplImage *)img, cvRect((int)max(0.0f,point->x-RECTANGLE_SIZE/2),(int) max(0.0f,point->y-RECTANGLE_SIZE/2), (int)min((float)RECTANGLE_SIZE, img->width-point->x+RECTANGLE_SIZE/2), (int)min((float)RECTANGLE_SIZE, img->height-point->y+RECTANGLE_SIZE/2)));
+
+	cvMinMaxLoc(img, &minV, &maxV);
+	cvResetImageROI((IplImage *)img);
+
+	return (maxV-minV)/(maxV+minV);
 }
 
 bool verifyFeatureConsistency(featureMovement &feat) {
