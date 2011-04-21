@@ -10,7 +10,8 @@
 #define ALGORITHMS_H_
 
 #define MIN_FEATURE_DISTANCE 0//1
-#define RECTANGLE_SIZE	4
+#define FRAME_RADIUS	2
+#define FRAME_SIZE	2*FRAME_RADIUS+1
 #define MINIMUM_LIFE	6
 
 #include "parameters.h"
@@ -195,7 +196,13 @@ double iaasTimeToImpact(CvPoint2D32f vanishing_point, CvPoint2D32f p_t0, CvPoint
  */
 double iaasMeanTimeToImpact(CvPoint2D32f vanishing_point, CvPoint2D32f *cornersA, CvPoint2D32f *cornersB, int n_corners);
 
-//bool verifyValidFeature(featureMovement feat);
+/*
+ * Returns a rect representing the frame around the feature, making sure not to
+ * exceed the border of the image
+ * @param coordinates of the feature
+ * @param image
+ */
+CvRect getContrFrame (CvPoint2D32f *point, IplImage *img);
 
 /*
  * Computes the mean the Root Mean Square coontrast at the given coordinates.
@@ -222,6 +229,7 @@ double getWeberContrast(const IplImage *img, CvPoint2D32f *point, CvPoint2D32f *
  */
 double getMichelsonContrast(const IplImage *img, CvPoint2D32f *point);
 
+//bool verifyValidFeature(featureMovement feat);
 bool verifyNewFeatureIsOk(list<featureMovement>::iterator feat, const CvPoint2D32f newPoint, const int trackStatus=1);
 bool verifyFeatureConsistency(featureMovement &feat);
 
