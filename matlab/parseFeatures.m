@@ -47,7 +47,7 @@ while (tline~=-1)
     parsed = str2double(regexp(tline,coord_regex,'match'));
     new.start = parsed(1)+1;    % starting image. +1 since starts counting from 0
     new.num = parsed(2);    % number of frame tracked
-    new.x = parsed(3:3:end)+1; new.y = parsed(4:3:end)+1; new.contr = parsed(5:3:end)+1; % x, y and contr. +1 since starts from 0
+    new.x = parsed(3:3:end)+1; new.y = parsed(4:3:end)+1; new.contr = parsed(5:3:end); % x, y and contr. +1 since starts from 0
     feats = [feats, new]; %#ok
     tline = fgets(f);
 end
@@ -69,7 +69,6 @@ if cleanFeats
     end
 end
 %--------------------------------------------------------------------------
-
 if REVERSE
     for ii = 1:size(feats,2)
         feats(ii).start = feats(ii).start-feats(ii).num+1;

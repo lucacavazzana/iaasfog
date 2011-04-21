@@ -188,6 +188,10 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 		// Load image
 		image0 = cvLoadImage(pathImages[frameIndex].c_str(), CV_LOAD_IMAGE_GRAYSCALE);
 
+#ifdef _TESTING
+		std::cout << pathImages[frameIndex].c_str() << std::endl;
+#endif //_TESTING
+
 		// For each feature
 		list<featureMovement>::iterator feat = listFeatures.begin();
 		while (feat != listFeatures.end()) {

@@ -49,9 +49,6 @@ for ff = feats
     end
     indf=indf+1;
     pause(.3);
-    
-    disp([ff.x;ff.y]);
-    pause;
 end
 
 close(fig);
