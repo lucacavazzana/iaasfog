@@ -34,6 +34,7 @@ typedef struct {
 	int index;
 	featureStatus status;
 	double ratio;
+	CvMat fitLine;
 } featureMovement;
 
 

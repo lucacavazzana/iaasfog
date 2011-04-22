@@ -5,10 +5,6 @@
  */
 #include "iaas.h"
 
-CvPoint2D32f iaasGetCollinearPoint(CvPoint2D32f *list, CvMat *line) {
-
-}
-
 double iaasTwoLinesAngle(CvMat* line1, CvMat* line2) {
 	double angle;
 	double l1, l2, m1, m2;
@@ -30,13 +26,30 @@ double iaasTwoLinesAngle(CvMat* line1, CvMat* line2) {
 
 CvPoint2D32f iaasPointAlongLine(CvMat *line, CvPoint2D32f firstPoint, CvPoint2D32f lastPoint, float pixelDistance) {
 	CvPoint2D32f newPoint;
-	int directionX = sign(firstPoint.x-lastPoint.x);
-	int directionY = sign(firstPoint.y-lastPoint.y);
+	/*
+	int directionX = 1;
+	if((lastPoint.x-firstPoint.x) < 0)
+		directionX = -1;
+	int directionY = 1;
+	if((lastPoint.y-firstPoint.y) < 0)
+		directionY = -1;
 	// Slope (m) = -a/b
 	double m = -(line->data.db[0]/line->data.db[1]);
 	double magnitude = sqrt(1+m*m);
 	newPoint.x = lastPoint.x + (directionX)*pixelDistance/magnitude;
 	newPoint.y = lastPoint.y + (directionY)*pixelDistance*m/magnitude;
+	return newPoint;*/
+	float angle = atan2((double) lastPoint.y - firstPoint.y, (double) lastPoint.x - firstPoint.x);
+//	angle = atan2((double) firstPoint.y - lastPoint.y, (double) firstPoint.x - lastPoint.x);
+	//printf("Angle: %f\n", angle/(2*PI)*360);
+	newPoint.x = lastPoint.x + (pixelDistance * cos(angle));
+	newPoint.y = lastPoint.y + (pixelDistance * sin(angle));
+
+#ifdef _DEBUG
+	float dist = iaasTwoPointsDistance(newPoint, lastPoint);
+	printf("TEST: %f\n", dist);
+#endif
+	//cvLine(image, p, q, color, line_thickness, CV_AA, 0);
 	return newPoint;
 }
 
@@ -65,7 +78,7 @@ void iaasBestJoiningLine(CvPoint2D32f *list, int nPoints, CvMat* joinLine) {
 	float *bestLine = new float[4];
 
 	CvMat point_mat = cvMat(1, nPoints, CV_32FC2, list);
-	cvFitLine(&point_mat, CV_DIST_L2 , 0, 0.01, 0.01, bestLine);
+	cvFitLine(&point_mat, CV_DIST_L2, 0, 0.01, 0.01, bestLine);
 
 	// Compute parameters
 	float m = bestLine[1]/bestLine[0];
@@ -150,17 +163,12 @@ CvPoint2D32f iaasProjectPointToLine(CvPoint2D32f point1, CvPoint2D32f point2, Cv
 	return cvPoint2D32f(data_X[0], data_X[1]);
 }
 
-bool iaasPointIsInFOV(CvPoint point, int offset){
+template <typename T>bool iaasPointIsInFOV(const T point, int offset){
 	if(iaasIsInClosedInterval<int>(point.x, 0+offset, FRAME_WIDTH-1-offset) &&
 			iaasIsInClosedInterval<int>(point.y, 0+offset, FRAME_HEIGHT-1-offset)){
 		return true;
 	}else
 		return false;
-}
-
-bool iaasPointIsInFOV(CvPoint2D32f point, int offset){
-	CvPoint p = cvPoint(cvRound(point.x), cvRound(point.y));
-	return iaasPointIsInFOV(p, offset);
 }
 
 void iaasDrawStraightLine(IplImage* image, CvMat* line) {
@@ -221,6 +229,13 @@ void drawFeatures(IplImage *image, CvPoint2D32f *points, int size) {
 	for(int i=0; i<size; i++) {
 		cvCircle(image, cvPoint(cvRound(points[i].x), cvRound(points[i].y)), 2, CV_RGB(255, 255, 255));
 	}
+}
+
+void iaasDrawFlowFeature(IplImage* image, featureMovement &feat) {
+	for(int i=0; i<feat.positions.size(); i++) {
+		cvCircle(image, cvPoint(cvRound(feat.positions[i].x), cvRound(feat.positions[i].y)), 2, CV_RGB(255, 255, 255));
+	}
+	//iaasDrawStraightLine(image, &feat.fitLine);
 }
 
 void iaasDrawFlowFieldNew(IplImage* image, list<featureMovement> listFeatures,

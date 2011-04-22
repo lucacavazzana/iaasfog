@@ -38,6 +38,8 @@ CvPoint2D32f iaasPointAlongLine(CvMat *line, CvPoint2D32f firstPoint, CvPoint2D3
  */
 double iaasTwoLinesAngle(CvMat* line1, CvMat* line2);
 
+void iaasDrawFlowFeature(IplImage* image, featureMovement &feat);
+
 /**
  * Returns the distance between a point and a line
  *
@@ -118,9 +120,15 @@ template <class P> CvPoint2D32f iaasCentroid(P *points, int num_points){
 	return point;
 }
 
-bool iaasPointIsInFOV(CvPoint point, int offset=0);
+/**
+ * Returns true if the point is in Field of View
+ *
+ * @param point Point to check
+ * @param offset Optional offset from border
+ * @return True if point is in Field of View of image
+ */
+template <typename T>bool iaasPointIsInFOV(const T point, int offset=0);
 
-bool iaasPointIsInFOV(CvPoint2D32f point, int offset=0);
 
 /**
  * Returns true if the corner tracked in two frames is
