@@ -17,7 +17,17 @@ function [bestLam, bestModel, bestError] = myRansac(feats, showPlot)
 %   $Revision: xxxxx $  $Date: 2011/04/07 17:20:22 $
 
 
-NORMALIZE = 1;
+NORMALIZE_MEAN = 1;
+NORMALIZE_MINMAX = 2;
+NORMALIZE_EXTR = 3;
+
+%---- SET HERE ------------------------------------------------------------
+% normalize contrast data
+% ==1: using mean
+% ==2: using min-max
+% ==3: using extremities
+NORMALIZE = 2;
+%--------------------------------------------------------------------------
 
 if ~exist('showPlot','var')
     showPlot = 0;
@@ -28,8 +38,14 @@ NSET = size(feats,2);
 % normalizing data
 if NORMALIZE
     for ii = 1:NSET
-        notZero = feats(ii).contr(feats(ii).contr~=0); % FIXME: this passage is necessary until the c function is fixed
-        feats(ii).contr = feats(ii).contr/mean(2*notZero);
+        notZero = feats(ii).contr(feats(ii).contr~=0);
+        if NORMALIZE == NORMALIZE_MEAN
+            feats(ii).contr = feats(ii).contr/(2*mean(notZero));
+        elseif NORMALIZE == NORMALIZE_MINMAX
+            feats(ii).contr = (feats(ii).contr-min(notZero))/max(notZero);
+        elseif NORMALIZE == NORMALIZE_EXTR
+            feats(ii).contr = (feats(ii).contr-notZero(1))/notZero(end);
+        end
     end
 end
 
@@ -42,8 +58,15 @@ end
 % PARAMETERS
 N = ceil(NSET*.25); % model
 K = 10; % max iterations
-T = .2;  % threshold for a datum to fit
 D = ceil(NSET*.75); % required number to assert the model fits well the data
+T = .2;  % threshold for a datum to fit
+if NORMALIZE == NORMALIZE_MEAN
+    T = .08;
+elseif NORMALIZE == NORMALIZE_MINMAX
+    T = .08;
+elseif NORMALIZE == NORMALIZE_EXTR
+    T = .08;
+end
 
 % some initializations...
 maxTrack = max([feats.num]);	% longest tracking

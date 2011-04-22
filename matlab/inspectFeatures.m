@@ -48,6 +48,7 @@ for ff = feats
         pause(.1);
     end
     indf=indf+1;
+    drawnow;
     pause(.3);
 end
 
