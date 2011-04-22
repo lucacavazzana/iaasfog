@@ -159,6 +159,13 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 		// TODO: tmpFeatures include values not valid (depends on track_status, etc.)
 		filterFeaturesTooClose(newCorners, &newCornersCount, &tmpFeatures[0], featuresAlive.size());
 
+		// Remove new features too close to already tracked
+		/*
+		feat = listFeatures.begin();
+		while(feat != listFeatures.end()) {
+			filterFeaturesTooClose(newCorners, &newCornersCount, &feat->positions[0], feat->positions.size());
+			feat++;
+		}*/
 		tmpFeatures.clear();
 
 		// Deallocate image0 (not useful anymore)
@@ -169,7 +176,11 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 
 	}
 
-	// Filter features still alive
+	// Filter features still alive and create array with lines
+	int j = 0;
+	CvMat *joiningLines = new CvMat[listFeatures.size()];
+	image0 = cvLoadImage(pathImages[0].c_str(), CV_LOAD_IMAGE_GRAYSCALE);
+
 	feat = listFeatures.begin();
 	while (feat != listFeatures.end()) {
 		// If features is not undead (still alive)
@@ -177,20 +188,57 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 		if(feat->status != UNDEAD) {
 			erase = !verifyFeatureConsistency(*feat);
 		}
-		if(erase)
+		if(erase) {
 			feat = listFeatures.erase(feat);
-		else
+		}
+		else {
+			joiningLines[j++] = feat->fitLine;
+			iaasDrawStraightLine(image0, &feat->fitLine);
 			feat++;
+		}
 	}
 
+	// Estimate vanishing point
+	CvPoint2D32f vp = iaasFindBestCrossedPoint(image0, joiningLines, j);
+	cout << "VP: (" << vp.x << ";" << vp.y << ")" << endl;
+	drawFeatures(image0, &vp, 1);
+
+	cvShowImage(NAME_WINDOW, image0);
+	key = cvWaitKey(0);
+	cvReleaseImage(&image0);
+
+	// Remove features too far from vanishing point
+	image0 = cvLoadImage(pathImages[0].c_str(), CV_LOAD_IMAGE_GRAYSCALE);
+
+	feat = listFeatures.begin();
+	while (feat != listFeatures.end()) {
+		// If features is not undead (still alive)
+		float distance = iaasPointLineDistance(&feat->fitLine, vp);
+		if(distance > 10.0f) {
+			feat = listFeatures.erase(feat);
+		}
+		else {
+			// Estimate positions of feature using vanishing point
+			BTTFFeatures(*feat, &vp);
+
+			iaasDrawStraightLine(image0, &feat->fitLine);
+
+			feat++;
+		}
+	}
+	drawFeatures(image0, &vp, 2);
+	cvShowImage(NAME_WINDOW, image0);
+	key = cvWaitKey(0);
+	cvReleaseImage(&image0);
+
 	// Extract contrast for each point
+#ifdef REVERSE_IMAGE
+	for(int frameIndex=pathImages.size()-1; frameIndex >= 0; frameIndex--) {
+#else
 	for(int frameIndex=0; frameIndex < pathImages.size(); frameIndex++) {
+#endif
 		// Load image
 		image0 = cvLoadImage(pathImages[frameIndex].c_str(), CV_LOAD_IMAGE_GRAYSCALE);
-
-#ifdef _TESTING
-		std::cout << pathImages[frameIndex].c_str() << std::endl;
-#endif //_TESTING
 
 		// For each feature
 		list<featureMovement>::iterator feat = listFeatures.begin();
@@ -215,31 +263,32 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 		cvReleaseImage(&image0);
 	}
 
-
 	image0 = cvLoadImage(pathImages[0].c_str(), CV_LOAD_IMAGE_GRAYSCALE);
 
 	feat = listFeatures.begin();
 	// Print contrast from features in images
 	int i=0;
 	while (feat != listFeatures.end()) {
-		//if(verifyValidFeature(*feat)) {
-			// OK
-			cout << "Feature " << i++ << ": ";
-			for(int j=0; j<feat->contrast.size(); j++) {
-				cout << feat->contrast[j] << "\t";
-			}
-			cout << endl;
-			feat++;
-		/*}
-		else {
-			feat = listFeatures.erase(feat);	// Delete
-		}*/
+		cout << "Feature " << i++ << " contrast: ";
+		for(int j=0; j<feat->contrast.size(); j++) {
+			cout << feat->contrast[j] << "\t";
+		}
+		iaasDrawFlowFeature(image0, *feat);
+		cvShowImage(NAME_WINDOW, image0);
+		key = cvWaitKey(0);
+		cout << endl;
+		feat++;
 	}
+	cvShowImage(NAME_WINDOW, image0);
+	key = cvWaitKey(0);
+	cvReleaseImage(&image0);
+	image0 = cvLoadImage(pathImages[0].c_str(), CV_LOAD_IMAGE_GRAYSCALE);
 
 	if(verb) {
 
 		//Draw flaw field
 		iaasDrawFlowFieldNew(image0, listFeatures, CV_RGB(255, 0, 0));
+		drawFeatures(image0, &vp, 1);
 
 		cvShowImage(NAME_WINDOW, image0);
 		key = cvWaitKey(0);
@@ -249,7 +298,6 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 
 	//Releasing Resources
 	cvReleaseImage(&image0);
-
 	cvDestroyWindow(NAME_WINDOW);
 }
 

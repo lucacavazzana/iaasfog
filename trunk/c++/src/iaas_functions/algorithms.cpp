@@ -1,6 +1,6 @@
 /**
  * @file algorithms.h
- * @author Alessandro Stranieri && Stefano Cadario, Luca Cavazzana
+ * @author Stefano Cadario, Luca Cavazzana (originally developed by Alessandro Stranieri)
  * @date Feb 04, 2009
  */
 #include "iaas.h"
@@ -8,96 +8,118 @@
 #include <vector>
 
 CvRect getContrFrame (CvPoint2D32f *point, IplImage *img) {
-	//rounding
-	int x = int(point->x+.5);
-	int y = int(point->y+.5);
+        // Rounding
+        int x = int(point->x+.5);
+        int y = int(point->y+.5);
 
-	return cvRect(
-			max(0,x-FRAME_RADIUS),
-			max(0,y-FRAME_RADIUS),
-			min(FRAME_SIZE, min(img->width-x, x+1)+FRAME_RADIUS), // radius+1 + (width-1 - x) if on the right,  x + radius+1 if on the left
-			min(FRAME_SIZE, min(img->height-y, y+1)+FRAME_RADIUS)
-			);
+        return cvRect(	max(0,x-FRAME_RADIUS),
+        				max(0,y-FRAME_RADIUS),
+        				min(FRAME_SIZE, min(img->width-x, x+1)+FRAME_RADIUS), // radius+1 + (width-1 - x) if on the right,  x + radius+1 if on the left
+        				min(FRAME_SIZE, min(img->height-y, y+1)+FRAME_RADIUS));
 }
 
 double getRMSContrast(const IplImage *img, CvPoint2D32f *point) {
 
-	// element out of the image
-	if (point->x < 0 || point->x > img->width-1 || point->y < 0 || point->y > img->height-1) {
-		//std::cout << "- invalid feat" << std::endl;
-		return -1;
-	}
+        // Element out of the image
+        if (!iaasPointIsInFOV(*point))
+                return -1;
 
-	CvScalar avg, sdv;
+        CvScalar avg, sdv;
 
-	cvSetImageROI((IplImage *)img, getContrFrame(point, (IplImage*)img));
-	cvAvgSdv(img, &avg, &sdv);
+        cvSetImageROI((IplImage *)img, getContrFrame(point, (IplImage*)img));
+        cvAvgSdv(img, &avg, &sdv);
 
 #ifdef _TESTING
-	std::cout << "(" << point->x << "," << point->y << ") " <<
-				"frame: " << img->roi->height << "x" << img->roi->width << " " <<
-				"std: " << sdv.val[0] << std::endl;
-	for(int yy = 0; yy < img->roi->height; yy++){
-		uchar* ptr = (uchar*) img->imageData + img->widthStep*(img->roi->yOffset+yy);
-		for(int xx = 0; xx < img->roi->width; xx++) {
-			std::cout << (int)ptr[img->roi->xOffset + xx]  << " ";
-		}
-		std::cout << std::endl;
-	}
-	std::cout << std::endl;
+        std::cout << "(" << point->x << "," << point->y << ") " <<
+                                "frame: " << img->roi->height << "x" << img->roi->width << " " <<
+                                "std: " << sdv.val[0] << std::endl;
+        for(int yy = 0; yy < img->roi->height; yy++){
+                uchar* ptr = (uchar*) img->imageData + img->widthStep*(img->roi->yOffset+yy);
+                for(int xx = 0; xx < img->roi->width; xx++) {
+                        std::cout << (int)ptr[img->roi->xOffset + xx]  << " ";
+                }
+                std::cout << std::endl;
+        }
+        std::cout << std::endl;
 #endif
 
-	cvResetImageROI((IplImage *)img);
+        cvResetImageROI((IplImage *)img);
 
 #ifdef _TESTING
-	cvCircle((CvArr*)img, cvPoint((int)point->x,(int)point->y), 3, CV_RGB(255,0,0));
-	cvNamedWindow("asd",CV_WINDOW_AUTOSIZE);
-	cvShowImage("asd",img);
-	cvWaitKey(0);
-	cvDestroyWindow("asd");
+        cvCircle((CvArr*)img, cvPoint((int)point->x,(int)point->y), 3, CV_RGB(255,0,0));
+        cvNamedWindow("asd",CV_WINDOW_AUTOSIZE);
+        cvShowImage("asd",img);
+        cvWaitKey(0);
+        cvDestroyWindow("asd");
 #endif
 
-	return sdv.val[0];
+        return sdv.val[0];
 }
 
 double getWeberContrast(const IplImage *img, CvPoint2D32f *point, CvPoint2D32f *vp) {
 
-	// element out of the image
-	if (point->x < 0 || point->x > img->width-1 || point->y < 0 || point->y > img->height-1) {
-		//std::cout << "- invalid feat" << std::endl;
-		return -1;
-	}
+        // Element out of the image
+        if (!iaasPointIsInFOV(*point))
+                return -1;
 
-	CvScalar avg;
-	//CvRect rect = cvRect(max(0.0f,point->x-RECTANGLE_SIZE/2), max(0.0f,point->y-RECTANGLE_SIZE/2), min((float)RECTANGLE_SIZE, img->width-point->x+RECTANGLE_SIZE/2), min((float)RECTANGLE_SIZE, img->height-point->y+RECTANGLE_SIZE/2));
+        CvScalar avg;
 
-	if (vp==NULL)
-		cvSetImageROI((IplImage *)img, getContrFrame(point, (IplImage*)img));
-	else
-		cvSetImageROI((IplImage *)img, getContrFrame(vp, (IplImage*)img));
+        if (vp==NULL)
+                cvSetImageROI((IplImage *)img, getContrFrame(point, (IplImage*)img));
+        else
+                cvSetImageROI((IplImage *)img, getContrFrame(vp, (IplImage*)img));
 
-	//TODO: test
-	avg = cvAvg(img);
-	cvResetImageROI((IplImage *)img);
+        //TODO: test
+        avg = cvAvg(img);
+        cvResetImageROI((IplImage *)img);
 
-	return abs((double)*((uchar*)img->imageData + (int)point->y*img->widthStep + (int)point->x)-avg.val[0])/avg.val[0];
+        return abs((double)*((uchar*)img->imageData + (int)point->y*img->widthStep + (int)point->x)-avg.val[0])/avg.val[0];
 }
 
 double getMichelsonContrast(const IplImage *img, CvPoint2D32f *point) {
 
-	// element out of the image
-	if (point->x < 0 || point->x > img->width-1 || point->y < 0 || point->y > img->height-1) {
-		//std::cout << "- invalid feat" << std::endl;
-		return -1;
+        // Element out of the image
+        if (!iaasPointIsInFOV(*point))
+        	return -1;
+
+        double maxV, minV;
+        cvSetImageROI((IplImage *)img, getContrFrame(point, (IplImage*)img));
+
+        cvMinMaxLoc(img, &minV, &maxV);
+        cvResetImageROI((IplImage *)img);
+
+        return (maxV-minV)/(maxV+minV);
+}
+
+void BTTFFeatures(featureMovement &feat, CvPoint2D32f *vp) {
+	int i;
+	// Prolong line, generate virtual features (computed not founded because inside fog)
+	int maxAdd = feat.startFrame - feat.positions.size() + 1;
+	cout << "Point found: " << feat.positions.size();
+	int lastIndex = feat.positions.size() - 1;
+	for(i=0; i<maxAdd; i++) {
+		float newDistance;
+
+		// If null don't use vanishing point
+		if(vp != NULL)
+			newDistance = getPointCDistance(feat.positions[lastIndex-2],feat.positions[lastIndex-1],*vp, 2.0f);
+		else
+			newDistance = getCrossRatioDistance(feat.positions[lastIndex-2],feat.positions[lastIndex-1],feat.positions[lastIndex], (4.0f/3.0f));
+
+		// If next point distance is below 0.5 pixel stop
+		if(newDistance<0.5f)
+			break;
+
+		CvPoint2D32f newPoint = iaasPointAlongLine(&feat.fitLine, feat.positions[lastIndex-1], feat.positions[lastIndex], newDistance);
+		feat.positions.push_back(newPoint);
+		lastIndex++;
+#ifdef _DEBUG
+		lastIndex = feat.positions.size() - 1;
+		float realDistance = iaasTwoPointsDistance(feat.positions[lastIndex-1],feat.positions[lastIndex]);
+		cout << "( " << newDistance << "-" << realDistance << ") ";
+#endif
 	}
-
-	double maxV, minV;
-	cvSetImageROI((IplImage *)img, getContrFrame(point, (IplImage*)img));
-
-	cvMinMaxLoc(img, &minV, &maxV);
-	cvResetImageROI((IplImage *)img);
-
-	return (maxV-minV)/(maxV+minV);
+	cout << " Point added: " << i << endl;
 }
 
 bool verifyFeatureConsistency(featureMovement &feat) {
@@ -108,14 +130,25 @@ bool verifyFeatureConsistency(featureMovement &feat) {
 		// Correct points positions (move points in order to lie
 		// on the best line fitting all points)
 
-		CvMat line;
+		iaasBestJoiningLine(&feat.positions[0], feat.positions.size(), &feat.fitLine);
+		//iaasJoiningLine(feat.positions[0],feat.positions[feat.positions.size()-1],&feat.fitLine);
 
-		iaasBestJoiningLine(&feat.positions[0], feat.positions.size(), &line);
+		float maxDistance = 0;
 
-		for(int i=1; i < feat.positions.size()-1; i++) {
-			feat.positions[i] = iaasProjectPointToLine(feat.positions[i], &line);
-			//cout << " " << iaasPointLineDistance(&line, feat.positions[i]) << endl;
+		for(int i=0; i < feat.positions.size()-1; i++) {
+			/*float locDistance = abs(iaasPointLineDistance(&feat.fitLine, feat.positions[i]));
+			if(locDistance>maxDistance)
+				maxDistance = locDistance;*/
+			feat.positions[i] = iaasProjectPointToLine(feat.positions[i], &feat.fitLine);
 		}
+#ifdef _DEBUG
+		cout << "Max Distance " << maxDistance << endl;
+#endif
+		/*if(maxDistance > 2.0f) {
+			feat.status = DELETE;
+			cout << "Delete because distance " << maxDistance << endl;
+			return false;
+		}*/
 
 		double ratio = 0;
 		double mean = 0;
@@ -130,31 +163,18 @@ bool verifyFeatureConsistency(featureMovement &feat) {
 		ratio = mean/(feat.positions.size()-4);
 		variance = variance/(feat.positions.size()-4);
 		variance = sqrt(variance - ratio*ratio);
-		// TODO: generate virtual features (computed not founded because inside fog)
 
 		feat.ratio = ratio;
 		//cout << endl;
 		//cout << "Ratios: " << ratio << " " << variance << endl;
-		if(ratio < CRtolleranceMin || ratio > CRtolleranceMax || variance > 0.05) {
+		if(ratio < CRtolleranceMin || ratio > CRtolleranceMax || variance > 0.1) {
 			feat.status = DELETE;
 			cout << "Delete because mean " << ratio << " or variance " << variance << endl;
 			return false;
 		}
 		else {
-			// TODO: Prolong line
-			int maxAdd = feat.startFrame - feat.positions.size() + 1;
-			cout << "Distance: ";
-			for(int i=0; i<maxAdd; i++) {
-				int lastIndex = feat.positions.size() -1;
-				float newDistance;
-				newDistance = getCrossRatioDistance(feat.positions[lastIndex-2],feat.positions[lastIndex-1],feat.positions[lastIndex], (4.0f/3.0f));
-				cout << newDistance << " ";
-				// If next point distance is below 0.5 pixel stop
-				if(newDistance<0.5f)
-					break;
-				feat.positions.push_back(iaasPointAlongLine(&line, feat.positions[feat.positions.size()-2],feat.positions[feat.positions.size()-1], newDistance));
-			}
-			cout << endl;
+			// Prolong line, generate virtual features (computed not founded because inside fog)
+			//BTTFFeatures(feat);
 		}
 		return true;
 	}
@@ -179,7 +199,7 @@ bool verifyNewFeatureIsOk(list<featureMovement>::iterator feat, const CvPoint2D3
 	}
 
 	// Check if new point is negative
-	if(newPoint.x < 0 || newPoint.y < 0 || newPoint.x > FRAME_WIDTH || newPoint.y > FRAME_HEIGHT) {
+	if(!iaasPointIsInFOV(newPoint,0)) {
 		pointOk = false;
 		goto endCheck;
 	}
@@ -268,7 +288,7 @@ void filterFeaturesTooClose(CvPoint2D32f *newPoints, int *nNewPoints, CvPoint2D3
 		if(erase) {
 			nDelete++;
 		}
-		else {
+		else if(nDelete>0){
 			// Scale element with deleted
 			newPoints[i-nDelete] = newPoints[i];
 		}
@@ -276,33 +296,6 @@ void filterFeaturesTooClose(CvPoint2D32f *newPoints, int *nNewPoints, CvPoint2D3
 	// Set new size of array
 	*nNewPoints = *nNewPoints-nDelete;
 }
-
-/*
-bool verifyValidFeature(featureMovement feat) {
-	int nPoints = feat.positions.size();
-	if(nPoints < MINIMUM_LIFE) {
-		return false;
-	}
-	else {
-		CvMat line;
-		double ptsDistance;
-		iaasJoiningLine(feat.positions[0], feat.positions[nPoints-1], &line);
-		ptsDistance = iaasTwoPointsDistance(feat.positions[0], feat.positions[nPoints-1]) / 50;
-
-		vector<CvPoint2D32f>::iterator point = feat.positions.begin() + 1;
-		while(point != feat.positions.end()) {
-
-			double distance = iaasPointLineDistance(&line, *point);
-
-			// If distance of point is too far from line drop that feature
-			if(ptsDistance < distance) {
-				return false;
-			}
-			point++;
-		}
-	}
-	return true;
-}*/
 
 void iaasFindAndTrackCorners(double quality_level, IplImage *imageA, IplImage *imageB, int *track_count, CvPoint2D32f *cornersA, CvPoint2D32f *cornersB, float *track_errors, char* track_status){
 	//Shi-Tomasi parameters
@@ -514,15 +507,13 @@ double iaasMeanTimeToImpact(CvPoint2D32f vanishing_point, CvPoint2D32f *cornersA
 	return tot_tti/n_corners;
 }
 
-
-
 CvPoint2D32f iaasEstimateVanishingPoint(CvPoint2D32f *pointsA, CvPoint2D32f *pointsB, int num_points, char *status){
 	//Number of tracked corners
 	int tracked_corners = iaasNumberFoundCorners(status, num_points);
 
 	//Create set of lines from valid corners
 	CvMat *joiningLines = new CvMat[tracked_corners];
-	for(int i = 0, j= 0; i < num_points; i++){
+	for(int i = 0, j= 0; i < num_points; i++) {
 		if(status[i] == 1){
 			iaasJoiningLine(pointsA[i], pointsB[i], joiningLines+j);
 			j++;
@@ -532,6 +523,65 @@ CvPoint2D32f iaasEstimateVanishingPoint(CvPoint2D32f *pointsA, CvPoint2D32f *poi
 	CvPoint2D32f vp = iaasHoughMostCrossedPoint(joiningLines, tracked_corners);
 
 	return vp;
+}
+
+CvPoint2D32f iaasFindBestCrossedPoint(IplImage* image, CvMat *lines, int n_lines, int img_width, int img_height) {
+	CvPoint2D32f result;
+	CvPoint2D32f temp;
+	vector<CvPoint2D32f> intersect;
+	vector<CvPoint2D32f> bestFit;
+	for(int i=0; i<n_lines; i++) {
+		for(int j=0; j<n_lines; j++) {
+			if(i!=j) {
+				temp = iaasIntersectionPoint(&lines[i], &lines[j]);
+				if(iaasPointIsInFOV(temp)) {
+					intersect.push_back(temp);
+				}
+			}
+		}
+	}
+
+	// Find best candidate vanishing point from set
+	int MAX_DIST = MAX(img_width, img_height)/15;	// Maximum distance where points is minimum
+	int MIN_DIST = 2;								// Maximum distance where points is maximum
+
+	float rank = 0;
+	float bestRank = 0;
+
+	for(int i=0; i<intersect.size(); i++) {
+		rank = 0;
+		for(int j=0; j<intersect.size(); j++) {
+			if(i == j) continue;
+			float distance = iaasTwoPointsDistance(intersect[i], intersect[j]);
+			if(distance < MAX_DIST) {
+				if(distance < MIN_DIST)
+					rank += 1;
+				else
+					rank += (MAX_DIST-distance)/(MAX_DIST-MIN_DIST);
+			}
+		}
+		if(rank > bestRank) {
+			result = intersect[i];
+			bestRank = rank;
+		}
+	}
+
+	// Compute centroid
+	float x=0, y=0;
+	int size=0;
+	for(int i=0; i<intersect.size(); i++) {
+		if(iaasTwoPointsDistance(result, intersect[i]) < MAX_DIST) {
+			//bestFit.push_back();
+			x +=intersect[i].x;
+			y +=intersect[i].y;
+			size++;
+			cvCircle(image, cvPoint(cvRound(intersect[i].x), intersect[i].y), 1, CV_RGB(255, 255, 255));
+		}
+	}
+	result.x = x/size;
+	result.y = y/size;
+
+	return result;
 }
 
 

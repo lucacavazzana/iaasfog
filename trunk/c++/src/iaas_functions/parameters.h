@@ -54,7 +54,7 @@
 /**
  * Size of the patch used in "Hough" algorithm.
  */
-#define PATCH_SIZE 20
+#define PATCH_SIZE 2//20
 
 /**
  * Number of frames corners are to be tracked
@@ -68,6 +68,14 @@
 
 #define CRtolleranceMax 4.0f/3.0f*1.05f
 #define CRtolleranceMin 4.0f/3.0f*0.95f
+
+#define MIN_FEATURE_DISTANCE	0 //1
+
+#define FRAME_RADIUS    		2
+
+#define FRAME_SIZE				2*FRAME_RADIUS+1
+
+#define MINIMUM_LIFE			4
 
 #ifndef PARAMETERS_H_
 #define PARAMETERS_H_

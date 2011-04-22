@@ -9,11 +9,6 @@
 #ifndef ALGORITHMS_H_
 #define ALGORITHMS_H_
 
-#define MIN_FEATURE_DISTANCE 0//1
-#define FRAME_RADIUS	2
-#define FRAME_SIZE	2*FRAME_RADIUS+1
-#define MINIMUM_LIFE	6
-
 #include "parameters.h"
 /**
  * Given a sequence of two images, finds corners in the first one and tracks them in the second one.
@@ -119,6 +114,8 @@ void iaasFilterNotInFOV(CvPoint2D32f *pointsA, CvPoint2D32f *pointsB, int num_po
  * @param vanishing_point
  */
 void iaasFilterByMotionDirection(CvPoint2D32f *pointsA, CvPoint2D32f *pointsB, int num_points, char *status, CvPoint2D32f vanishing_point);
+
+CvPoint2D32f iaasFindBestCrossedPoint(IplImage* image, CvMat *lines, int n_lines, int img_width=FRAME_WIDTH, int img_height=FRAME_HEIGHT);
 
 /**
  * Estimate vanishing point using an a la Hough approach. A set of lines is provied as argument. These lines
@@ -229,13 +226,20 @@ double getWeberContrast(const IplImage *img, CvPoint2D32f *point, CvPoint2D32f *
  */
 double getMichelsonContrast(const IplImage *img, CvPoint2D32f *point);
 
-//bool verifyValidFeature(featureMovement feat);
+/*
+ * Computes the cross-ratio of first 4 points of array
+ * @param array of points with at least four element to analyze
+ * @return cross-ratio computed
+ */
+float getCrossRatio(CvPoint2D32f *points);
+
 bool verifyNewFeatureIsOk(list<featureMovement>::iterator feat, const CvPoint2D32f newPoint, const int trackStatus=1);
 bool verifyFeatureConsistency(featureMovement &feat);
 
 float getCrossRatioDistance(CvPoint2D32f a, CvPoint2D32f b, CvPoint2D32f c, float crossRatio);
 float getPointCDistance(CvPoint2D32f a, CvPoint2D32f b, CvPoint2D32f d, float crossRatio);
 void filterFeaturesTooClose(CvPoint2D32f *newPoints, int *nNewPoints, CvPoint2D32f *existingPoints, int nExistingPoints);
-float getCrossRatio(CvPoint2D32f *points);
+
+void BTTFFeatures(featureMovement &feat, CvPoint2D32f *vp = NULL);
 
 #endif //ALGORITHMS_H_
