@@ -12,7 +12,9 @@ function [] = iaas(showPlots)
 
 % OPTIONS
 REFINDFEATURES = 1;   % = 1 to call the exe to recompute the features (useless and costly for multiple run on the same set of images)
-
+global ASD
+ASD.x=1;
+ASD.Y=2;
 close all;
 
 if ~exist('showPlots','var')

@@ -1,4 +1,4 @@
-function [feats]  = parseFeatures(fileName, cleanFeats)
+function [feats]  = parseFeatures(fileName)
 
 %%
 % parseFeatures(FILENAME) parses the output file of the feature finder
@@ -20,7 +20,7 @@ function [feats]  = parseFeatures(fileName, cleanFeats)
 
 
 REVERSE = 1;    %FIXME : rimuovere quando findFeatures sparerà fuori feats nell'ordine corretto (stefano suks)
-%FIXME: rimuovere cleanFeats quando sarà sistemato in findFeatures
+CLEANFEATS = 1;  %FIXME: rimuovere cleanFeats quando sarà sistemato in findFeatures
 
 
 if ~exist('fileName','var')
@@ -56,17 +56,20 @@ fclose(f);
 
 %% TODO: remove this when the c function will be fixed---------------------
 % clears too-close tracking set
-if cleanFeats
-    for ii=size(feats,2):-1:1
-        for jj=ii-1:-1:1
-            if (feats(ii).num==feats(jj).num && ...
-                    all(round(feats(ii).x)==round(feats(jj).x)) && ...
-                    all(round(feats(ii).y)==round(feats(jj).y))) % TODO: refine here
-                feats(ii)=[]; % deleting feature
-                break;
+if CLEANFEATS
+    ii=1;
+    while ii<=size(feats,2)
+        for jj=size(feats,2):-1:ii+1
+            if(feats(ii).start==feats(jj).start && ...
+                    feats(ii).num==feats(jj).num && ...
+                    all(abs(feats(ii).x-feats(jj).x)<1) && ...
+                    all(abs(feats(ii).y-feats(jj).y)<1))
+                feats(jj) = []; % deleting the element
             end
         end
+        ii=ii+1;
     end
+    disp(['- After cleaning: ', num2str(size(feats,2)), ' feats']);
 end
 %--------------------------------------------------------------------------
 if REVERSE
@@ -74,7 +77,6 @@ if REVERSE
         feats(ii).start = feats(ii).start-feats(ii).num+1;
         feats(ii).x = feats(ii).x(end:-1:1);
         feats(ii).y = feats(ii).y(end:-1:1);
-        feats(ii).contr = feats(ii).contr(end:-1:1);
     end
 end
 
