@@ -1,26 +1,29 @@
 function [feats]  = parseFeatures(fileName)
 
-%%
-% parseFeatures(FILENAME) parses the output file of the feature finder
-% INPUT:
-%   'fileName'  :   valid name of the output file
-%   'cleanFeats':   temporary parameter, if 1 removes redundant features
-%                   (since the until the C++ function is fixed)
+%PARSEFEATURES
 %
-% OUTPUT:
-%   'feats'     :   list of struct representing the features as
-%                   f.start - first frame the feature appears
-%                   f.num - # of frame the feature is tracked
-%                   f.x - x coords of the features in each frame appears
-%                   f.y - x coords of the features in each frame appears
-%                   f.contr - contrast value of the feat for each frame
+%   parseFeatures(FILENAME) parses the output file of the feature finder
+%   INPUT:
+%     'fileName'    :   valid name of the output file
+%     'cleanFeats'  :   temporary parameter, if 1 removes redundant
+%                       features (since the until the C++ function is fixed)
+%
+%   OUTPUT:
+%     'feats'       :   list of struct representing the features as
+%                       f.start - first frame the feature appears
+%                       f.num - # of frame the feature is tracked
+%                       f.x - x coords of the features in each frame appears
+%                       f.y - x coords of the features in each frame appears
+%                       f.contr - contrast value of the feat for each frame
+%                       f.tti - computed time-to-impact
+%                       f.pars - vector to store possible parameters
 
 %   Copyright 2011 Stefano Cadario, Luca Cavazzana.
 %   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 
-REVERSE = 1;    %FIXME : rimuovere quando findFeatures sparerà fuori feats nell'ordine corretto (stefano suks)
 CLEANFEATS = 1;  %FIXME: rimuovere cleanFeats quando sarà sistemato in findFeatures
+FILLLASTTTI = 1;
 
 
 if ~exist('fileName','var')
@@ -29,25 +32,21 @@ if ~exist('fileName','var')
 %     error(['    - ERROR: ', fileName, ' does not exist']);
 end
 
-if exist('cleanFeats','var') && cleanFeats~=0
-    cleanFeats=1;
-else
-    cleanFeats=0;
-end
-
 f = fopen(fileName,'r');
 coord_regex = '\d+(\.\d+)?';
 
 % parses the output of the c++ program, each line representes a feature in
 % the form:
-% #ImageFeatFirstAppears #ImagesFeatIsTracked [xValue yValue contrastValue ]+
+% #ImageFeatFirstAppears #ImagesFeatIsTracked #TimeToImpact [xValue yValue contrastValue ]+
 feats = [];
 tline = fgets(f);
 while (tline~=-1)
     parsed = str2double(regexp(tline,coord_regex,'match'));
     new.start = parsed(1)+1;    % starting image. +1 since starts counting from 0
     new.num = parsed(2);    % number of frame tracked
-    new.x = parsed(3:3:end)+1; new.y = parsed(4:3:end)+1; new.contr = parsed(5:3:end); % x, y and contr. +1 since starts from 0
+    new.x = parsed(3:4:end)+1; new.y = parsed(4:4:end)+1; new.contr = parsed(5:4:end); new.tti = parsed(6:4:end); % x, y, contr and time-to-impact. +1 since starts from 0
+%     new.pars = 0;
+    new.start = new.start-new.num+1;
     feats = [feats, new]; %#ok
     tline = fgets(f);
 end
@@ -72,11 +71,9 @@ if CLEANFEATS
     disp(['- After cleaning: ', num2str(size(feats,2)), ' feats']);
 end
 %--------------------------------------------------------------------------
-if REVERSE
-    for ii = 1:size(feats,2)
-        feats(ii).start = feats(ii).start-feats(ii).num+1;
-        feats(ii).x = feats(ii).x(end:-1:1);
-        feats(ii).y = feats(ii).y(end:-1:1);
+if FILLLASTTTI
+    for ii = 1:max(size(feats))
+        feats(ii).tti = [feats(ii).tti, 2*feats(ii).tti(end)-feats(ii).tti(end-1)];
     end
 end
 
