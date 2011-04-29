@@ -198,8 +198,16 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 		}
 	}
 
+	time_t begin, end;
+	time(&begin);
+
 	// Estimate vanishing point
 	CvPoint2D32f vp = iaasFindBestCrossedPoint(image0, joiningLines, j);
+
+	time(&end);
+	cout.precision(4);
+	cout << "Time elapsed for vanishing point: " << fixed << difftime(end, begin) << " seconds"<< endl;
+
 	cout << "VP: (" << vp.x << ";" << vp.y << ")" << endl;
 	drawFeatures(image0, &vp, 1);
 
@@ -220,7 +228,16 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 		else {
 			// Estimate positions of feature using vanishing point
 			BTTFFeatures(*feat, &vp);
-
+			float TTIb = 0;
+			float TTI = 0;
+			cout << "Time to impact: ";
+			for(int i=0; i < feat->positions.size()-1; i++) {
+				TTI = iaasTimeToImpact(vp, feat->positions[i+1], feat->positions[i]);
+				feat->timeToImpact.push_back(TTI);
+				cout << TTI << " " << TTI-TTIb << " " << endl;
+				TTIb = TTI;
+			}
+			cout << endl;
 			iaasDrawStraightLine(image0, &feat->fitLine);
 
 			feat++;
@@ -251,9 +268,11 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 #else
 			int index = frameIndex - feat->startFrame;
 #endif
-			// Get contrast of point
+			// TODO: Choice of algorithm as parameter (Get contrast of point)
 			if(index >= 0 && index < feat->positions.size()) {
-				float contrast = getRMSContrast(image0, &feat->positions[index]);
+				int radiusSize = 2;
+				//radiusSize = 2 + iaasTwoPointsDistance(vp, feat->positions[index])/FRAME_WIDTH*10;
+				float contrast = getRMSContrast(image0, &feat->positions[index], radiusSize);
 				feat->contrast.push_back(contrast);
 			}
 			feat++;
@@ -275,7 +294,7 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 		}
 		iaasDrawFlowFeature(image0, *feat);
 		cvShowImage(NAME_WINDOW, image0);
-		key = cvWaitKey(0);
+		//key = cvWaitKey(0);
 		cout << endl;
 		feat++;
 	}
@@ -492,6 +511,8 @@ void printFeatures(std::string filePath, list<featureMovement> listFeatures) {
 			f_out << feat->startFrame << "\t" << feat->contrast.size() << "\t";
 			for(int rec = 0; rec < feat->contrast.size(); rec++) {
 				f_out << feat->positions[rec].x << "\t"<< feat->positions[rec].y << "\t" << feat->contrast[rec] << "\t";
+				if(rec < feat->contrast.size() - 1)
+					f_out << feat->timeToImpact[rec] << "\t";
 			}
 			f_out << std::endl;
 			feat++;

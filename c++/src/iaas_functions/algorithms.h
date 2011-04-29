@@ -199,7 +199,7 @@ double iaasMeanTimeToImpact(CvPoint2D32f vanishing_point, CvPoint2D32f *cornersA
  * @param coordinates of the feature
  * @param image
  */
-CvRect getContrFrame (CvPoint2D32f *point, IplImage *img);
+CvRect getContrFrame (CvPoint2D32f *point, IplImage *img, int frameRadius=FRAME_RADIUS);
 
 /*
  * Computes the mean the Root Mean Square coontrast at the given coordinates.
@@ -207,7 +207,7 @@ CvRect getContrFrame (CvPoint2D32f *point, IplImage *img);
  * @param img image to analyze
  * @oaram point coordinates
  */
-double getRMSContrast(const IplImage *img, CvPoint2D32f *point);
+double getRMSContrast(const IplImage *img, CvPoint2D32f *point, int frameRadius=FRAME_RADIUS);
 
 /*
  * Computes the mean the Weber contrast at the given coordinates (using the
