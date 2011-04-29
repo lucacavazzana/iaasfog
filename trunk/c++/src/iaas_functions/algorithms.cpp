@@ -7,18 +7,18 @@
 #include <iostream>
 #include <vector>
 
-CvRect getContrFrame (CvPoint2D32f *point, IplImage *img) {
+CvRect getContrFrame(CvPoint2D32f *point, IplImage *img, int frameRadius) {
         // Rounding
-        int x = int(point->x+.5);
-        int y = int(point->y+.5);
+        int x = int(point->x/*+.5*/);
+        int y = int(point->y/*+.5*/);
 
-        return cvRect(	max(0,x-FRAME_RADIUS),
-        				max(0,y-FRAME_RADIUS),
-        				min(FRAME_SIZE, min(img->width-x, x+1)+FRAME_RADIUS), // radius+1 + (width-1 - x) if on the right,  x + radius+1 if on the left
-        				min(FRAME_SIZE, min(img->height-y, y+1)+FRAME_RADIUS));
+        return cvRect(	max(0,x-frameRadius),
+        				max(0,y-frameRadius),
+        				min(frameRadius, min(img->width-x, x+1)+frameRadius), // radius+1 + (width-1 - x) if on the right,  x + radius+1 if on the left
+        				min(frameRadius, min(img->height-y, y+1)+frameRadius));
 }
 
-double getRMSContrast(const IplImage *img, CvPoint2D32f *point) {
+double getRMSContrast(const IplImage *img, CvPoint2D32f *point, int frameRadius) {
 
         // Element out of the image
         if (!iaasPointIsInFOV(*point))
@@ -26,7 +26,7 @@ double getRMSContrast(const IplImage *img, CvPoint2D32f *point) {
 
         CvScalar avg, sdv;
 
-        cvSetImageROI((IplImage *)img, getContrFrame(point, (IplImage*)img));
+        cvSetImageROI((IplImage *)img, getContrFrame(point, (IplImage*)img, frameRadius));
         cvAvgSdv(img, &avg, &sdv);
 
 #ifdef _TESTING
@@ -97,20 +97,33 @@ void BTTFFeatures(featureMovement &feat, CvPoint2D32f *vp) {
 	int maxAdd = feat.startFrame - feat.positions.size() + 1;
 	cout << "Point found: " << feat.positions.size();
 	int lastIndex = feat.positions.size() - 1;
+
+	CvPoint2D32f lastRealPoint = feat.positions[lastIndex];
+	CvPoint2D32f beforeLastRealPoint = feat.positions[lastIndex-1];
+
+#define USE_ONLY_REAL_POINTS 1
+
 	for(i=0; i<maxAdd; i++) {
 		float newDistance;
 
 		// If null don't use vanishing point
 		if(vp != NULL)
-			newDistance = getPointCDistance(feat.positions[lastIndex-2],feat.positions[lastIndex-1],*vp, 2.0f);
+#ifdef USE_ONLY_REAL_POINTS
+			newDistance = getPointCDistance(beforeLastRealPoint, lastRealPoint, *vp, (double)(i+2)/(double)(i+1));
+#else
+		newDistance = getPointCDistance(feat.positions[lastIndex-1],feat.positions[lastIndex],*vp, 2.0f);
+#endif
 		else
 			newDistance = getCrossRatioDistance(feat.positions[lastIndex-2],feat.positions[lastIndex-1],feat.positions[lastIndex], (4.0f/3.0f));
 
 		// If next point distance is below 0.5 pixel stop
 		if(newDistance<0.5f)
 			break;
-
+#ifdef USE_ONLY_REAL_POINTS
+		CvPoint2D32f newPoint = iaasPointAlongLine(&feat.fitLine, beforeLastRealPoint, lastRealPoint, newDistance);
+#else
 		CvPoint2D32f newPoint = iaasPointAlongLine(&feat.fitLine, feat.positions[lastIndex-1], feat.positions[lastIndex], newDistance);
+#endif
 		feat.positions.push_back(newPoint);
 		lastIndex++;
 #ifdef _DEBUG
@@ -486,16 +499,18 @@ void iaasFilterByMotionDirection(CvPoint2D32f *pointsA, CvPoint2D32f *pointsB, i
 	}
 }
 
-double iaasTimeToImpact(CvPoint2D32f vanishing_point, CvPoint2D32f p_t0, CvPoint2D32f p_t1){
+double iaasTimeToImpact(CvPoint2D32f vanishing_point, CvPoint2D32f p_t0, CvPoint2D32f p_t1) {
 	double time_to_impact;
 	double p1_vp, p0_p1;
-	CvPoint2D32f pp_t0 = iaasProjectPointToLine(vanishing_point, p_t1, p_t0);
+
+	CvPoint2D32f pp_t0 = p_t0;
+	//pp_t0 = iaasProjectPointToLine(vanishing_point, p_t1, p_t0);
 
 	//Compute distances in image plane
 	p1_vp = iaasTwoPointsDistance<CvPoint2D32f>(p_t1, vanishing_point);//C'A'
 	p0_p1 = iaasTwoPointsDistance<CvPoint2D32f>(pp_t0, p_t1);//C'B'
 
-	time_to_impact = p1_vp/(p0_p1*FRAME_RATE*(NUM_RECORDS-1));
+	time_to_impact = p1_vp/(p0_p1*FRAME_RATE);
 	return time_to_impact;
 }
 
@@ -531,12 +546,10 @@ CvPoint2D32f iaasFindBestCrossedPoint(IplImage* image, CvMat *lines, int n_lines
 	vector<CvPoint2D32f> intersect;
 	vector<CvPoint2D32f> bestFit;
 	for(int i=0; i<n_lines; i++) {
-		for(int j=0; j<n_lines; j++) {
-			if(i!=j) {
-				temp = iaasIntersectionPoint(&lines[i], &lines[j]);
-				if(iaasPointIsInFOV(temp)) {
-					intersect.push_back(temp);
-				}
+		for(int j=i+1; j<n_lines; j++) {
+			temp = iaasIntersectionPoint(&lines[i], &lines[j]);
+			if(iaasPointIsInFOV(temp)) {
+				intersect.push_back(temp);
 			}
 		}
 	}
@@ -547,11 +560,16 @@ CvPoint2D32f iaasFindBestCrossedPoint(IplImage* image, CvMat *lines, int n_lines
 
 	float rank = 0;
 	float bestRank = 0;
+	int Npoints = intersect.size();
 
-	for(int i=0; i<intersect.size(); i++) {
+	for(int i=0; i<Npoints; i++) {
 		rank = 0;
-		for(int j=0; j<intersect.size(); j++) {
+		for(int j=0; j<Npoints; j++) {
 			if(i == j) continue;
+			// If rank is lower than best even if all subsequent rank are all 1 discard
+			if(rank + Npoints - j < bestRank) break;
+
+			// 25% delle distanze
 			float distance = iaasTwoPointsDistance(intersect[i], intersect[j]);
 			if(distance < MAX_DIST) {
 				if(distance < MIN_DIST)

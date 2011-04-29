@@ -31,6 +31,7 @@ typedef struct {
 	int startFrame;
 	vector <CvPoint2D32f> positions;
 	vector <float> contrast;
+	vector <float> timeToImpact;
 	int index;
 	featureStatus status;
 	double ratio;
