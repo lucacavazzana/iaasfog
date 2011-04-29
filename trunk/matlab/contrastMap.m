@@ -1,6 +1,7 @@
 function [contr, norm] = contrastMap(img, alg)
 
-%%COTRASTMAP
+%COTRASTMAP
+%
 %   contrastMap(IMG, ALG) is a test function, computes the contrast for
 %   each pixel. IMG is a path or image, ALG the algorightm used (0:RMS
 %   (default),1:MICHELSON, 2:WEBER)

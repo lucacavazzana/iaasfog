@@ -9,13 +9,13 @@
 
 CvRect getContrFrame(CvPoint2D32f *point, IplImage *img, int frameRadius) {
         // Rounding
-        int x = int(point->x/*+.5*/);
-        int y = int(point->y/*+.5*/);
+        int x = int(point->x+.5);
+        int y = int(point->y+.5);
 
         return cvRect(	max(0,x-frameRadius),
         				max(0,y-frameRadius),
-        				min(frameRadius, min(img->width-x, x+1)+frameRadius), // radius+1 + (width-1 - x) if on the right,  x + radius+1 if on the left
-        				min(frameRadius, min(img->height-y, y+1)+frameRadius));
+        				min(frameRadius*2+1, min(img->width-x, x+1)+frameRadius), // radius+1 + (width-1 - x) if on the right,  x + radius+1 if on the left
+        				min(frameRadius*2+1, min(img->height-y, y+1)+frameRadius));
 }
 
 double getRMSContrast(const IplImage *img, CvPoint2D32f *point, int frameRadius) {

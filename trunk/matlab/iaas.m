@@ -1,9 +1,10 @@
 function [] = iaas(showPlots)
-%%IAAS
+%IAAS
+%
 %   bla bla bla bla
 %
-%INPUT:
-%   'showPlot'  :   if 1 shows some cool visual feedback, if 2 shows a lot
+%   INPUT:
+%     'showPlot'  : if 1 shows some cool visual feedback, if 2 shows a lot
 %                   more graphs (mainly for testing purposes, can become
 %                   veeery boring), if 0 plots nothing
 
@@ -11,11 +12,8 @@ function [] = iaas(showPlots)
 %   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 % OPTIONS
-REFINDFEATURES = 1;   % = 1 to call the exe to recompute the features (useless and costly for multiple run on the same set of images)
-global ASD
-ASD.x=1;
-ASD.Y=2;
-close all;
+REFINDFEATURES = 0;   % = 1 to call the exe to recompute the features (just to avoid wasting time recomputing during tests ont he same set of images)
+
 
 if ~exist('showPlots','var')
     showPlots=0;
@@ -46,8 +44,7 @@ end
 outFile = 'outFile.txt';
 imName = 'frame0000.jpg';
 imNum = 20;
-imTime = 0.1;
-speed = 0;
+imTime = 1/30;
 % -------------------------------------------------------------------------
 
 if exist(exec_path,'file')~=2
@@ -77,7 +74,6 @@ if REFINDFEATURES || exist(outFile,'file')~=2
 end
 
 feats = parseFeatures(outFile); % re-parsing features
-imTime = imTime*ones(1,imNum); imTime(1)=0; % time vector
 
 % if strcmp(arch,'glnxa64') % that's because Luca's computer sucks and is unable to compute the vp correctly
 %     vp_st.x=190; vp_st.y=120; vp_st.z=1;
