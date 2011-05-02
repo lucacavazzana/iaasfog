@@ -6,18 +6,18 @@
 \defcounter {refsection}{0}
 \contentsline {chapter}{\numberline {2}Qualche titolo}{3}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {3}Funzioni}{4}
+\contentsline {chapter}{\numberline {3}Funzioni}{5}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {3.1}C++}{4}
+\contentsline {section}{\numberline {3.1}C++}{5}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {3.2}Matlab}{5}
+\contentsline {section}{\numberline {3.2}Matlab}{6}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {4}Installazione}{7}
+\contentsline {chapter}{\numberline {4}Installazione}{8}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {4.1}OpenCV}{7}
+\contentsline {section}{\numberline {4.1}OpenCV}{8}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {4.1.1}Windows}{7}
+\contentsline {subsection}{\numberline {4.1.1}Windows}{8}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {4.1.2}Linux / MacOSX}{7}
+\contentsline {subsection}{\numberline {4.1.2}Linux / MacOSX}{8}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {4.2}Installazione progetto}{9}
+\contentsline {section}{\numberline {4.2}Installazione ed esecuzione del programma}{10}

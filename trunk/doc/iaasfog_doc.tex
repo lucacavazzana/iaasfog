@@ -20,15 +20,32 @@
 
 \chapter{Introduzione}
 
+\noindent bla bla bla bla
+
 \chapter{Qualche titolo}
+
+\section*{Calcolo del tempo all'impatto}
+
+\noindent Dato un set di punti di coordinate $A$ e $B$, rappresentante una stessa feature in differenti immagini e conoscendo il framerate $f$ delle telecamera \`e possibile calcolare il tempo d'impatto, ossia l'istante in cui la feature attraverser\`a il piano immagine mediante il birapporto
+
+$$ cross(i,a,b,v) = \frac{\overline{ia}}{\overline{ab}}\frac{\overline{av}}{\overline{iv}} = \frac{\overline{i'a'}}{\overline{a'b'}}\frac{\overline{a'v'}}{\overline{i'v'}} $$
+
+\noindent Essendo nel mondo reale le distanze rispetto al vanishing point infinite, come quelle rispetto al piano della telecamera nelle immagini, la formula si semplifica
+
+$$ \frac{\overline{ia}}{\overline{ab}} = \frac{\overline{a'v'}}{\overline{a'b'}} $$
+
+\noindent Dal momento che $\overline{a'v'}$ e $\overline{a'b'}$ sono noti, ed essendo $ab$ la distanza percorsa dal veicolo fra le due immagini ($velocit\`a/framerate$), il tempo d'impatto pu\`o essere ottenuto come
+
+$$ t_{i,b} = \frac{\overline{a'v'}}{\overline{a'b'}}\frac{\overline{ab}}{v} = \frac{\overline{a'v'}}{\overline{a'b'}}*f^{-1} $$
+
 \begin{itemize}
-	\item cambio approccio: dato che \`e un controsenso cercare features nella nebbia invertiamo il flusso\dots Immagini bufferizzate, features cercate dalla fine e trackkate a ritroso nel tempo. Quando scompaiono viene stimata la loro posizione (WIP).
-	
 	\item features filtrate in base a: direzione (WIP), lunghezza spostamento (rapporto circa costante, WIP), 
 	
 	\item uso di RMS per il calcolo del contrasto, che in teoria dovrebbe essere pi\'u resistente al rumore (DEBUG).
 	
-	\item  parametri della funzione (esponenziale) stimati usando RANSAC. Necessit\'a di normalizzare i valori del contrasto (WIP).
+	\item parametri della funzione (esponenziale) stimati usando RANSAC. Necessit\'a di normalizzare i valori del contrasto (CAZZIATO?).
+	
+	\item normalizzazione dei dati in modo da poterli aggregare per la ricerca del parametro (WIP)
 \end{itemize}
 
 \chapter{Funzioni}
@@ -78,6 +95,8 @@ Viene qui presentata una panoramica delle funzioni realizzate. Per informazioni 
 \paragraph*{\verb_rsmContrast:_} date le coordinate di una feature e la relativa immagine calcola il livello di contrasto nell'intorno come $$\sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(I_{ij}-\bar{I})^2}$$
 
 \paragraph*{\verb_WeberContrast:_} date le coordinate di una feature e la relative immagine calcola il livello di contrasto come $$\frac{I-I_b}{I_b}$$ dove $I_b$ \`e il livello della nebbia.
+
+\paragraph*{\verb_normContrast:_} normalizza il contrasto delle features secondo come \dots
 
 \paragraph*{\verb_timeImpact:_} date le coordinate del punto di fuga, di una feature in due differenti immagini e il relativo lasso tempo, stima il tempo mancante affinch\'e la feature attraversi il piano focale. %TODO:giusto il termine?
 
@@ -141,13 +160,13 @@ Per compilare la libreria \`e necessario installare degli header offerti da MinG
 
 \noindent dove \verb|<opencv_dir>| \`e la cartella dove abbiamo compilato il le librerie, nel nostro caso \verb|~/OpenCV-2.2.0/release|.
 
-\section{Installazione progetto}
+\section{Installazione ed esecuzione del programma}
 \noindent Il progetto \`e disponibile via SVN alla pagina \url{http://code.google.com/p/iaasfog}.\\
 Importare i sorgenti nella cartella \verb|c++| in Eclipse, importare gli header delle funzioni di OpenCV mediante Project $\rightarrow$ Properties  $\rightarrow$ C\slash C\verb|++| Editor $\rightarrow$ Settings $\rightarrow$ GCC C\verb|++| Compiler $\rightarrow$ Directories aggiungendo il percorso \verb|/usr/local/include/| e sotto GCC C\slash C\verb|++| Linker $\rightarrow$ Libraries le librerie \verb|opencv_core|, \verb|opencv_video|, \verb|opencv_highgui| e \verb|opencv_imgproc| in \verb|/usr/local/lib| (o qualunque path sia stato utilizzato per l'installazione).\\
 Compilare.\\
 
 \noindent In Matlab aggiungere il path degli m-file ed assicurarsi che il percorso specificato dalla varibile \verb|exec_path| in \verb|iaas.m| corrisponda alla cartella dell'eseguibile del codice C\verb|++|.\\
-Per eseguire il programma lanciare nella console di Matlab il comando \verb|iaas|.
+Per eseguire il programma lanciare nella console di Matlab il comando \verb|iaas [#]|, dove \verb|#|, opzionale, non far\`a visualizzare nessuna finestra se assente o uguale a \verb|0|, se uguale a \verb|1| visualizzer\`a una serie di grafici che mostrano le curve fittate, mentre se uguale a \verb|2| mostrer\'a un numero maggiore di grafici (modalit\`a pensata principalmente per il debugging, l'eccessivo quantitativo di grafici rischia di risultare tedioso per l'utente).
 
 \printbibliography
 
