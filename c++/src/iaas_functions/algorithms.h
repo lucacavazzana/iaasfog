@@ -115,6 +115,9 @@ void iaasFilterNotInFOV(CvPoint2D32f *pointsA, CvPoint2D32f *pointsB, int num_po
  */
 void iaasFilterByMotionDirection(CvPoint2D32f *pointsA, CvPoint2D32f *pointsB, int num_points, char *status, CvPoint2D32f vanishing_point);
 
+
+CvPoint2D32f iaasFindBestCrossedPointRANSAC(IplImage* image, CvMat *lines, int n_lines, int img_width=FRAME_WIDTH, int img_height=FRAME_HEIGHT);
+
 CvPoint2D32f iaasFindBestCrossedPoint(IplImage* image, CvMat *lines, int n_lines, int img_width=FRAME_WIDTH, int img_height=FRAME_HEIGHT);
 
 /**
@@ -181,7 +184,9 @@ CvPoint2D32f iaasEstimateVanishingPoint(CvPoint2D32f *pointsA, CvPoint2D32f *poi
  * @param p_t1 Point in newest frame
  * @return Time to impact.
  */
-double iaasTimeToImpact(CvPoint2D32f vanishing_point, CvPoint2D32f p_t0, CvPoint2D32f p_t1);
+
+double iaasTimeToImpact3Pts(CvPoint2D32f p_t0, CvPoint2D32f p_t1, CvPoint2D32f p_t2);
+double iaasTimeToImpact(CvPoint2D32f vanishing_point, CvPoint2D32f p_t0, CvPoint2D32f p_t1, int n_frames=1);
 
 /**
  * Computes the mean time to impact for a set of objects tracked in two frames
