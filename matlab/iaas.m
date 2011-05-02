@@ -43,12 +43,12 @@ else
 end
 outFile = 'outFile.txt';
 imName = 'frame0000.jpg';
-imNum = 20;
+imNum = 30;
 imTime = 1/30;
 % -------------------------------------------------------------------------
 
 if exist(exec_path,'file')~=2
-    error('- ERROR: cannot find the feature-finding executable. Click on this message to fix the path');
+%     error('- ERROR: cannot find the feature-finding executable. Click on this message to fix the path');
 end
 
 if ~DEFPATHS % FIXME: delete this condition in the final release

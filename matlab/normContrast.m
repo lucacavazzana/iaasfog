@@ -11,7 +11,9 @@ function [feats] = normContrast(feats, type)
 %                   'last':
 %                   'firstLast':
 %                   'mean':
-%                   'fitExp': norm over 'k' fitting the function 'k*exp(-x/lam)
+%                   'fitExp': norm over 'k' fitting the function
+%                             'k*exp(-x/lam) and filter out features with
+%                             MSE over the nth percentile
 %   OUTPUT:
 %      'feats'  :   list of features with contrast properly normalized
 %
@@ -65,19 +67,20 @@ elseif strcmp(type, 'fitExp') %-----------------------------------------------
     for ff = feats
         
         options.StartPoint = [max(ff.contr), 1]; % TODO: find good starting point
-        fitted = fit(ff.tti',ff.contr(1:end)', ft, options);
+        [cfun gof] = fit(ff.tti',ff.contr(1:end)', ft, options);
         
-        feats(ii).contr = feats(ii).contr/fitted.k;
-        feats(ii).pars = [fitted.k, fitted.lam];
+        feats(ii).contr = feats(ii).contr/cfun.k;
+        feats(ii).pars = [cfun.k, cfun.lam];
         
-        if 0
-            k = fitted.k;
-            lam = fitted.lam;
+        if 1    % plotting for debug
+            k = cfun.k;
+            lam = cfun.lam;
             x = feats(ii).tti(1):.01:feats(ii).tti(end);
             plot(feats(ii).tti,feats(ii).contr(1:end), 'ro');
             hold on; grid on;
             plot(x, eval(fun)/k);
-            pause(.2);
+            title(['lambda: ', num2str(k), ', rmse: ', num2str(gof.rmse/k)]);
+            pause();
             close;
         end
         
