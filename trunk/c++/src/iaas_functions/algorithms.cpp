@@ -9,8 +9,8 @@
 
 CvRect getContrFrame(CvPoint2D32f *point, IplImage *img, int frameRadius) {
         // Rounding
-        int x = int(point->x+.5);
-        int y = int(point->y+.5);
+        int x = int(point->x/*+.5*/);
+        int y = int(point->y/*+.5*/);
 
         return cvRect(	max(0,x-frameRadius),
         				max(0,y-frameRadius),
@@ -499,18 +499,43 @@ void iaasFilterByMotionDirection(CvPoint2D32f *pointsA, CvPoint2D32f *pointsB, i
 	}
 }
 
-double iaasTimeToImpact(CvPoint2D32f vanishing_point, CvPoint2D32f p_t0, CvPoint2D32f p_t1) {
+double iaasTimeToImpact3Pts(CvPoint2D32f p_t0, CvPoint2D32f p_t1, CvPoint2D32f p_t2) {
+	double time_to_impact;
+	double b, c;
+
+	//Compute distances in image plane
+	b = iaasTwoPointsDistance<CvPoint2D32f>(p_t2, p_t1);
+	c = iaasTwoPointsDistance<CvPoint2D32f>(p_t1, p_t0);
+
+	cout << "b: " << b << " c: " << c << endl;
+
+	//time_to_impact = p1_vp/(p0_p1)*FRAME_RATE;
+	time_to_impact = (1/((-(b+c)/b)+1))-(2.0f/(double)FRAME_RATE);
+
+	return time_to_impact;
+}
+
+double iaasTimeToImpact(CvPoint2D32f vanishing_point, CvPoint2D32f p_t0, CvPoint2D32f p_t1, int n_frames) {
 	double time_to_impact;
 	double p1_vp, p0_p1;
 
 	CvPoint2D32f pp_t0 = p_t0;
 	//pp_t0 = iaasProjectPointToLine(vanishing_point, p_t1, p_t0);
+	//vanishing_point = iaasProjectPointToLine(p_t1, p_t0, vanishing_point);
+
+	CvMat line;
+	iaasJoiningLine(p_t0, p_t1, &line);
+	//vanishing_point = iaasProjectPointToLine(vanishing_point, &line);
 
 	//Compute distances in image plane
 	p1_vp = iaasTwoPointsDistance<CvPoint2D32f>(p_t1, vanishing_point);//C'A'
 	p0_p1 = iaasTwoPointsDistance<CvPoint2D32f>(pp_t0, p_t1);//C'B'
 
-	time_to_impact = p1_vp/(p0_p1*FRAME_RATE);
+	//cout << "P1-VP: " << p1_vp << " P0-P1: " << p0_p1 << endl;
+
+	//time_to_impact = p1_vp/(p0_p1)*FRAME_RATE;
+	time_to_impact = ((p1_vp/p0_p1)-1)*((double)n_frames/(double)FRAME_RATE);
+
 	return time_to_impact;
 }
 
@@ -529,7 +554,7 @@ CvPoint2D32f iaasEstimateVanishingPoint(CvPoint2D32f *pointsA, CvPoint2D32f *poi
 	//Create set of lines from valid corners
 	CvMat *joiningLines = new CvMat[tracked_corners];
 	for(int i = 0, j= 0; i < num_points; i++) {
-		if(status[i] == 1){
+		if(status[i] == 1) {
 			iaasJoiningLine(pointsA[i], pointsB[i], joiningLines+j);
 			j++;
 		}
@@ -538,6 +563,110 @@ CvPoint2D32f iaasEstimateVanishingPoint(CvPoint2D32f *pointsA, CvPoint2D32f *poi
 	CvPoint2D32f vp = iaasHoughMostCrossedPoint(joiningLines, tracked_corners);
 
 	return vp;
+}
+
+CvPoint2D32f iaasFindBestCrossedPointRANSAC(IplImage* image, CvMat *lines, int n_lines, int img_width, int img_height) {
+
+	srand(time(NULL));
+
+	int iteration = 0;
+
+	// Find best candidate vanishing point from set
+	int MAX_DIST = MAX(img_width, img_height)/30;	// Maximum distance where points is minimum
+	int MIN_DIST = 2;								// Maximum distance where points is maximum
+
+	CvPoint2D32f vpCandidate, result;
+
+	// Test 10% of all possibile intersections
+	int max_iteration = (n_lines*n_lines + n_lines)/50;///20;
+
+	cout << "Max iteration: " << max_iteration << endl;
+
+	float rank = 0;
+	float bestRank = 0;
+	int inliers = 0;
+	int tempInliers = 0;
+
+	while(iteration < max_iteration) {
+
+		// Find a vanishing point candidate
+		do {
+			vpCandidate = iaasIntersectionPoint(&lines[rand()%n_lines], &lines[rand()%n_lines]);
+		} while(!iaasPointIsInFOV(vpCandidate));
+
+		rank = 0;
+		tempInliers = 0;
+
+		for(int j=0; j<n_lines; j++) {
+
+			// If rank is lower than best even if all subsequent rank are all 1 discard
+			if(rank + n_lines - j < bestRank) break;
+
+			float distance = iaasPointLineDistance(&lines[j], vpCandidate);
+			if(distance < MAX_DIST) {
+				// Inlier
+				tempInliers += 1;
+
+				if(distance < MIN_DIST)
+					rank += 1;
+				else
+					rank += (MAX_DIST-distance)/(MAX_DIST-MIN_DIST);
+			}
+		}
+		if(rank > bestRank) {
+			result = vpCandidate;
+			bestRank = rank;
+			inliers = tempInliers;
+			cout << "Elected point (" << result.x << ";" << result.y << ") as best Rank ";
+			cout << "with " << bestRank << " and with " << inliers << " inliers (" << (inliers*100)/n_lines << " %)"<<endl;
+		}
+		iteration++;
+	}
+
+	// --------------Resolve with SVD--------------
+
+	//Solution matrix
+	CvMat X;
+	double data_X[2];
+
+	// Init matrix X with 2 Row, 1 Column with dataX
+	cvInitMatHeader(&X, 2, 1, CV_64FC1, data_X);
+
+	//A and B matrices
+	CvMat A; 								CvMat B;
+	double *data_A = new double[inliers*2]; double *data_B = new double[inliers];
+	int j=0;
+	for(int i = 0; i < n_lines; i++) {
+		// Just inliers count
+		if(iaasPointLineDistance(&lines[i], result) < MAX_DIST) {
+			double *line_data = lines[i].data.db;
+			double a = line_data[0], b = line_data[1], c = line_data[2];
+
+			data_A[2*j] 	= a/sqrt(iaasSquare<double>(a)+iaasSquare<double>(b));
+			data_A[2*j+1] 	= b/sqrt(iaasSquare<double>(a)+iaasSquare<double>(b));
+			data_B[j] 		= -c/sqrt(iaasSquare<double>(a)+iaasSquare<double>(b));
+			j++;
+		}
+	}
+	cvInitMatHeader(&A, inliers, 2, CV_64FC1, data_A);
+	cvInitMatHeader(&B, inliers, 1, CV_64FC1, data_B);
+
+	//Solve system with Least Square Method
+	cvSolve(&A, &B, &X, CV_SVD);
+
+
+	if(data_X[2] == 0){
+#ifdef DEBUG
+		printf("SVD not working, returning not optimezed point\n");
+#endif
+		return result;
+	}
+	double x = data_X[0];
+	double y = data_X[1];
+
+	return cvPoint2D32f(x, y);
+
+	//return result;
 }
 
 CvPoint2D32f iaasFindBestCrossedPoint(IplImage* image, CvMat *lines, int n_lines, int img_width, int img_height) {
@@ -593,7 +722,7 @@ CvPoint2D32f iaasFindBestCrossedPoint(IplImage* image, CvMat *lines, int n_lines
 			x +=intersect[i].x;
 			y +=intersect[i].y;
 			size++;
-			cvCircle(image, cvPoint(cvRound(intersect[i].x), intersect[i].y), 1, CV_RGB(255, 255, 255));
+			//cvCircle(image, cvPoint(cvRound(intersect[i].x), intersect[i].y), 1, CV_RGB(255, 255, 255));
 		}
 	}
 	result.x = x/size;

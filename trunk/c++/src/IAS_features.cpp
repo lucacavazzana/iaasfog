@@ -202,7 +202,7 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 	time(&begin);
 
 	// Estimate vanishing point
-	CvPoint2D32f vp = iaasFindBestCrossedPoint(image0, joiningLines, j);
+	CvPoint2D32f vp = iaasFindBestCrossedPointRANSAC(image0, joiningLines, j);
 
 	time(&end);
 	cout.precision(4);
@@ -228,16 +228,23 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 		else {
 			// Estimate positions of feature using vanishing point
 			BTTFFeatures(*feat, &vp);
-			float TTIb = 0;
 			float TTI = 0;
+			float mean = 0;
 			cout << "Time to impact: ";
 			for(int i=0; i < feat->positions.size()-1; i++) {
-				TTI = iaasTimeToImpact(vp, feat->positions[i+1], feat->positions[i]);
-				feat->timeToImpact.push_back(TTI);
-				cout << TTI << " " << TTI-TTIb << " " << endl;
-				TTIb = TTI;
+				//TTI = iaasTimeToImpact(vp, feat->positions[i+1], feat->positions[i]);
+				//TTI = iaasTimeToImpact3Pts(feat->positions[i], feat->positions[i+1], feat->positions[i+2]);
+				TTI = iaasTimeToImpact(vp, feat->positions[i+1], feat->positions[0], i+1);
+				mean += TTI;
+				cout << TTI << " " << " \t\n ";
 			}
-			cout << endl;
+			mean = mean/(feat->positions.size()-1);
+			cout << "Mean start: " << mean << endl;
+
+			// Add time to impact corrected
+			for(int i=0; i < feat->positions.size()-1; i++) {
+				feat->timeToImpact.push_back(mean+(float)i/(float)FRAME_RATE);
+			}
 			iaasDrawStraightLine(image0, &feat->fitLine);
 
 			feat++;
@@ -271,7 +278,7 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 			// TODO: Choice of algorithm as parameter (Get contrast of point)
 			if(index >= 0 && index < feat->positions.size()) {
 				int radiusSize = 2;
-				//radiusSize = 2 + iaasTwoPointsDistance(vp, feat->positions[index])/FRAME_WIDTH*10;
+				radiusSize = 2 + iaasTwoPointsDistance(vp, feat->positions[index])/FRAME_WIDTH*5;
 				float contrast = getRMSContrast(image0, &feat->positions[index], radiusSize);
 				feat->contrast.push_back(contrast);
 			}
