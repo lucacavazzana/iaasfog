@@ -42,8 +42,8 @@ else
     DEFPATHS = 0; % se non sei ne Luca ne Stefano ti tocca inserire a mano i path
 end
 outFile = 'outFile.txt';
-imName = 'frame0000.jpg';
-imNum = 30;
+imName = 'frame0040.jpg';
+imNum = 20;
 imTime = 1/30;
 % -------------------------------------------------------------------------
 
@@ -79,7 +79,7 @@ feats = parseFeatures(outFile); % re-parsing features
 %     vp_st.x=190; vp_st.y=120; vp_st.z=1;
 % end
 
-disp(['Found ', num2str(size(feats,1)), ' features over ', num2str(size(feats,2)), ' images']);
+disp(['Found ', num2str(size(feats,2)), ' features over ', num2str(size(imPaths,1)), ' images']);
 
 switch alg
     case 1, % visually check features

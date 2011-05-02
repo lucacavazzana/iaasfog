@@ -1,4 +1,4 @@
-function [feats] = normContrast(feats, type)
+function [feats] = normContrast(feats, type, showPlot)
 
 %NORMCONTRAST   Normalize contrast values
 %
@@ -12,8 +12,7 @@ function [feats] = normContrast(feats, type)
 %                   'firstLast':
 %                   'mean':
 %                   'fitExp': norm over 'k' fitting the function
-%                             'k*exp(-x/lam) and filter out features with
-%                             MSE over the nth percentile
+%                             'k*exp(-x/lam)
 %   OUTPUT:
 %      'feats'  :   list of features with contrast properly normalized
 %
@@ -21,6 +20,11 @@ function [feats] = normContrast(feats, type)
 
 %   Copyright 2011 Stefano Cadario, Luca Cavazzana.
 %   $Revision: xxxxx $  $Date: 2011/04/09 11:59:22 $
+
+if ~exist('showPlot','var')
+    showPlot = 0;
+end
+
 
 if strcmp(type, 'max')
     
@@ -72,14 +76,18 @@ elseif strcmp(type, 'fitExp') %-----------------------------------------------
         feats(ii).contr = feats(ii).contr/cfun.k;
         feats(ii).pars = [cfun.k, cfun.lam];
         
-        if 1    % plotting for debug
+        if showPlot > 2 % plotting for debug
             k = cfun.k;
             lam = cfun.lam;
             x = feats(ii).tti(1):.01:feats(ii).tti(end);
             plot(feats(ii).tti,feats(ii).contr(1:end), 'ro');
             hold on; grid on;
             plot(x, eval(fun)/k);
-            title(['lambda: ', num2str(k), ', rmse: ', num2str(gof.rmse/k)]);
+            title(['k: ', num2str(k), ', lambda: ', num2str(lam), ', rmse: ', num2str(gof.rmse)]);
+            
+            disp('rmse * k - rmse / k - maxmin');
+            disp([num2str(gof.rmse*k), ' - ', num2str(gof.rmse/k)]);
+            
             pause();
             close;
         end
