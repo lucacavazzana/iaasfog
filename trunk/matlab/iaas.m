@@ -42,7 +42,7 @@ else
     DEFPATHS = 0; % se non sei ne Luca ne Stefano ti tocca inserire a mano i path
 end
 outFile = 'outFile.txt';
-imName = 'frame0040.jpg';
+imName = 'frame0000.jpg';
 imNum = 20;
 imTime = 1/30;
 % -------------------------------------------------------------------------
@@ -59,7 +59,8 @@ if ~DEFPATHS % FIXME: delete this condition in the final release
 end
 alg = selectAlg({'inspect features';...
     'plot contrasts';...
-    'new experiment';...
+    'normalize by fitted k and then ransac';...
+    'estimate lambda by min-max and then ransac';...
     'test contrasts'});
 
 % checks the image list
@@ -87,8 +88,10 @@ switch alg
     case 2, % plots contrast
         plotContrasts(feats);
     case 3, % exp interpolation
-        theNewWay(feats,showPlots);
-    case 4, % lol test function
+        normByFitting(feats,showPlots);
+    case 4
+        estimateLamMinMax(feats,showPlots);
+    case 5, % lol test function
         testContrasts(imPaths,feats);
 end
 
