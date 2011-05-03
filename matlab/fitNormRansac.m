@@ -1,4 +1,4 @@
-function [] = normByFitting(feats, showPlot)
+function [] = fitNormRansac(feats, showPlot)
 
 %THENEWWAY
 %
