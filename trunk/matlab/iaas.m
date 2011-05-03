@@ -76,10 +76,6 @@ end
 
 feats = parseFeatures(outFile); % re-parsing features
 
-% if strcmp(arch,'glnxa64') % that's because Luca's computer sucks and is unable to compute the vp correctly
-%     vp_st.x=190; vp_st.y=120; vp_st.z=1;
-% end
-
 disp(['Found ', num2str(size(feats,2)), ' features over ', num2str(size(imPaths,1)), ' images']);
 
 switch alg
@@ -87,9 +83,9 @@ switch alg
         inspectFeatures(imPaths, feats);
     case 2, % plots contrast
         plotContrasts(feats);
-    case 3, % exp interpolation
-        normByFitting(feats,showPlots);
-    case 4
+    case 3, % computes lambda normalizing by the fitted k and then applying ransac
+        fitNormRansac(feats,showPlots);
+    case 4, % estimates lambda as t_min-t_max/ln(c_max/c_min), then 
         estimateLamMinMax(feats,showPlots);
     case 5, % lol test function
         testContrasts(imPaths,feats);
