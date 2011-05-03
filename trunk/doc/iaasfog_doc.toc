@@ -6,18 +6,36 @@
 \defcounter {refsection}{0}
 \contentsline {chapter}{\numberline {2}Qualche titolo}{3}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {3}Funzioni}{5}
+\contentsline {section}{\numberline {2.1}Tracking delle features}{3}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {3.1}C++}{5}
+\contentsline {section}{\numberline {2.2}Calcolo vanishing-point}{3}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {3.2}Matlab}{6}
+\contentsline {section}{\numberline {2.3}Calcolo del tempo all'impatto}{3}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {4}Installazione}{8}
+\contentsline {section}{\numberline {2.4}Calcolo del contrasto}{4}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {4.1}OpenCV}{8}
+\contentsline {section}{\numberline {2.5}Stima dei parametri}{4}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {4.1.1}Windows}{8}
+\contentsline {subsection}{\numberline {2.5.1}Stima di $\lambda $ mediante minMax}{4}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {4.1.2}Linux / MacOSX}{8}
+\contentsline {subsection}{\numberline {2.5.2}Fitting di $\lambda $}{5}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {4.2}Installazione ed esecuzione del programma}{10}
+\contentsline {subsection}{\numberline {2.5.3}Normalizzazione mediante fitting di $k$ e RANSAC}{5}
+\defcounter {refsection}{0}
+\contentsline {subsection}{\numberline {2.5.4}Confronto}{5}
+\defcounter {refsection}{0}
+\contentsline {chapter}{\numberline {3}Funzioni}{6}
+\defcounter {refsection}{0}
+\contentsline {section}{\numberline {3.1}C++}{6}
+\defcounter {refsection}{0}
+\contentsline {section}{\numberline {3.2}Matlab}{7}
+\defcounter {refsection}{0}
+\contentsline {chapter}{\numberline {4}Installazione}{9}
+\defcounter {refsection}{0}
+\contentsline {section}{\numberline {4.1}OpenCV}{9}
+\defcounter {refsection}{0}
+\contentsline {subsection}{\numberline {4.1.1}Windows}{9}
+\defcounter {refsection}{0}
+\contentsline {subsection}{\numberline {4.1.2}Linux / MacOSX}{9}
+\defcounter {refsection}{0}
+\contentsline {section}{\numberline {4.2}Installazione ed esecuzione del programma}{11}

@@ -24,7 +24,15 @@
 
 \chapter{Qualche titolo}
 
-\section*{Calcolo del tempo all'impatto}
+\section{Tracking delle features}
+
+\noindent Crossratio, controllo sulla direzione, bla bla bla \dots
+
+\section{Calcolo vanishing-point}
+
+\noindent Ribla, ribla, ribla, \dots
+
+\section{Calcolo del tempo all'impatto}
 
 \noindent Dato un set di punti di coordinate $A$ e $B$, rappresentante una stessa feature in differenti immagini e conoscendo il framerate $f$ delle telecamera \`e possibile calcolare il tempo d'impatto, ossia l'istante in cui la feature attraverser\`a il piano immagine mediante il birapporto
 
@@ -38,27 +46,40 @@ $$ \frac{\overline{ia}}{\overline{ab}} = \frac{\overline{a'v'}}{\overline{a'b'}}
 
 $$ t_{i,b} = \frac{\overline{a'v'}}{\overline{a'b'}}\frac{\overline{ab}}{v} = \frac{\overline{a'v'}}{\overline{a'b'}}*f^{-1} $$
 
-\section*{Stima lambda}
+\section{Calcolo del contrasto}
+\noindent RMS bla bla bla
+
+\section{Stima dei parametri}
+
+\subsection{Stima di $\lambda$ mediante minMax}
 
 \noindent Per ogni set di feature:
 
 $$ c_i = ke^{-t_i/\lambda} $$
 
-\noindent essendo k uguale per ogni feature nel set
+\noindent Essendo $k$ uguale per ogni feature nel set \'e possibile sfruttarlo per imporre un'eguaglianza fra due campioni, ottenendo cos\'i \lambda
 
-$$ c_0e^{t_0/\lambda} = c_1e^{t_1/\lambda} $$
-$$ \lambda = \(\frac{\log\frac{c_0}{c_1}}{t_1-t_0}\)^{-1}
+$$ c_1e^{t_1/\lambda} = c_2e^{t_2/\lambda} $$
+$$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}}
+
+\noindent In questo modo \`e possibile stimare il parametro lambda utilizzando i livelli di contrasto massimi e minimi (ed i relativi tempi all'impatto). I test mostrano come per set di features pi\'u smooth il parametro stimato sia molto vicino a quello calcolato mediante fitting, mentre per dati pi\'u rumorosi tende ad essere pi\'u una sottostima (dal momento che outlier minimi e massimi tendono ad ingrandire i valori al denominatore).\\
+Successivamente si pu\'o procedere con il calcolo di un $\lambda$ globale in base a quelli simati (media? RANSAC?)
+
+\subsection{Fitting di $\lambda$}
+\noindent La seconda tecnica adottata \'e stata di sfruttare la funzione \verb|fit| di Matlab per estrarre il parametro $\lambda$ di ogni singolo set di features, ed infine calcolare il parametro globale mediante media o mediana (dopo aver eliminato i valori troppo elevati generati da funzioni eccessivamente rumorose)
+
+\subsection{Normalizzazione mediante fitting di $k$ e RANSAC}
+\noindent Un'altra tecnica adottata consiste nel sfruttare tutte le informazioni disponibili  per stimare (mediante la funzione \verb|fit| di Matlab) i parametri $k$ e $\lambda$ che minimizzano l'errore su ogni singolo set di features. A questo punto $k$ potr\'a essere sfruttato per normalizzare i dati, mentre $\lambda$ potr\'a essere utilizzato per individuare potenziali outlier (funzioni particolarmente rumorose tendono infatti ad avere valri di $\lambda$ estremamente elevati, eliminabili mantenendo solo i set con tale parametro sotto un certo percentile).\\
+Avendo quindi tutti i dati su una stessa scala \'e infine possibile stimare il parametro $\lambda$ comune usando RANSAC.\\
+Questo approccio, sfruttando tutti i dati disponibili, porta a risultati molto pi\'u precisi rispetto a quello precedente (che fa uso dei soli valori estremi). Tale precisione tuttavia si paga con un maggiore costo computazionale dato dalla fase di fitting dei parametri.
+
+\subsection{Confronto}
+\noindent I test mostrano come il $\lambda$ sul singolo set di features ottenuto mediante minMax sia molto vicino a quello ottenuto mediante fitting in caso di campioni smooth (bella forza\dots), mentre per set pi\'u rumorosi (in verit\'a a contare \'e esclusivamente il rumore sui valori estremi) si ottiene una sottostima del valore (causato da un'aumento della divergenza fra i valori massimo e minimo che portano ad un incremento del denominatore nella formula).\\
+Gli ultimi due approci invece risultano essere molto pi\'u precisi, dal momento che sfruttano l'intero set di dati, ma pagano un prezzo molto maggiore in termini di complessit\'a di calcolo nella fase di fitting.
 
 
-\begin{itemize}
-	\item features filtrate in base a: direzione (WIP), lunghezza spostamento (rapporto circa costante, WIP), 
-	
-	\item uso di RMS per il calcolo del contrasto, che in teoria dovrebbe essere pi\'u resistente al rumore (DEBUG).
-	
-	\item parametri della funzione (esponenziale) stimati usando RANSAC. Necessit\'a di normalizzare i valori del contrasto (CAZZIATO?).
-	
-	\item normalizzazione dei dati in modo da poterli aggregare per la ricerca del parametro (WIP)
-\end{itemize}
+
+
 
 \chapter{Funzioni}
 
@@ -92,8 +113,7 @@ Viene qui presentata una panoramica delle funzioni realizzate. Per informazioni 
 
 \paragraph*{\verb_inspectContrast:_} stampa a video le sequenze di features per un'ispezione visiva
 
-\paragraph*{\verb_myRansac:_} implementazione di RANSAC per calcolare il parametro lambda della funzione del contrasto
-
+\paragraph*{\verb_myRansac:_} implementazione di RANSAC per calcolare il parametro lambda della funzione del contrasto dati in ingresso dei set di features normalizzati.
 
 
 
@@ -108,9 +128,17 @@ Viene qui presentata una panoramica delle funzioni realizzate. Per informazioni 
 
 \paragraph*{\verb_WeberContrast:_} date le coordinate di una feature e la relative immagine calcola il livello di contrasto come $$\frac{I-I_b}{I_b}$$ dove $I_b$ \`e il livello della nebbia.
 
-\paragraph*{\verb_normContrast:_} normalizza il contrasto delle features secondo come \dots
+\paragraph*{\verb_normContrast:_} normalizza il contrasto di ogni set di features utilizzando diverse tecniche:
+\begin{itemize}
+	\item \verb|first|: $ norm\left(c_i\right) = c_i/c_{1^{th}} $
+	\item \verb|firstLast|: $ norm\left(c_i\right) = \frac{c_i-c_{n^{th}}}{c_{1^{th}} - c_{n^{th}}} $
+	\item \verb|max|: $ norm\left(c_i\right) = c_i/c_{max} $
+	\item \verb|minMax|: $ norm\left(c_i\right) = \frac{c_i-c_{min}}{c_{max} - c_{min}} $
+	\item \verb|mean|: $ norm(c_i) = c_i/2\bar{c} $
+	\item \verb|fit|: $ c_i / mle_{k}(\underline{c}) $
+\end{itemize}
 
-\paragraph*{\verb_timeImpact:_} date le coordinate del punto di fuga, di una feature in due differenti immagini e il relativo lasso tempo, stima il tempo mancante affinch\'e la feature attraversi il piano focale. %TODO:giusto il termine?
+\noindent Di fatto quella che ci interessa maggiormente \'e \verb|fit|, le altre invece sono principalmente dei tentativi di approccio che non hanno avuto seguito nel progetto.
 
 \chapter{Installazione}
 \section{OpenCV}
