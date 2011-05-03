@@ -1,4 +1,4 @@
-function [] = theNewWay(feats, showPlot)
+function [] = normByFitting(feats, showPlot)
 
 %THENEWWAY
 %

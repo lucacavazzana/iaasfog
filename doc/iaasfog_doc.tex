@@ -38,6 +38,18 @@ $$ \frac{\overline{ia}}{\overline{ab}} = \frac{\overline{a'v'}}{\overline{a'b'}}
 
 $$ t_{i,b} = \frac{\overline{a'v'}}{\overline{a'b'}}\frac{\overline{ab}}{v} = \frac{\overline{a'v'}}{\overline{a'b'}}*f^{-1} $$
 
+\section*{Stima lambda}
+
+\noindent Per ogni set di feature:
+
+$$ c_i = ke^{-t_i/\lambda} $$
+
+\noindent essendo k uguale per ogni feature nel set
+
+$$ c_0e^{t_0/\lambda} = c_1e^{t_1/\lambda} $$
+$$ \lambda = \(\frac{\log\frac{c_0}{c_1}}{t_1-t_0}\)^{-1}
+
+
 \begin{itemize}
 	\item features filtrate in base a: direzione (WIP), lunghezza spostamento (rapporto circa costante, WIP), 
 	
