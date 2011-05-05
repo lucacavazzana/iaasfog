@@ -4,22 +4,20 @@ if ~exist('showPlot','var')
     showPlot = 0;
 end
 
-% compute pars by minMax, delete the feature if min and max are too close
-for ii = size(feats,2):-1:1
-    [vMax iMax] = max(feats(ii).contr);
-    [vMin iMin] = min(feats(ii).contr);
-    if abs(iMin-iMax) > .5*feats(ii).num
-        feats(ii).pars = (feats(ii).tti(iMin)-feats(ii).tti(iMax))/log(vMax/vMin);
-    else
-        feats(ii) = [];
-    end
+for ii = 1:size(feats,2)
+    feats(ii).pars = minMaxContr(feats(ii).contr, feats(ii).tti);
 end
 
+% cleaning invalid lambdas
+feats = feats([feats.pars]~=-1);
 disp(['Now only ', num2str(size(feats,2)), ' feats']);
 
 if showPlot
     hist([feats.pars]);
     title(['mean: ', num2str(mean([feats.pars])), ', median: ', num2str(median([feats.pars]))]);
+    disp(' ');
+    disp('Estimated lambdas:');
+    disp(num2str([feats.pars]));
 end
 
 end

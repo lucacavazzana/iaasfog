@@ -1,6 +1,8 @@
-function [contr] = rmsContrast(feature, image)
+function [contr] = rmsContrast(feature, image, n)
 
-%RMSCONTRAST compute the comtrast level using root mean square
+%RMSCONTRAST compute the comtrast level using root mean square. The result
+%   will computed on the image normalized over [0,1] (keep in mind: the
+%   depends on the colo depth)
 %
 %   RMSCONTRAST(FEATURE, IMAGE) computes the root mean square contrast
 %   level in the 21x21 frame around the feature's coords. The FEATURE
@@ -12,22 +14,22 @@ function [contr] = rmsContrast(feature, image)
 %
 %   Example:
 %       coords.x = 100; coords.y = 200; coords.z = 1;
-%       image = imread('myImage.jpg');
+%       image = imread('myImage.jpg',2);
 %       contr = rmsContrast(coords,image);
 %
 %   See also MICHELSONCONTRAST, WEBERCONTRAST.
 
-%   Copyright 2011 Stefano Cadario, Cavazzana Luca.
+%   Copyright 2011 Stefano Cadario, Luca Cavazzana.
 %   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 if exist('image','var')
-    n = 2; % feature window
+    if ~exist('n','var')
+        n = 2; % feature window
+    end
     
     % Normalize
-    if feature.z~=1
-        feature.x = feature.x/feature.z;
-        feature.y = feature.y/feature.z;
-    end
+    feature.x = round(feature.x/feature.z);
+    feature.y = round(feature.y/feature.z);
     
     if size(image,1)==1 % if ==1 is a string...
         image = imread(image);
@@ -37,15 +39,19 @@ if exist('image','var')
     end
     
     % frame around the feature
-    xi = max(round(feature.x - n),1);
-    xf = min(round(feature.x + n),size(image,2));
-    yi = max(round(feature.y - n),1);
-    yf = min(round(feature.y + n),size(image,1));
+    xi = max(feature.x - n,1);
+    xf = min(feature.x + n,size(image,2));
+    yi = max(feature.y - n,1);
+    yf = min(feature.y + n,size(image,1));
     
+    % extracting the feature
     image = im2double(image(yi:yf,xi:xf));
 else
     image = feature; %pointing at the same data... matlab doesn't allocate new memory until variables differ
     clear feature;
+    if size(image,3)==3 % if ==3 RGB
+        image = im2gray(rgb2gray(image));
+    end
 end
 
 %--------------------------------------------------------------------------

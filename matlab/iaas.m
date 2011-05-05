@@ -1,4 +1,4 @@
-function [] = iaas(showPlots)
+function [] = iaas(showPlot)
 %IAAS
 %
 %   bla bla bla bla
@@ -15,10 +15,10 @@ function [] = iaas(showPlots)
 REFINDFEATURES = 0;   % = 1 to call the exe to recompute the features (just to avoid wasting time recomputing during tests ont he same set of images)
 
 
-if ~exist('showPlots','var')
-    showPlots=0;
+if ~exist('showPlot','var')
+    showPlot=0;
 else
-    showPlots = str2double(showPlots);
+    showPlot = str2double(showPlot);
 end
 
 arch = computer('arch');
@@ -42,8 +42,8 @@ else
     DEFPATHS = 0; % se non sei ne Luca ne Stefano ti tocca inserire a mano i path
 end
 outFile = 'outFile.txt';
-imName = 'frame0000.jpg';
-imNum = 20;
+imName = 'frame0020.jpg';
+imNum = 25;
 imTime = 1/30;
 % -------------------------------------------------------------------------
 
@@ -57,11 +57,12 @@ if ~DEFPATHS % FIXME: delete this condition in the final release
     imNum = getNumImages;
     imTime = getPeriod;
 end
-alg = selectAlg({'inspect features';...
-    'plot contrasts';...
-    'normalize by fitted k and then ransac';...
-    'estimate lambda by min-max and then ransac';...
-    'test contrasts'});
+alg = selectAlg({'inspect features'; ...
+    'plot contrasts'; ...
+    'estimate lambda by min-max'; ...
+    'estimate lambda by fitting'; ...
+    'normalize by fitted k and then ransac'; ...
+    'compare constrasts'});
 
 % checks the image list
 imPaths = getPaths(imFolder,imName,imNum);
@@ -81,14 +82,16 @@ disp(['Found ', num2str(size(feats,2)), ' features over ', num2str(size(imPaths,
 switch alg
     case 1, % visually check features
         inspectFeatures(imPaths, feats);
-    case 2, % plots contrast
+    case 2, % plots computed contrast
         plotContrasts(feats);
-    case 3, % computes lambda normalizing by the fitted k and then applying ransac
-        fitNormRansac(feats,showPlots);
-    case 4, % estimates lambda as t_min-t_max/ln(c_max/c_min), then 
-        estimateLamMinMax(feats,showPlots);
-    case 5, % lol test function
-        testContrasts(imPaths,feats);
+    case 3, % estimates lambda as t_min-t_max/ln(c_max/c_min), then 
+        estimateLamMinMax(feats, showPlot);
+    case 4, % estimates lamdas by fitting on each single set
+        estimateLamFit(feats, showPlot);
+    case 5, % computes lambda normalizing by the fitted k and then applying ransac
+        fitNormRansac(feats, showPlot);
+    case 6, % compare different contrast formulas
+        compareContrasts(imPaths, feats, showPlot);
 end
 
 end
