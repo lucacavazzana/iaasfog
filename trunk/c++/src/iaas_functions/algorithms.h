@@ -10,6 +10,7 @@
 #define ALGORITHMS_H_
 
 #include "parameters.h"
+#include <algorithm>
 /**
  * Given a sequence of two images, finds corners in the first one and tracks them in the second one.
  * The function returns the corners in both mages as well as the number of found corners, an array of
@@ -116,7 +117,7 @@ void iaasFilterNotInFOV(CvPoint2D32f *pointsA, CvPoint2D32f *pointsB, int num_po
 void iaasFilterByMotionDirection(CvPoint2D32f *pointsA, CvPoint2D32f *pointsB, int num_points, char *status, CvPoint2D32f vanishing_point);
 
 
-CvPoint2D32f iaasFindBestCrossedPointRANSAC(IplImage* image, CvMat *lines, int n_lines, int img_width=FRAME_WIDTH, int img_height=FRAME_HEIGHT);
+CvPoint2D32f iaasFindBestCrossedPointRANSAC(IplImage* image, CvMat *lines, int n_lines, float *distancePercentile);
 
 CvPoint2D32f iaasFindBestCrossedPoint(IplImage* image, CvMat *lines, int n_lines, int img_width=FRAME_WIDTH, int img_height=FRAME_HEIGHT);
 
@@ -184,8 +185,6 @@ CvPoint2D32f iaasEstimateVanishingPoint(CvPoint2D32f *pointsA, CvPoint2D32f *poi
  * @param p_t1 Point in newest frame
  * @return Time to impact.
  */
-
-double iaasTimeToImpact3Pts(CvPoint2D32f p_t0, CvPoint2D32f p_t1, CvPoint2D32f p_t2);
 double iaasTimeToImpact(CvPoint2D32f vanishing_point, CvPoint2D32f p_t0, CvPoint2D32f p_t1, int n_frames=1);
 
 /**
@@ -204,7 +203,7 @@ double iaasMeanTimeToImpact(CvPoint2D32f vanishing_point, CvPoint2D32f *cornersA
  * @param coordinates of the feature
  * @param image
  */
-CvRect getContrFrame (CvPoint2D32f *point, IplImage *img, int frameRadius=FRAME_RADIUS);
+CvRect getContrFrame (CvPoint2D32f *point, IplImage *img, int frameRadius=MIN_FRAME_RADIUS);
 
 /*
  * Computes the mean the Root Mean Square coontrast at the given coordinates.
@@ -212,7 +211,7 @@ CvRect getContrFrame (CvPoint2D32f *point, IplImage *img, int frameRadius=FRAME_
  * @param img image to analyze
  * @oaram point coordinates
  */
-double getRMSContrast(const IplImage *img, CvPoint2D32f *point, int frameRadius=FRAME_RADIUS);
+double getRMSContrast(const IplImage *img, CvPoint2D32f *point, int frameRadius=MIN_FRAME_RADIUS);
 
 /*
  * Computes the mean the Weber contrast at the given coordinates (using the
@@ -246,5 +245,51 @@ float getPointCDistance(CvPoint2D32f a, CvPoint2D32f b, CvPoint2D32f d, float cr
 void filterFeaturesTooClose(CvPoint2D32f *newPoints, int *nNewPoints, CvPoint2D32f *existingPoints, int nExistingPoints);
 
 void BTTFFeatures(featureMovement &feat, CvPoint2D32f *vp = NULL);
+
+/* ------------------ QUICK SORT (copy & paste from internet) ------------------ */
+
+template <typename TYPE>
+void quickSort(TYPE *arr, int elements) {
+
+#define  MAX_LEVELS  300
+
+	TYPE piv, beg[MAX_LEVELS], end[MAX_LEVELS];
+	int i = 0, L, R, swap;
+
+	beg[0] = 0;
+	end[0] = elements;
+	while (i >= 0) {
+		L = beg[i];
+		R = end[i] - 1;
+		if (L < R) {
+			piv = arr[L];
+			while (L < R) {
+				while (arr[R] >= piv && L < R)
+					R--;
+				if (L < R)
+					arr[L++] = arr[R];
+				while (arr[L] <= piv && L < R)
+					L++;
+				if (L < R)
+					arr[R--] = arr[L];
+			}
+			arr[L] = piv;
+			beg[i + 1] = L + 1;
+			end[i + 1] = end[i];
+			end[i++] = L;
+			if (end[i] - beg[i] > end[i - 1] - beg[i - 1]) {
+				swap = beg[i];
+				beg[i] = beg[i - 1];
+				beg[i - 1] = swap;
+				swap = end[i];
+				end[i] = end[i - 1];
+				end[i - 1] = swap;
+			}
+		} else {
+			i--;
+		}
+	}
+}
+
 
 #endif //ALGORITHMS_H_

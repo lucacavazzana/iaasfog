@@ -60,6 +60,35 @@ template <class P> double iaasPointLineDistance(CvMat* line, P point) {
 	return d;
 }
 
+template <class P> double iaasMahalanobisPointLineDistance(CvMat* line, P point) {
+
+	double result = 0;
+	double* buf = new double[4];
+	double* buf2 = new double[4];
+
+	const CvArr *tempArray[2];
+	tempArray[0]=line;
+	tempArray[1]=line;
+
+	CvMat covMatrix = cvMat(2, 2, CV_64FC1, buf);
+	CvMat covMean = cvMat(2, 2, CV_64FC1, buf2);
+	printf("LOL\n"); fflush(stdout);
+	cvCalcCovarMatrix(tempArray, 2, &covMatrix, &covMean, CV_COVAR_SCALE);
+	printf("Matrix: %f \n", covMatrix.data.db[0]); fflush(stdout);
+	cvInvert(&covMatrix, &covMatrix, CV_SVD);
+	printf("LOL\n"); fflush(stdout);
+	double* data = new double[3];
+	data[0] = point.x;
+	data[1] = point.y;
+	data[2] = 1;
+	CvMat pointHom = cvMat(3, 1, CV_64FC1, data);
+	printf("LOL\n"); fflush(stdout);
+
+	result = cvMahalonobis(&pointHom, line, &covMatrix);
+	printf("Result: %f", result);fflush(stdout);
+	return result;
+}
+
 /**
  * Compute the parameters of a line joining two points
  *
@@ -69,7 +98,14 @@ template <class P> double iaasPointLineDistance(CvMat* line, P point) {
  */
 void iaasJoiningLine(CvPoint2D32f p1, CvPoint2D32f p2, CvMat* joinLine);
 
-
+/**
+ * Compute the parameters of a line fitting two or more points
+ *
+ * @param list array of points to be fitted
+ * @param nPoints number of points in list
+ * @param joinLine pointer to the best line found
+ * @return The intersection point
+ */
 void iaasBestJoiningLine(CvPoint2D32f *list, int nPoints, CvMat* joinLine);
 
 /**
@@ -84,14 +120,22 @@ void iaasBestJoiningLine(CvPoint2D32f *list, int nPoints, CvMat* joinLine);
 CvPoint2D32f iaasIntersectionPoint(CvMat *line1, CvMat *line2);
 
 /**
- * TODO
- * @param point1
- * @param point2
- * @param ppoint
- * @return
+ * Returns the point nearest to ppoint and laying on line joining point1 and point2
+ * @param point1 first point to generate line
+ * @param point2 second point to generate line
+ * @param ppoint point to project over line
+ * @return The new point found
  */
 CvPoint2D32f iaasProjectPointToLine(CvPoint2D32f point1, CvPoint2D32f point2, CvPoint2D32f ppoint);
+
+/**
+ * Returns the point nearest to oldPoint and laying on line
+ * @param oldPoint point to project over line
+ * @param line parameters of line
+ * @return The new point found
+ */
 CvPoint2D32f iaasProjectPointToLine(CvPoint2D32f oldPoint, CvMat *line);
+
 /**
  * Computes and return the centroid of a set points
  *

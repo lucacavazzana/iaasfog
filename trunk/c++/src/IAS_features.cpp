@@ -39,11 +39,6 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 	iaasFindCorners(image0, newCorners, &newCornersCount);
 	cout << "Corners found: " << newCornersCount << endl;
 
-	/*
-	drawFeatures(image0, newCorners, newCornersCount);
-	cvShowImage(NAME_WINDOW, image0);
-	key = cvWaitKey(0);*/
-	//exit(1);
 	list<featureMovement>::iterator feat;
 
 #ifdef REVERSE_IMAGE
@@ -157,16 +152,18 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 
 		// Delete points too close to others that already exist
 		// TODO: tmpFeatures include values not valid (depends on track_status, etc.)
+#if Enable_FilterTooClose == 1
 		filterFeaturesTooClose(newCorners, &newCornersCount, &tmpFeatures[0], featuresAlive.size());
 
 		// Remove new features too close to already tracked
-		/*
+
 		feat = listFeatures.begin();
 		while(feat != listFeatures.end()) {
 			filterFeaturesTooClose(newCorners, &newCornersCount, &feat->positions[0], feat->positions.size());
 			feat++;
-		}*/
+		}
 		tmpFeatures.clear();
+#endif
 
 		// Deallocate image0 (not useful anymore)
 		cvReleaseImage(&image0);
@@ -202,7 +199,9 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 	time(&begin);
 
 	// Estimate vanishing point
-	CvPoint2D32f vp = iaasFindBestCrossedPointRANSAC(image0, joiningLines, j);
+	float distancePercentile;
+	CvPoint2D32f vp = iaasFindBestCrossedPointRANSAC(image0, joiningLines, j, &distancePercentile);
+	cout << "Rank found: " << distancePercentile << endl;
 
 	time(&end);
 	cout.precision(4);
@@ -222,7 +221,7 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 	while (feat != listFeatures.end()) {
 		// If features is not undead (still alive)
 		float distance = iaasPointLineDistance(&feat->fitLine, vp);
-		if(distance > 10.0f) {
+		if(distance > MAX_DISTANCE_FEATURE_VP) {
 			feat = listFeatures.erase(feat);
 		}
 		else {
@@ -230,23 +229,28 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 			BTTFFeatures(*feat, &vp);
 			float TTI = 0;
 			float mean = 0;
+#ifdef _DEBUG
 			cout << "Time to impact: ";
+#endif
 			for(int i=0; i < feat->positions.size()-1; i++) {
-				//TTI = iaasTimeToImpact(vp, feat->positions[i+1], feat->positions[i]);
-				//TTI = iaasTimeToImpact3Pts(feat->positions[i], feat->positions[i+1], feat->positions[i+2]);
 				TTI = iaasTimeToImpact(vp, feat->positions[i+1], feat->positions[0], i+1);
 				mean += TTI;
+#ifdef _DEBUG
 				cout << TTI << " " << " \t\n ";
+#endif
 			}
 			mean = mean/(feat->positions.size()-1);
+#ifdef _DEBUG
 			cout << "Mean start: " << mean << endl;
+#endif
 
 			// Add time to impact corrected
-			for(int i=0; i < feat->positions.size()-1; i++) {
+			for(int i=0; i < feat->positions.size(); i++) {
 				feat->timeToImpact.push_back(mean+(float)i/(float)FRAME_RATE);
 			}
 			iaasDrawStraightLine(image0, &feat->fitLine);
-
+			//cvShowImage(NAME_WINDOW, image0);
+			//key = cvWaitKey(0);
 			feat++;
 		}
 	}
@@ -277,9 +281,12 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 #endif
 			// TODO: Choice of algorithm as parameter (Get contrast of point)
 			if(index >= 0 && index < feat->positions.size()) {
-				int radiusSize = 2;
-				radiusSize = 2 + iaasTwoPointsDistance(vp, feat->positions[index])/FRAME_WIDTH*5;
-				float contrast = getRMSContrast(image0, &feat->positions[index], radiusSize);
+				int radiusSize = MIN_FRAME_RADIUS;
+#if VARIABLE_FRAME_SIZE == 1
+				radiusSize = MIN_FRAME_RADIUS + iaasTwoPointsDistance(vp, feat->positions[index])/FRAME_WIDTH*5;
+#endif
+				float contrast;
+				contrast = getRMSContrast(image0, &feat->positions[index], radiusSize);
 				feat->contrast.push_back(contrast);
 			}
 			feat++;
@@ -291,10 +298,14 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 
 	image0 = cvLoadImage(pathImages[0].c_str(), CV_LOAD_IMAGE_GRAYSCALE);
 
+
+#ifdef _DEBUG
 	feat = listFeatures.begin();
+
 	// Print contrast from features in images
 	int i=0;
 	while (feat != listFeatures.end()) {
+
 		cout << "Feature " << i++ << " contrast: ";
 		for(int j=0; j<feat->contrast.size(); j++) {
 			cout << feat->contrast[j] << "\t";
@@ -302,11 +313,12 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 		iaasDrawFlowFeature(image0, *feat);
 		cvShowImage(NAME_WINDOW, image0);
 		//key = cvWaitKey(0);
-		cout << endl;
+		//cout << endl;
 		feat++;
 	}
 	cvShowImage(NAME_WINDOW, image0);
 	key = cvWaitKey(0);
+#endif
 	cvReleaseImage(&image0);
 	image0 = cvLoadImage(pathImages[0].c_str(), CV_LOAD_IMAGE_GRAYSCALE);
 
@@ -327,6 +339,7 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 	cvDestroyWindow(NAME_WINDOW);
 }
 
+// OLD VERSION
 void Find_features(std::vector<std::string> pathImages, std::string pathOutFile, bool verb){
 	TrackRecord *a_records;
 	IplImage *imageA, *imageB, *image1, *image0 /*,*image*/;
@@ -504,6 +517,7 @@ void Find_features(std::vector<std::string> pathImages, std::string pathOutFile,
 	cvDestroyWindow(NAME_WINDOW);
 }
 
+// Save features to file
 void printFeatures(std::string filePath, list<featureMovement> listFeatures) {
 
 	// Open file to write
