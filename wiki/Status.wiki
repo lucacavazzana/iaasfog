@@ -1,7 +1,6 @@
 == WIP ==
- * Riscrivere il mondo
- * Sistemare funzione approssimante
- * Testare contrasto rms
+ * Sistemare filtro delle feature su vp
+ * Doppia passata di fit + quantile sul calcolo dell'errore (o magari sulla variazione dell'errore, chissà), calcolo di lambda sul quantile 0.2 delle migliori feat
  * ...
 
 == TODO ==
@@ -9,7 +8,9 @@
 
 == DONE ==
  * Scherzone a Stefano
- * Aggiunto contrasto root mean square
- * Filtro features che non si muovono nell'immagine (migliorare)
- * Aumentata finestra per la correlazione features  
+ * Stima features dopo che scompaiono nella nebbia
+ * Inseguimento delle feature con filtro su direzione, birapporto, consistenza step, vp
+ * Calcolo vp mediante ransac
+ * Adottato contrasto root mean square
+ * Fitting mediante ransac su dati riscalati in base a k fittato
  * ...
