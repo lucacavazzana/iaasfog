@@ -59,7 +59,6 @@ if ~DEFPATHS % FIXME: delete this condition in the final release
 end
 alg = selectAlg({'inspect features'; ...
     'plot contrasts'; ...
-    'estimate lambda by min-max'; ...
     'estimate lambda by fitting'; ...
     'normalize by fitted k and then ransac'; ...
     'compare constrasts'});
@@ -84,13 +83,11 @@ switch alg
         inspectFeatures(imPaths, feats);
     case 2, % plots computed contrast
         plotContrasts(feats);
-    case 3, % estimates lambda as t_min-t_max/ln(c_max/c_min), then 
-        estimateLamMinMax(feats, showPlot);
-    case 4, % estimates lamdas by fitting on each single set
+    case 3, % estimates lamdas by fitting on each single set
         estimateLamFit(feats, showPlot);
-    case 5, % computes lambda normalizing by the fitted k and then applying ransac
+    case 4, % computes lambda normalizing by the fitted k and then applying ransac
         fitNormRansac(feats, showPlot);
-    case 6, % compare different contrast formulas
+    case 5, % compare different contrast formulas
         compareContrasts(imPaths, feats, showPlot);
 end
 
