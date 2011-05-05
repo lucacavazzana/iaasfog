@@ -43,7 +43,7 @@ else
 end
 outFile = 'outFile.txt';
 imName = 'frame0020.jpg';
-imNum = 25;
+imNum = 20;
 imTime = 1/30;
 % -------------------------------------------------------------------------
 
