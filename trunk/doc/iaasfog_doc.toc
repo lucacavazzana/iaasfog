@@ -14,28 +14,28 @@
 \defcounter {refsection}{0}
 \contentsline {section}{\numberline {2.4}Calcolo del contrasto}{4}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {2.5}Stima dei parametri}{4}
+\contentsline {section}{\numberline {2.5}Stima dei parametri}{8}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {2.5.1}Stima di $\lambda $ mediante minMax}{4}
+\contentsline {subsection}{\numberline {2.5.1}Stima di $\lambda $ mediante minMax}{8}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {2.5.2}Fitting di $\lambda $}{5}
+\contentsline {subsection}{\numberline {2.5.2}Fitting di $\lambda $}{8}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {2.5.3}Normalizzazione mediante fitting di $k$ e RANSAC}{5}
+\contentsline {subsection}{\numberline {2.5.3}Normalizzazione mediante fitting di $k$ e RANSAC}{9}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {2.5.4}Confronto}{5}
+\contentsline {subsection}{\numberline {2.5.4}Confronto}{9}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {3}Funzioni}{6}
+\contentsline {chapter}{\numberline {3}Funzioni}{11}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {3.1}C++}{6}
+\contentsline {section}{\numberline {3.1}C++}{11}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {3.2}Matlab}{7}
+\contentsline {section}{\numberline {3.2}Matlab}{12}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {4}Installazione}{9}
+\contentsline {chapter}{\numberline {4}Installazione}{14}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {4.1}OpenCV}{9}
+\contentsline {section}{\numberline {4.1}OpenCV}{14}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {4.1.1}Windows}{9}
+\contentsline {subsection}{\numberline {4.1.1}Windows}{14}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {4.1.2}Linux / MacOSX}{9}
+\contentsline {subsection}{\numberline {4.1.2}Linux / MacOSX}{14}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {4.2}Installazione ed esecuzione del programma}{11}
+\contentsline {section}{\numberline {4.2}Installazione ed esecuzione del programma}{16}

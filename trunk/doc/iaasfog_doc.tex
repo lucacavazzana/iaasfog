@@ -5,6 +5,8 @@
 \usepackage{url}
 \usepackage{biblatex}
 \usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{caption}
 
 
 \bibliography{bib}
@@ -47,37 +49,63 @@ $$ \frac{\overline{ia}}{\overline{ab}} = \frac{\overline{a'v'}}{\overline{a'b'}}
 $$ t_{i,b} = \frac{\overline{a'v'}}{\overline{a'b'}}\frac{\overline{ab}}{v} = \frac{\overline{a'v'}}{\overline{a'b'}}*f^{-1} $$
 
 \section{Calcolo del contrasto}
-\noindent RMS bla bla bla
+\noindent Per il calcolo delle features sono stati presi in considerazione diversi approcci per il calcolo del contrasto nell'intorno di una feature: oltre alla formule di Michelson e Weber, gi\`a sfruttate nelle precedenti fasi del progetto, \`e stato deciso di introdurre anche Root Mean Square, che calcola il livello di contrasto secondo la formula
+
+$$ c\left(I_{M\times N}\right) = \sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(i_{ij}-\bar{I})^2} $$
+
+\noindent Dal momento che nel calcolo del valore contribuiscono tutti i pixel all'interno della finestra tale formula risulta essere molto pi\`u resistente al rumore rispetto alle precendenti, il cui risultato risulta essere dipendente dall'errore sul singolo pixel centrale per Weber, e dall'errore sui valori di min e max per Michelson.\\
+Confrontanto i valori ottenti calcolando i livelli di contrasto utilizzando i diversi metodi mostrano come RMS tenda a generare curve pi\`u smooth.
+
+\begin{center}
+	\includegraphics[scale=0.6, angle=90.0]{images/compContr1.png}
+	\captionof{figure}{confronto fra i valori di contrasto ottenuti mediante i differenti approcci}
+	\label{fig:contr01}
+\end{center}
+\begin{center}
+	\includegraphics[scale=0.6, angle=90.0]{images/compContr2.png}
+	\captionof{figure}{confronto su nuovi set}
+	\label{fig:contr02}
+\end{center}
+\begin{center}
+	\includegraphics[scale=0.6, angle=90.0]{images/compContr3.png}
+	\captionof{figure}{confronto su nuovi set}
+	\label{fig:contr03}
+\end{center}
+
+\noindent Una particolarit\`a di RMS \`e che, al contrario delle altre tecniche, il risultato dipende dallo spazio di colori utilizzato per rappresentare l'immagine (facilmente aggirabile riscalando rispetto alla profondit\`a del colore).
 
 \section{Stima dei parametri}
 
 \subsection{Stima di $\lambda$ mediante minMax}
 
-\noindent Per ogni set di feature:
+\noindent Definiamo la formula del contrasto per ogni feature come
 
-$$ c_i = ke^{-t_i/\lambda} $$
+$$ c_{i,s} = k_se^{-t_{i,s}/\lambda} $$
 
-\noindent Essendo $k$ uguale per ogni feature nel set \'e possibile sfruttarlo per imporre un'eguaglianza fra due campioni, ottenendo cos\'i \lambda
+\noindent dove $c_{i,s}$ \`e il livello di contrasto all'istante $t_{i,s}$. Il parametro $k_s$ risulta essere costante all'interno di ogni singola sequenza di feature, mentre $\lambda$ \`e globale.
+Sfruttando $k_s$ \`e possibile imporre la seguente uguaglianza fra due campioni nello stesso set
 
 $$ c_1e^{t_1/\lambda} = c_2e^{t_2/\lambda} $$
-$$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}}
+$$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
-\noindent In questo modo \`e possibile stimare il parametro lambda utilizzando i livelli di contrasto massimi e minimi (ed i relativi tempi all'impatto). I test mostrano come per set di features pi\'u smooth il parametro stimato sia molto vicino a quello calcolato mediante fitting, mentre per dati pi\'u rumorosi tende ad essere pi\'u una sottostima (dal momento che outlier minimi e massimi tendono ad ingrandire i valori al denominatore).\\
-Successivamente si pu\'o procedere con il calcolo di un $\lambda$ globale in base a quelli simati (media? RANSAC?)
+\noindent in modo da stimare il parametro $\lambda$ sul singolo set utilizzando i livelli di contrasto massimi e minimi (ed i relativi tempi all'impatto).\\
+A questo punto viene introdotto un primo semplice criterio atto ad eliminare set eccessivamente rumorosi: ricordando che i dati sono ordinati sul tempo d'impatto (e quindi il contrasto risulter\`a essere una funzione decrescente), vengono ignorati set in cui la differenza fra gli indici dei valori di contrasto minimo e massimo non \`e sufficientemente grande (nel nostro caso deve essere superiore alla met\`a del numero di feature all'interno del set).\\
+Successivamente si pu\`o procedere con il calcolo di un $\lambda$ globale in base a quelli stimati calcolandone la media, mediana o applicando altre tecniche pi\`u complesse.
 
 \subsection{Fitting di $\lambda$}
-\noindent La seconda tecnica adottata \'e stata di sfruttare la funzione \verb|fit| di Matlab per estrarre il parametro $\lambda$ di ogni singolo set di features, ed infine calcolare il parametro globale mediante media o mediana (dopo aver eliminato i valori troppo elevati generati da funzioni eccessivamente rumorose)
+\noindent Una seconda tecnica adottata \`e stata quella di sfruttare la funzione \verb|fit| di Matlab per estrarre il parametro $\lambda_s$ che meglio descrive ogni singolo set di feature.\\
+Funzioni particolarmente rumorose tendono a generare un $\lambda$ particolarmente elevato, portando ad una funzione che cresce rapidamente per poi appiattirsi subito sul valore di contrasto medio. Allo scopo di eliminare tali set vengono mantenuti solo quelli entro il quantile $0.8$ su $\lambda$.\\
+I parametri dei singoli set vengono infine usati per stimare quello globale in modo simile al metodo precedente.
 
 \subsection{Normalizzazione mediante fitting di $k$ e RANSAC}
-\noindent Un'altra tecnica adottata consiste nel sfruttare tutte le informazioni disponibili  per stimare (mediante la funzione \verb|fit| di Matlab) i parametri $k$ e $\lambda$ che minimizzano l'errore su ogni singolo set di features. A questo punto $k$ potr\'a essere sfruttato per normalizzare i dati, mentre $\lambda$ potr\'a essere utilizzato per individuare potenziali outlier (funzioni particolarmente rumorose tendono infatti ad avere valri di $\lambda$ estremamente elevati, eliminabili mantenendo solo i set con tale parametro sotto un certo percentile).\\
-Avendo quindi tutti i dati su una stessa scala \'e infine possibile stimare il parametro $\lambda$ comune usando RANSAC.\\
-Questo approccio, sfruttando tutti i dati disponibili, porta a risultati molto pi\'u precisi rispetto a quello precedente (che fa uso dei soli valori estremi). Tale precisione tuttavia si paga con un maggiore costo computazionale dato dalla fase di fitting dei parametri.
+\noindent Un'altra tecnica sperimentata consiste nello sfruttare tutte le informazioni disponibili  per stimare (mediante la funzione \verb|fit| di Matlab) i parametri $k_s$ e $\lambda_s$ che minimizzano l'errore su ogni singolo set di features.\\
+$\lambda_s$, analogamente al metodo precedente, viene sfruttato per eliminare set eccessivamente rumorosi mantenendo solo quelli al di sotto del quantile $0.8$.\\
+Il parametro $k_s$ viene invece utilizzato per normalizzare features con un valore di contrasto ``intrinseco'' (ovvero il massimo livello che otterremmo in condizioni idealei, senza nebbia): considerando $c_{i,s}/k_s$ possiamo cos\`i considerare sulla funzione discreta solo il contributo della nebbia, permettondoci di aggregare i dati di diversi set e stimare il parametro $\lambda$ globale sulla formula $$ c(t) = e^{-t/\lambda} $$ mediante RANSAC.\\
+Questa implementazione di RANSAC seleziona a caso il $25\%$ dei set disponibili, i cui valori di contrasto vengono aggregati, ordinati in base al tempo d'impatto ed infine usati per stimare il $\lambda$ globale. Per tale parametro verrà poi calcolato il set di consenso ed il relativo errore, iterando il processo come da manuale.
 
 \subsection{Confronto}
-\noindent I test mostrano come il $\lambda$ sul singolo set di features ottenuto mediante minMax sia molto vicino a quello ottenuto mediante fitting in caso di campioni smooth (bella forza\dots), mentre per set pi\'u rumorosi (in verit\'a a contare \'e esclusivamente il rumore sui valori estremi) si ottiene una sottostima del valore (causato da un'aumento della divergenza fra i valori massimo e minimo che portano ad un incremento del denominatore nella formula).\\
-Gli ultimi due approci invece risultano essere molto pi\'u precisi, dal momento che sfruttano l'intero set di dati, ma pagano un prezzo molto maggiore in termini di complessit\'a di calcolo nella fase di fitting.
-
-
+\noindent I test mostrano come il $\lambda_s$ sul singolo set di features ottenuto mediante minMax sia molto vicino a quello ottenuto mediante fitting in caso di campioni smooth (bella forza\dots), mentre per set pi\`u rumorosi (in verit\`a a contare \`e esclusivamente il rumore sui valori estremi) si ottiene una sottostima del valore (causato da un aumento della divergenza fra i valori massimo e minimo che portano ad un incremento del denominatore nella formula).\\
+Gli approcci che fanno uso del fitting risultano essere invece molto pi\`u precisi, dal momento che sfruttano tutte le informazioni sull'intero set di dati, ma come prevedibile pagano un prezzo molto maggiore in termini di complessit\`a di calcolo.
 
 
 
@@ -93,11 +121,11 @@ Viene qui presentata una panoramica delle funzioni realizzate. Per informazioni 
 
 \paragraph*{\verb_iaasFindCorners:_} estrae i corner dall'immagine
 
-\paragraph*{\verb_iaasTrackCorners:_} cerca di rintracciare i corner della prima immagine (gi\'a calcolati) nella seconda
+\paragraph*{\verb_iaasTrackCorners:_} cerca di rintracciare i corner della prima immagine (gi\`a calcolati) nella seconda
 
 \paragraph*{\verb_verifyNewFeatureIsOk:_} verifica che una sequenza di corner sia coerente in base a \dots
 
-\paragraph*{\verb_getAroundContrast:_} calcola il contrasto nell'intorno di una features usando RMS: $$contr = \sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(I_{ij}-\bar{I})^2}$$
+\paragraph*{\verb_getAroundContrast:_} calcola il contrasto nell'intorno di una features usando RMS: $$ c\left(I_{M\times N}\right) = \sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(i_{ij}-\bar{I})^2} $$
 
 \paragraph*{\verb_verifyValidFeature:_} \dots
 
@@ -122,11 +150,11 @@ Viene qui presentata una panoramica delle funzioni realizzate. Per informazioni 
 
 \paragraph*{\verb_fogLevel:_} date le coordinate del punto di fuga calcola il livello della nebbia come il livello di grigio medio nell'intorno se questi \`e omogeneo.
 
-\paragraph*{\verb_MichelsonContrast:_} date le coordinate di una feature e la relative immagine restituisce il livello di contrasto nell'intorno come $$\frac{I_{max}-I_{min}}{I_{max}+I_{min}}$$
+\paragraph*{\verb_MichelsonContrast:_} date le coordinate di una feature e la relative immagine restituisce il livello di contrasto nell'intorno come $$c\left(I\right) = \frac{\max(I)-\min(I)}{\max(I)+\min(I)}$$
 
-\paragraph*{\verb_rsmContrast:_} date le coordinate di una feature e la relativa immagine calcola il livello di contrasto nell'intorno come $$\sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(I_{ij}-\bar{I})^2}$$
+\paragraph*{\verb_rsmContrast:_} date le coordinate di una feature e la relativa immagine calcola il livello di contrasto nell'intorno come $$ c\left(I_{M\times N}\right) = \sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(i_{ij}-\bar{I})^2} $$
 
-\paragraph*{\verb_WeberContrast:_} date le coordinate di una feature e la relative immagine calcola il livello di contrasto come $$\frac{I-I_b}{I_b}$$ dove $I_b$ \`e il livello della nebbia.
+\paragraph*{\verb_WeberContrast:_} date le coordinate di una feature e la relative immagine calcola il livello di contrasto come $$c\left(i_{i,j}\right)= \frac{i_{i,j}-I_b}{I_b}$$ dove $I_b$ \`e il livello della nebbia, calcolato come il valore medio del frame.
 
 \paragraph*{\verb_normContrast:_} normalizza il contrasto di ogni set di features utilizzando diverse tecniche:
 \begin{itemize}
@@ -138,7 +166,7 @@ Viene qui presentata una panoramica delle funzioni realizzate. Per informazioni 
 	\item \verb|fit|: $ c_i / mle_{k}(\underline{c}) $
 \end{itemize}
 
-\noindent Di fatto quella che ci interessa maggiormente \'e \verb|fit|, le altre invece sono principalmente dei tentativi di approccio che non hanno avuto seguito nel progetto.
+\noindent Di fatto quella che ci interessa maggiormente \`e \verb|fit|, le altre invece sono principalmente dei tentativi di approccio che non hanno avuto seguito nel progetto.
 
 \chapter{Installazione}
 \section{OpenCV}
@@ -206,7 +234,7 @@ Importare i sorgenti nella cartella \verb|c++| in Eclipse, importare gli header 
 Compilare.\\
 
 \noindent In Matlab aggiungere il path degli m-file ed assicurarsi che il percorso specificato dalla varibile \verb|exec_path| in \verb|iaas.m| corrisponda alla cartella dell'eseguibile del codice C\verb|++|.\\
-Per eseguire il programma lanciare nella console di Matlab il comando \verb|iaas [#]|, dove \verb|#|, opzionale, non far\`a visualizzare nessuna finestra se assente o uguale a \verb|0|, se uguale a \verb|1| visualizzer\`a una serie di grafici che mostrano le curve fittate, mentre se uguale a \verb|2| mostrer\'a un numero maggiore di grafici (modalit\`a pensata principalmente per il debugging, l'eccessivo quantitativo di grafici rischia di risultare tedioso per l'utente).
+Per eseguire il programma lanciare nella console di Matlab il comando \verb|iaas [#]|, dove \verb|#|, opzionale, non far\`a visualizzare nessuna finestra se assente o uguale a \verb|0|, se uguale a \verb|1| visualizzer\`a una serie di grafici che mostrano le curve fittate, mentre se uguale a \verb|2| mostrer\`a un numero maggiore di grafici (modalit\`a pensata principalmente per il debugging, l'eccessivo quantitativo di grafici rischia di risultare tedioso per l'utente).
 
 \printbibliography
 
