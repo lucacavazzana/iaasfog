@@ -23,25 +23,11 @@ double iaasTwoLinesAngle(CvMat* line1, CvMat* line2) {
 	return angle;
 }
 
-
 CvPoint2D32f iaasPointAlongLine(CvMat *line, CvPoint2D32f firstPoint, CvPoint2D32f lastPoint, float pixelDistance) {
 	CvPoint2D32f newPoint;
-	/*
-	int directionX = 1;
-	if((lastPoint.x-firstPoint.x) < 0)
-		directionX = -1;
-	int directionY = 1;
-	if((lastPoint.y-firstPoint.y) < 0)
-		directionY = -1;
-	// Slope (m) = -a/b
-	double m = -(line->data.db[0]/line->data.db[1]);
-	double magnitude = sqrt(1+m*m);
-	newPoint.x = lastPoint.x + (directionX)*pixelDistance/magnitude;
-	newPoint.y = lastPoint.y + (directionY)*pixelDistance*m/magnitude;
-	return newPoint;*/
+
 	float angle = atan2((double) lastPoint.y - firstPoint.y, (double) lastPoint.x - firstPoint.x);
-//	angle = atan2((double) firstPoint.y - lastPoint.y, (double) firstPoint.x - lastPoint.x);
-	//printf("Angle: %f\n", angle/(2*PI)*360);
+
 	newPoint.x = lastPoint.x + (pixelDistance * cos(angle));
 	newPoint.y = lastPoint.y + (pixelDistance * sin(angle));
 
@@ -49,7 +35,7 @@ CvPoint2D32f iaasPointAlongLine(CvMat *line, CvPoint2D32f firstPoint, CvPoint2D3
 	float dist = iaasTwoPointsDistance(newPoint, lastPoint);
 	printf("TEST: %f\n", dist);
 #endif
-	//cvLine(image, p, q, color, line_thickness, CV_AA, 0);
+
 	return newPoint;
 }
 
@@ -85,9 +71,7 @@ void iaasBestJoiningLine(CvPoint2D32f *list, int nPoints, CvMat* joinLine) {
 	float q = bestLine[3]-bestLine[2]*m;
 
 	delete bestLine;
-	//cout << "Best Line: y=m=vy/vx=" << m << "q= " << q << endl;
 
-	// TODO: segmentation fault if use float instead of double, why ?
 	// Init result array
 	double *data = new double[3];
 	*joinLine = cvMat(3, 1, CV_64FC1, data);
@@ -185,7 +169,6 @@ void iaasDrawStraightLine(IplImage* image, CvMat* line) {
 	//Count and store intersections
 	int num_intersections = 0;
 	CvPoint intersections[4];
-
 
 	//Intersection Y = 0
 	t = cvRound(-c/a);

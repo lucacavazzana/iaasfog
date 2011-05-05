@@ -11,6 +11,8 @@
  */
 #define REVERSE_IMAGE
 
+#define MAX_DISTANCE_FEATURE_VP		5.0f
+
 //Image parameters
 /**
  * Frame width.
@@ -27,11 +29,11 @@
 /**
  * Number of corners searched in the first frame
  */
-#define MAX_CORNERS 50
+#define MAX_CORNERS 100//50
 /**
  * Quality of corner
  */
-#define QUALITY_LEVEL 0.1//0.01
+#define QUALITY_LEVEL 0.05 //0.1
 /**
  * Minimum distance between two tracked points
  */
@@ -45,7 +47,7 @@
 /**
  * Lukas Kanade algorithm search window size
  */
-#define WIN_SIZE 20//50
+#define WIN_SIZE 5//20//50		// TODO: how this parameter change the results
 /**
  * Number of pyramid layers used in LK algorithm
  */
@@ -66,14 +68,26 @@
  */
 #define FRAME_RATE 30
 
-#define CRtolleranceMax 4.0f/3.0f*1.05f
-#define CRtolleranceMin 4.0f/3.0f*0.95f
+#define CRMaxVariance		0.1f
+#define CRTollerancePerc	0.10f
+#define CRtolleranceMax 	4.0f/3.0f*(1+CRTollerancePerc)
+#define CRtolleranceMin		4.0f/3.0f*(1-CRTollerancePerc)
+
+// Enable/Disable filter on features
+#define Enable_AngleFilter			1
+#define Enable_CheckCrossRatio		1
+#define Enable_FilterTooClose		1
+
+
+#define Enable_OptimizeVanishingPointSVD	0
+
 
 #define MIN_FEATURE_DISTANCE	0 //1
 
-#define FRAME_RADIUS    		2
-
-#define FRAME_SIZE				2*FRAME_RADIUS+1
+#define VARIABLE_FRAME_SIZE		1
+#define MAX_FRAME_RADIUS		8
+#define MIN_FRAME_RADIUS    	2
+#define FRAME_SIZE				2*MIN_FRAME_RADIUS+1
 
 #define MINIMUM_LIFE			4
 
