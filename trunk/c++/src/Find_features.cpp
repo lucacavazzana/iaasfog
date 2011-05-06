@@ -6,7 +6,7 @@
  *
  */
 
-#define _DEBUG 1
+//#define _DEBUG 1
 
 #include <iostream>
 #include <cstdlib>
@@ -51,7 +51,7 @@ int checkFile(string str) {
 
 int main (int argc, char **argv) {
 
-	bool verbose = true;
+	bool verbose = false;
 	string folder, firstImage, outFile;
 	char *inTime = NULL;
 	char *inNum;

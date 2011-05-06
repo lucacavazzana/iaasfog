@@ -73,7 +73,9 @@ void BTTFFeatures(featureMovement &feat, CvPoint2D32f *vp) {
 	int i;
 	// Prolong line, generate virtual features (computed because inside fog)
 	int maxAdd = feat.startFrame - feat.positions.size() + 1;
+#ifdef _DEBUG
 	cout << "Point found: " << feat.positions.size();
+#endif
 	int lastIndex = feat.positions.size() - 1;
 
 	CvPoint2D32f lastRealPoint = feat.positions[lastIndex];
@@ -132,7 +134,9 @@ void BTTFFeatures(featureMovement &feat, CvPoint2D32f *vp) {
 		cout << "( " << newDistance << "-" << realDistance << ") ";
 #endif
 	}
+#ifdef _DEBUG
 	cout << " Point added: " << i << endl;
+#endif
 }
 
 bool verifyFeatureConsistency(featureMovement &feat) {
@@ -558,7 +562,9 @@ CvPoint2D32f iaasFindBestCrossedPointRANSAC(IplImage* image, CvMat *lines, int n
 	vector<float> distances;
 	distances.reserve(n_lines);
 
+#ifdef _DEBUG
 	cout << "Max iteration: " << max_iteration << endl;
+#endif
 
 	float rank = 0;
 	float bestRank = 0;
@@ -597,7 +603,9 @@ CvPoint2D32f iaasFindBestCrossedPointRANSAC(IplImage* image, CvMat *lines, int n
 			result = vpCandidate;
 			bestRank = rank;
 			inliers = tempInliers;
+#ifdef _DEBUG
 			cout << "Elected point (" << result.x << ";" << result.y << ") as best Rank with " << bestRank << endl;
+#endif
 		}
 		iteration++;
 	}
