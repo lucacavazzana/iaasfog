@@ -31,13 +31,14 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 #else
 	image0 = cvLoadImage(pathImages[0].c_str(), CV_LOAD_IMAGE_GRAYSCALE);
 #endif
-	//cvNormalize(image0, image0, 0.0f, 255.0f, cv::NORM_MINMAX);
 
 	// Extract features for the first image
 	newCornersCount = MAX_CORNERS;					// This value can change
 
 	iaasFindCorners(image0, newCorners, &newCornersCount);
-	cout << "Corners found: " << newCornersCount << endl;
+
+	if(verb)
+		cout << "Corners found: " << newCornersCount << endl;
 
 	list<featureMovement>::iterator feat;
 
@@ -82,7 +83,8 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 				listFeatures.push_back(ft);
 			}
 		}
-		cout << "New corners matching: " << cornersMatching << endl;
+		if(verb)
+			cout << "New corners matching: " << cornersMatching << endl;
 
 		delete track_errors;
 		delete track_status;
@@ -148,7 +150,8 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 		// Find new features in image1
 		newCornersCount = MAX_CORNERS;				// This value can change
 		iaasFindCorners(image1, newCorners, &newCornersCount);
-		cout << "Corners found: " << newCornersCount << endl;
+		if(verb)
+			cout << "Corners found: " << newCornersCount << endl;
 
 		// Delete points too close to others that already exist
 		// TODO: tmpFeatures include values not valid (depends on track_status, etc.)
@@ -195,24 +198,30 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 		}
 	}
 
+#ifdef _DEBUG
 	time_t begin, end;
 	time(&begin);
+#endif
 
 	// Estimate vanishing point
 	float distancePercentile;
 	CvPoint2D32f vp = iaasFindBestCrossedPointRANSAC(image0, joiningLines, j, &distancePercentile);
-	cout << "Rank found: " << distancePercentile << endl;
 
+#ifdef _DEBUG
 	time(&end);
 	cout.precision(4);
 	cout << "Time elapsed for vanishing point: " << fixed << difftime(end, begin) << " seconds"<< endl;
 
 	cout << "VP: (" << vp.x << ";" << vp.y << ")" << endl;
-	drawFeatures(image0, &vp, 1);
+#endif
 
-	cvShowImage(NAME_WINDOW, image0);
-	key = cvWaitKey(0);
-	cvReleaseImage(&image0);
+	if(verb) {
+		drawFeatures(image0, &vp, 1);
+
+		cvShowImage(NAME_WINDOW, image0);
+		key = cvWaitKey(0);
+	}
+		cvReleaseImage(&image0);
 
 	// Remove features too far from vanishing point
 	image0 = cvLoadImage(pathImages[0].c_str(), CV_LOAD_IMAGE_GRAYSCALE);
@@ -254,9 +263,11 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 			feat++;
 		}
 	}
-	drawFeatures(image0, &vp, 2);
-	cvShowImage(NAME_WINDOW, image0);
-	key = cvWaitKey(0);
+	if(verb) {
+		drawFeatures(image0, &vp, 2);
+		cvShowImage(NAME_WINDOW, image0);
+		key = cvWaitKey(0);
+	}
 	cvReleaseImage(&image0);
 
 	// Extract contrast for each point
@@ -323,7 +334,6 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 	image0 = cvLoadImage(pathImages[0].c_str(), CV_LOAD_IMAGE_GRAYSCALE);
 
 	if(verb) {
-
 		//Draw flaw field
 		iaasDrawFlowFieldNew(image0, listFeatures, CV_RGB(255, 0, 0));
 		drawFeatures(image0, &vp, 1);
