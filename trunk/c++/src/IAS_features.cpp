@@ -221,7 +221,7 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 	while (feat != listFeatures.end()) {
 		// If features is not undead (still alive)
 		float distance = iaasPointLineDistance(&feat->fitLine, vp);
-		if(distance > MAX_DISTANCE_FEATURE_VP) {
+		if(distance > distancePercentile) {
 			feat = listFeatures.erase(feat);
 		}
 		else {

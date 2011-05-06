@@ -115,7 +115,7 @@ void BTTFFeatures(featureMovement &feat, CvPoint2D32f *vp) {
 		double dist_vanpX01 = iaasTwoPointsDistance(*vp,x0_a);
 		double dist_vanpX02 = iaasTwoPointsDistance(*vp,x0_b);
 
-		if(dist_vanpX01 <= dist_vanpX01) {
+		if(dist_vanpX01 <= dist_vanpX02) {
 			feat.positions.push_back(x0_a);
 		}
 		else if (dist_vanpX02 <= dist_vanpX01) {
