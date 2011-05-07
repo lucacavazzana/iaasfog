@@ -1,14 +1,12 @@
-function [bestPars, bestModel, bestError] = myRansac(feats, normType, funct, showPlot)
+function [bestPars, bestModel, bestError] = myRansac(feats, showPlot)
 
 %MYRANSAC
 %   RANSAC implementation to find the lambda value of the exponential
 %   visibility function.
 %   INPUT:
 %     'feats'       :   features vector as parsed by parseFeatures.m
-%     'normType'    :   type of normalization used (see normContrast)
-%     'funct'       :   function type. Actually supports 'exp' and 'tanh'
-%     'showPlot'    :   0: shows nothing, 1: shows fitting curve, 2: also
-%                       shows error over each set
+%     'showPlot'    :   0: shows nothing, 1: shows the fitting curve,
+%                       2: error over fitting
 %
 %   OUTPUT:
 %     'bestPars'    :   computed list of parameters
@@ -26,49 +24,20 @@ end
 
 NSET = size(feats,2);
 
-if showPlot > 2 % shows contrasts plot
-    fig = plotContrasts(feats);
-    pause;
-    close(fig);
-end
-
 % PARAMETERS
 N = ceil(NSET*.25); % model
 K = 15; % max iterations
 D = ceil(NSET*.75); % required number to assert the model fits well the data
-
-if strcmp(normType,'max')
-    T=.075;
-elseif strcmp(normType,'minMax')
-    T=.07;
-elseif strcmp(normType,'last')
-    T=.2;
-elseif strcmp(normType,'firstLast')
-    T=.2;
-elseif strcmp(normType,'mean')
-    T=.06;
-elseif strcmp(normType,'fitExp')
-    T=.11;
-else
-    error('   invalid normalization parameter');
-end
+T = .10;
 
 % some initializations...
-maxTrack = max([feats.tti]);	% longest tracking
-
-
-% edit here the function we're using
-switch funct
-    case 'exp'
-        f = 'exp(-x/lam)';
-    case 'tanh'
-        f = '-.5*tanh((x-x0)/lam)+.5';
+if showPlot
+    x = 0:.01:max([feats.tti]);
 end
 
-
-fun = fittype(f);
+% edit here the function we're using
+fun = fittype('exp(-x/lam)');
 options = fitoptions('Method', 'NonlinearLeastSquares');
-x = 0:.01:maxTrack;
 
 bestError = Inf;
 bestModel = 0;
@@ -78,37 +47,30 @@ for ii=1:K
     modelSet = feats(model);
     consSet = model;    
     
-    switch funct
-        case 'exp'
-            options.StartPoint = 1; % TODO: find a good starting point
-        case 'tanh'
-            options.StartPoint = [1, mean([modelSet.tti])];
-    end
-    
-    interpFn = fit([modelSet.tti]',[modelSet.contr]', fun, options); % and now fit!
-    switch funct
-        case 'exp'
-            lam = interpFn.lam;
-        case 'tanh'
-            lam = interpFn.lam;
-            x0 = interpFn.x0;
-    end
-    
-    disp(' ');
-    disp(['- try with lambda = ' num2str(lam)]);
-    
-    % show how the function fits the data
+    options.startPoint = 1; % TODO: find a good starting point
+
+    % plots model data
     if showPlot
         plot([modelSet.tti], [modelSet.contr],'ro');
         hold on; grid on;
-        plot(x,eval(f));
-        switch funct
-            case 'exp'
-                title([f,' : lambda: ', num2str(lam)]);
-            case 'tanh'
-                title([f,' : lambda: ', num2str(lam), ', x0: ', num2str(x0)]);
-                plot(x0, .5, '*y');
-        end
+        drawnow;
+    end
+    
+    
+    interpFn = fit([modelSet.tti]',[modelSet.contr]', fun, options); % and now fit!
+    lam = interpFn.lam;
+    
+    
+    if showPlot
+        disp(' ');
+        disp(['- trying with lambda = ' num2str(lam)]);
+        
+        % show how the function fits the model
+        yFit = exp(-x/lam);
+        plot(x,yFit);
+        title(['lambda: ', num2str(lam)]);
+        legend('model data','fitted function');
+        drawnow
         hold off
     end
     
@@ -122,13 +84,14 @@ for ii=1:K
         mse = sum((ff.contr - exp(-ff.tti/lam)).^2)^.5/ff.num;
         %mse=sum((ff.contr-(1-exp(-(maxTrack-ff.num+1:maxTrack)/lam))).^2)^.5/ff.num
         
-        % fancy plot
+        % plot how the single feature fits the fitting (lol)
         if showPlot > 1
             pause;
             plot(ff.tti,ff.contr,'r*');
             hold on; grid on;
-            plot(x,eval(f));
+            plot(x,yFit);
             hold off
+            drawnow;
         end
         
         if any(ind==model) % if is in the model add error contribution
@@ -140,15 +103,18 @@ for ii=1:K
         elseif mse < T % if fits enough add to the consensus set and update error
             err = err+mse;
             consSet = [consSet ind]; %#ok
-            disp(['- feat ',num2str(ind),' added to consensus set for the model [',num2str(model),'] (mse: ', num2str(mse),')']);
-            if showPlot > 1
-                title(['mse: ', num2str(mse),' - added to the consensus set']);
+            if showPlot
+                disp(['- feat ',num2str(ind),' added to consensus set for the model [',num2str(model),'] (mse: ', num2str(mse),')']);
+                if showPlot > 1
+                    title(['mse: ', num2str(mse),' - added to the consensus set']);
+                end
             end
-            
         else
-            disp(['- feat ',num2str(ind),' rejected for the model [',num2str(model),'] (mse: ', num2str(mse),')']);
-            if showPlot > 1
-                title(['mse: ', num2str(mse),' - outlier for current model']);
+            if showPlot
+                disp(['- feat ',num2str(ind),' rejected for the model [',num2str(model),'] (mse: ', num2str(mse),')']);
+                if showPlot > 1
+                    title(['mse: ', num2str(mse),' - outlier for current model']);
+                end
             end
         end
         ind = ind +1;
@@ -158,21 +124,22 @@ for ii=1:K
     if size(consSet,2)>=D
         err=err/size(consSet,2);
         if err < bestError
-            disp(['- new best model [', num2str(model),']! Error: ', num2str(err)]);
-            switch funct
-                case 'exp'
-                    bestPars.lam = lam;
-                case 'tanh'
-                    bestPars.lam = lam;
-                    bestPars.x0 = x0;
+            if showPlot
+                disp(['- new best model [', num2str(model),']! Error: ', num2str(err)]);
             end
+
+            bestPars.lam = lam;
             bestError = err;
             bestModel = model;
         else
-            disp(['- model [', num2str(model),'] not good enough. Error: ', num2str(err)]);
+            if showPlot
+                disp(['- model [', num2str(model),'] not good enough. Error: ', num2str(err)]);
+            end
         end
     else
-        disp(['- model [', num2str(model),']: not enough consensus']);
+        if showPlot
+            disp(['- model [', num2str(model),']: not enough consensus']);
+        end
     end
     
     if showPlot

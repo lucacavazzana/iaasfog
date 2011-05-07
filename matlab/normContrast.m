@@ -62,51 +62,43 @@ elseif strcmp(type, 'mean') %----------------------------------------------
     end
     
 elseif strcmp(type, 'fitExp') %-----------------------------------------------
-    fun = 'k*exp(-x/lam)';
-    ft = fittype(fun);
+    ft = fittype('k*exp(-x/lam)');
     options = fitoptions('Method', 'NonlinearLeastSquares');
     
+    
+    if showPlot > 2
+        fig = figure;
+    end
     ii=1;
     for ff = feats
         
-%         [vMax iMax] = max(ff.contr);
-%         [vMin iMin] = min(ff.contr);
-%         compLam = (ff.tti(iMin)-ff.tti(iMax))/log(vMax/vMin);
-%         if compLam<0
-%             continue;
-%         end
-        
         options.StartPoint = [max(ff.contr), 1]; % TODO: find good starting point
-        [cfun gof] = fit(ff.tti',ff.contr(1:end)', ft, options);
+        cfun = fit(ff.tti',ff.contr(1:end)', ft, options);
         
         feats(ii).contr = ff.contr/cfun.k;
         feats(ii).pars = [cfun.k, cfun.lam];
         
         if showPlot > 2 % plotting for debug
-            k = cfun.k;
-            lam = cfun.lam;
-            x = feats(ii).tti(1):.01:feats(ii).tti(end);
+            
             plot(feats(ii).tti,feats(ii).contr(1:end), 'ro');
             hold on; grid on;
-            plot(x, eval(fun)/k);
-            title(['k: ', num2str(k), ', lambda: ', num2str(lam), ', rmse: ', num2str(gof.rmse)]);
-            
-%             disp('rmse * k - rmse / k - maxmin');
-%             disp([num2str(gof.rmse*k), ' - ', num2str(gof.rmse/k)]);
-
-%             disp([num2str(cfun.lam), ' ', num2str(compLam)]);
-%             plot(ff.tti([iMax,iMin]),[vMax,vMin]/k,'go');
+            x = feats(ii).tti(1):.01:feats(ii).tti(end);
+            plot(x, exp(-x/cfun.lam));
+            title(['k: ', num2str(cfun.k), ', lambda: ', num2str(cfun.lam)]);
             
             pause();
-            close;
+            clf;
         end
-        
         
         ii = ii+1;
     end
     
+    if showPlot > 2
+        clese(fig);
+    end
+    
 else %---------------------------------------------------------------------
-    error('    invalid normalization selected');
+    error('    invalid normalization parameter');
 end
 
 end
