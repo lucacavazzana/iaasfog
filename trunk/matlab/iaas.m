@@ -34,7 +34,7 @@ elseif regexp(path,'/Users/stefanocadario','once')
     imFolder = '../Images';
     exec_path = ['../Debug/', bin_name]; % path of the c++ part of the project. Make sure it exists
 else
-    DEFPATHS = 0; % se non sei ne Luca ne Stefano ti tocca inserire a mano i path
+    exec_path = ['', bin_name]; % EDIT HERE!
 end
 outFile = 'outFile.txt';
 imName = 'frame0000.jpg';
@@ -42,7 +42,7 @@ imNum = 50;
 % -------------------------------------------------------------------------
 
 if exist(exec_path,'file')~=2
-%     error('- ERROR: cannot find the feature-finding executable. Click on this message to fix the path');
+    error('- ERROR: cannot find the feature-finding executable. Click on this message to fix the path');
 end
 
 % get images folder, name and number
@@ -64,7 +64,7 @@ if GUI || exist(outFile,'file')~=2
     
     cmd = [exec_path,' -f ',imFolder,' -i ',imName,' -n ', num2str(imNum),' -o ',outFile];
     if exist('imTime','var')
-    cmd = [cmd,' -t' num2str(imTime)];
+        cmd = [cmd,' -t' num2str(imTime)];
     end
     
     if(system(cmd)~=0)
@@ -93,6 +93,7 @@ switch alg
         lam = -1;
 end
 
-disp(lam);
+disp(' ');
+disp(['Estimated lambda: ', num2str(lam), 's']);
 
 end
