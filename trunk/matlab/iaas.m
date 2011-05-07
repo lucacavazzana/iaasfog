@@ -42,8 +42,8 @@ else
     DEFPATHS = 0; % se non sei ne Luca ne Stefano ti tocca inserire a mano i path
 end
 outFile = 'outFile.txt';
-imName = 'frame0020.jpg';
-imNum = 20;
+imName = 'frame0000.jpg';
+imNum = 30;
 imTime = 1/30;
 % -------------------------------------------------------------------------
 

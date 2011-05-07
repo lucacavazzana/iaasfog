@@ -9,7 +9,7 @@ end
 feats = fitLamContr(feats, showPlot);
 
 errs = [feats.err];
-feats = feats(errs < prctile(errs,25));
+feats = feats(errs <= prctile(errs,25));
 
 if showPlot > 1
     for ff = feats
