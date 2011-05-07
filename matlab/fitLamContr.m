@@ -5,16 +5,17 @@ if ~exist('showPlot','var')
 end
 
 % this is only to make sure these fields are in the struct list
-feats(1).pars = 1;
-feats(1).err1norm = 1;
-feats(1).err1perc = 1;
-feats(1).rmse1 = 1;
-feats(1).err2norm = 1;
-feats(1).err2perc = 1;
-feats(1).rmse2 = 1;
-feats(1).step = 1;
-feats(1).rapp = 1;
-feats(1).err = 1;
+feats(1).bestData = [];
+feats(1).pars = [];
+feats(1).err1norm = [];
+feats(1).err1perc = [];
+feats(1).rmse1 = [];
+feats(1).err2norm = [];
+feats(1).err2perc = [];
+feats(1).rmse2 = [];
+feats(1).step = [];
+feats(1).rapp = [];
+feats(1).intErr = [];
 
 fun = 'k*exp(-x/lam)';
 ft = fittype(fun);
@@ -51,28 +52,30 @@ for ff = feats
 
         disp(['    k: ', num2str(cfun.k), ',     lambda: ', num2str(cfun.lam), ',     rmse (k-norm): ', num2str(gof.rmse), ' (', num2str(gof.rmse/cfun.k),')']);
         drawnow;
-        oldK = cfun.k; oldLam = cfun.lam; oldErr = gof.rmse;
     end
+    oldK = cfun.k; oldLam = cfun.lam; oldErr = gof.rmse;
     
     % best 50% data
-    bad = err./fitted <= prctile(err./fitted,50); % err percent
-    ff.tti = ff.tti(bad);
-    ff.contr = ff.contr(bad);
+    ff.bestData = err./fitted <= prctile(err./fitted,50); % err percent
     
     % second fit
-    [cfun gof] = fit(ff.tti',ff.contr', ft, options);
+    [cfun gof] = fit(ff.tti(ff.bestData)',ff.contr(ff.bestData)', ft, options);
     
-    fitted = cfun.k*exp(-(ff.tti)/cfun.lam);
-    err = abs(ff.contr - fitted);   % error 2nd fit
+    fitted = cfun.k*exp(-(ff.tti(ff.bestData))/cfun.lam);
+    err = abs(ff.contr(ff.bestData) - fitted);   % error 2nd fit
     
     ff.err2norm = mean(err)/cfun.lam; % 2nd mean norm error
     ff.err2perc = mean(err ./ fitted);  % 2nd mean perc error
     ff.rmse2 = gof.rmse;    % 2nd rmse
     
+% promettente
+% int(k1*exp(-t/lam1,0,Inf) - k2*exp(-t/lam2)) = k2*lam2*exp(-t/lam2) - k1*lam1*exp(-t/lam1) ~ k2*lam2 - k1*lam1
+    ff.intErr = abs(cfun.k*cfun.lam - oldK*oldLam);
+    
     ff.pars = [cfun.k, cfun.lam];
         
     if showPlot > 2
-        plot(ff.tti,ff.contr, 'or');
+        plot(ff.tti(ff.bestData),ff.contr(ff.bestData), 'or');
         plot(x, cfun.k*exp(-x/cfun.lam),'r');
         legend(['data - rmse: ', num2str(oldErr)], ...
                 ['first fit - k: ', num2str(oldK), ', \lambda: ', num2str(oldLam)], ...
@@ -87,11 +90,10 @@ for ff = feats
             ', rmse2: ', num2str(ff.rmse2)]);
         disp(['normStep: ', num2str(ff.err1norm-ff.err2norm), ', percStep: ', num2str(ff.err1perc-ff.err2perc), ', rmsStep: ', num2str(ff.rmse1-ff.rmse2)]);
         disp(['normRapp: ', num2str(ff.err2norm/ff.err1norm), ', percRapp: ', num2str(ff.err2perc/ff.err1perc), ', rmsRapp: ', num2str(ff.rmse2/ff.rmse1)]);
+        disp(['intError: ', num2str(ff.intErr)]);
         disp(' ');
         pause;
     end
-    
-    ff.err = ff.err1perc;
     
     feats(ii) = ff;
     ii = ii+1;

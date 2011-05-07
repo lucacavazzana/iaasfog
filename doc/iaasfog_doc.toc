@@ -24,6 +24,8 @@
 \defcounter {refsection}{0}
 \contentsline {subsection}{\numberline {2.5.4}Confronto}{9}
 \defcounter {refsection}{0}
+\contentsline {subsection}{\numberline {2.5.5}Filtro fitting}{10}
+\defcounter {refsection}{0}
 \contentsline {chapter}{\numberline {3}Funzioni}{11}
 \defcounter {refsection}{0}
 \contentsline {section}{\numberline {3.1}C++}{11}
