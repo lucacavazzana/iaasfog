@@ -57,17 +57,17 @@ $$ c\left(I_{M\times N}\right) = \sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(i_{i
 Confrontanto i valori ottenti calcolando i livelli di contrasto utilizzando i diversi metodi mostrano come RMS tenda a generare curve pi\`u smooth.
 
 \begin{center}
-	\includegraphics[scale=0.6, angle=90.0]{images/compContr1.png}
+	\includegraphics[scale=0.60, angle=90.0]{images/compContr1.png}
 	\captionof{figure}{confronto fra i valori di contrasto ottenuti mediante i differenti approcci}
 	\label{fig:contr01}
 \end{center}
 \begin{center}
-	\includegraphics[scale=0.6, angle=90.0]{images/compContr2.png}
+	\includegraphics[scale=0.60, angle=90.0]{images/compContr2.png}
 	\captionof{figure}{confronto su nuovi set}
 	\label{fig:contr02}
 \end{center}
 \begin{center}
-	\includegraphics[scale=0.6, angle=90.0]{images/compContr3.png}
+	\includegraphics[scale=0.60, angle=90.0]{images/compContr3.png}
 	\captionof{figure}{confronto su nuovi set}
 	\label{fig:contr03}
 \end{center}
@@ -106,6 +106,17 @@ Questa implementazione di RANSAC seleziona a caso il $25\%$ dei set disponibili,
 \subsection{Confronto}
 \noindent I test mostrano come il $\lambda_s$ sul singolo set di features ottenuto mediante minMax sia molto vicino a quello ottenuto mediante fitting in caso di campioni smooth (bella forza\dots), mentre per set pi\`u rumorosi (in verit\`a a contare \`e esclusivamente il rumore sui valori estremi) si ottiene una sottostima del valore (causato da un aumento della divergenza fra i valori massimo e minimo che portano ad un incremento del denominatore nella formula).\\
 Gli approcci che fanno uso del fitting risultano essere invece molto pi\`u precisi, dal momento che sfruttano tutte le informazioni sull'intero set di dati, ma come prevedibile pagano un prezzo molto maggiore in termini di complessit\`a di calcolo.
+
+\subsection{Filtro fitting}
+\noindent Viene mantenuto il quantile di ordine $25\%$ di una determinata cifra di merito. Per tale cifra sono stati provati diversi approcci:
+
+\begin{itemize}
+	\item	\emph{errore primo/secondo fitting}: c'\`e poco da spiegare. L'errore viene calcolato come media dei rapporti fra l'errore e la proiezione del dato sulla curva.
+	\item	\emph{variazione dell'errore}: nell'ipotesi di un buon set di dati la variazione dell'errore medio non dovrebbe essere molto grande. Viene quindi tenuta in considerazione la differenza fra gli errori calcolati (prossima a $0$ per buone features) o il rapporto (prossimo a $1$).
+	\item	\emph{differenza curva}: viene calcolata la variazione fra i parametri. Per aggregare i due parametri viene considerata la differenza fra l'area delle due curve, calcolata come $$\left|\int^{\infty}_0\left(k_1e^{-t/\lambda_1} - k_2e^{-t/\lambda_2}\right)dt\right| = \left|\left[ k_2\lambda_2e^{-t/\lambda_2} - k_1\lambda_1e^{-t/\lambda_1} \right]^\infty_0\right| = \left|k_2\lambda_2 - k_1\lambda_1\right|$$
+\end{itemize}
+
+L'ultima soluzione sembra essere quella pi\`u robusta.
 
 
 

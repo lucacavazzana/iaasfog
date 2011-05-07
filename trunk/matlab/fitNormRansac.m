@@ -1,4 +1,4 @@
-function [] = fitNormRansac(feats, showPlot)
+function [lam] = fitNormRansac(feats, showPlot)
 
 %THENEWWAY
 %
@@ -25,20 +25,19 @@ end
 % ransacching
 [pars ~] = myRansac(feats, normType, func, showPlot);
 
-if 1
+if showPlot
     figure; grid on; hold on;
-    switch func
-        case 'exp'
-            plot(0:.01:max([feats.tti]), exp(-(0:.01:max([feats.tti]))/pars.lam), 'y*');
-            title(['lambda: ', num2str(pars.lam)]);
-        case 'tanh'
-            plot(0:.01:max([feats.tti]), tanh(0:.01:max([feats.tti])), 'y*'); % fix
-    end
+    
+    plot(0:.01:max([feats.tti]), exp(-(0:.01:max([feats.tti]))/pars.lam), 'y*');
+    title(['lambda: ', num2str(pars.lam)]);
+        
     for ff = feats
         plot(ff.tti, ff.contr, 'o');
     end
     pause;
     close;
 end
+
+lam = pars.lam;
 
 end

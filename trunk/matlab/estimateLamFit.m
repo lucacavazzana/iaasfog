@@ -1,4 +1,4 @@
-function [] = estimateLamFit(feats, showPlot)
+function [lam] = estimateLamFit(feats, showPlot)
 
 %
 
@@ -8,7 +8,7 @@ end
 
 feats = fitLamContr(feats, showPlot);
 
-errs = [feats.err];
+errs = [feats.intErr]; % try this!
 feats = feats(errs <= prctile(errs,25));
 
 if showPlot > 1
@@ -16,10 +16,11 @@ if showPlot > 1
 
         xx = ff.tti(1):.01:ff.tti(end);
         hold on; grid on;
-        plot(ff.tti,ff.contr,'o');
+        plot(ff.tti, ff.contr, 'o');
+        plot(ff.tti(ff.bestData), ff.contr(ff.bestData), 'ro');
         plot(xx, ff.pars(1)*exp(-xx/ff.pars(2)));
         
-        legend('data','fitted');
+        legend('all data', 'best data', 'fitted');
         title(['fitted \lambda: ', num2str(ff.pars(2))]);
         disp(['fitted lambda: ', num2str(ff.pars(2))]);
         pause;
@@ -35,5 +36,8 @@ if showPlot
     disp('fitted lambdas');
     disp(num2str(lams));
 end
+
+lam = [feats.pars]; lam = lam(2:2:end);
+lam = median(lam);
 
 end
