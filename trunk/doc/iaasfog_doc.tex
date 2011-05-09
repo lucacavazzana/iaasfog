@@ -8,7 +8,6 @@
 \usepackage{graphicx}
 \usepackage{caption}
 
-
 \bibliography{bib}
 
 \title {IaasFog}
@@ -22,17 +21,41 @@
 
 \chapter{Introduzione}
 
-\noindent bla bla bla bla
+\noindent L'obbiettivo del progetto \`e estrarre un parametro numerico indicante la visibilit\`a in caso di nebbia utilizzando esclusivamente delle immagini riprese da una telecamera montata su una automobile.\\
+La tecnica utilizzata si basa sull'analisi della variazione del contrasto delle features individuate in ogni frame dell'immagine con il fine di trovare il parametro $\lambda$ della funzione $$ke^{-t/\lambda}$$ Tale funzione deriva da una prima analisi teorica del problema in questione: il parametro $\lambda$ infatti rappresenta il tempo medio d'impatto di una feature che sta emergendo dalla nebbia, per cui il valore di contrasto viene considerato come pari a $k/e$.\\
+I problemi affrontati nel corso di questo progetto consistono nello sviluppo di una tecnica performante per l'individuazione e il tracking di features il cui movimento relativo sia consistente con quello del veicolo, e trovare un metodo per il calcolo del contrasto e la stima del parametro in questione sufficientemente robusto al livello di rumore sui dati.\\
+	 	
+\noindent Un simile sistema potrebbe essere integrato fra i sensori di un veicolo, monitorando l'idoneit\`a della velocit\`a di crociera rispetto alle condizioni di visibilit\`a e ai tempi di reazione del conducente. Nel campo emergente dei veicoli autonomi similmente potrebbe vincolare il valore massimo di velocit\`a in base ai tempi di risposta, oppure potenziare la consapevolezza del sistema di analisi fornendo un parametro per la stima della rumorosit\`a/bont\`a dei dati a seconda della distanza dell'elemento da cui sono state ricavati.
 
 \chapter{Qualche titolo}
 
 \section{Tracking delle features}
 
-\noindent Crossratio, controllo sulla direzione, bla bla bla \dots
+\noindent Il tracking delle features deve contemporaneamente individuare il maggior numero di features in ogni immagine ma nel contempo escludere gli outliers che influirebbero nei passaggi successivi dell'elaborazione.\\
+L'elaborazione dei frame avviene in modo inverso rispetto al tempo perch\'e in questo modo si \`e in grado di individuare le features quando sono ben visibili per poi inseguirle nei frame temporalmente precedenti, dove il riconoscimento \`e pi\`u difficoltoso a causa della nebbia.\\
 
-\section{Calcolo vanishing-point}
+\noindent Ad ogni frame viene eseguita la funzione \verb|cvGoodFeaturesToTrack| che individua la posizione di features con autovalori pi\`u alti e quindi con maggior probabilit\`a di essere individuati nei frame successivi. Nel frame successivo vengono quindi cercate le stesse features individuate fin'ora utilizzando la funzione \verb|cvCalcOpticalFlowPyrLK|, che utilizzando l'algoritmo iterativo di \emph{Lucas-Kanade}~\cite{lucaskanade81} ricalcola la nuova posizione di ogni feature.\\
 
-\noindent Ribla, ribla, ribla, \dots
+\noindent Prima di aggiungere alla sequenza il nuovo punto individuato vengono effettuati dei controlli di coerenza: la nuova posizione deve avere direzione concorde con i punti antecedenti ed il nuovo passo deve essere maggiore dei precedenti. Una sequenza di features \`e considerata valida se \`e inseguita per almeno cinque frame (essendo quattro il numero minimo necessario per il calcolo del birapporto), in caso contrario viene eliminata. Se la feature \`e valida viene eseguito un controllo sulla cross-ratio dei punti che deve essere prossima a 4/3. I punti trovati saranno comunque soggetti ad errori di posizione dovuti a diversi fattori e quindi non collineari: per rimediare viene quindi calcolata la retta di regressione, su cui verranno proiettati i punti per l'analisi del birapporto.\\
+
+\noindent Il tracking di feature diventa sempre pi\`u difficoltoso all'avvicinarsi al vanishing point a causa del calo dei livelli di contrasto causati dalla nebbia che riduce la possibilit\`a di individuazione; per ovviare a questo problema vengono calcolate le posizioni teoriche delle features utilizzando i punti nei frame precedenti e la cross-ratio nota. Il tracking di una feature ha termine quando non si hanno pi\`u frame disponibili oppure quando lo step del nuovo punto \`e inferiore ai $0.5$ pixel.
+
+\section{Calcolo vanishing point}
+\noindent La posizione del vanishing point riveste un ruolo fondamentale nella risoluzione del problema poich\'e viene coinvolto sia nel filtro di outliers, sia nel calcolo del tempo d'impatto di ogni feature.\\
+
+\noindent Inizialmente \`e stato implementato un algoritmo che prevedeva l'individuazione di tutti i punti di intersezione tra rette e da questi ricavare il punto che minimizza la distanza con tutti gli altri. Questo approccio, sebbene abbia dato buoni risultati, si \`e rivelato troppo lento a causa della complessit\`a eccessiva del problema che richiedeva fino a $15$ secondi di elaborazione per $200$ features.\\
+
+\noindent Dopo un primo tentativo di ottimizzare l'algoritmo esistente si \`e deciso di riscriverlo sfruttando RANSAC:
+\begin{itemize}
+	\item	Ad ogni iterazione viene eletto casualmente un possibile candidato vanishing point calcolando l'intersezione delle rette rappresentanti due features, con il solo vincolo di essere all'interno del field of view dell'immagine.
+	\item	Per ogni retta viene calcolata la distanza dal vanishing point candidato. A tale distanza viene assegnato un punteggio (da 0 a 1) che sommato a quelli di ogni retta determina il rank del candidato vanishing point.
+	\item	Se il nuovo vanishing point ha un rank migliore dei precedenti viene eletto come nuovo best vanishing point.
+	\item	Il ciclo termina quando vengono analizzati un numero di intersezioni ritenuto sufficiente (circa il $5\%$ di tutte le possibili intersezioni tra rette).
+\end{itemize}
+
+\noindent L'algoritmo applicato a diversi set di dati ha restituito buoni risultati con tempi notevolmente ridotti (circa 1 secondo di elaborazione per 200 features) rispetto alla prima implementazione meno efficiente.\\
+
+\noindent La posizione del vanishing point reale viene poi affinata utilizzando SVD con il $50\%$ delle rette pi\`u vicine al vanishing point trovato in precedenza. 
 
 \section{Calcolo del tempo all'impatto}
 
@@ -93,30 +116,33 @@ A questo punto viene introdotto un primo semplice criterio atto ad eliminare set
 Successivamente si pu\`o procedere con il calcolo di un $\lambda$ globale in base a quelli stimati calcolandone la media, mediana o applicando altre tecniche pi\`u complesse.
 
 \subsection{Fitting di $\lambda$}
-\noindent Una seconda tecnica adottata \`e stata quella di sfruttare la funzione \verb|fit| di Matlab per estrarre il parametro $\lambda_s$ che meglio descrive ogni singolo set di feature.\\
-Funzioni particolarmente rumorose tendono a generare un $\lambda$ particolarmente elevato, portando ad una funzione che cresce rapidamente per poi appiattirsi subito sul valore di contrasto medio. Allo scopo di eliminare tali set vengono mantenuti solo quelli entro il quantile $0.8$ su $\lambda$.\\
-I parametri dei singoli set vengono infine usati per stimare quello globale in modo simile al metodo precedente.
+\noindent Una tecnica adottata \`e stata quella di sfruttare la funzione \verb|fit| di Matlab per estrarre il parametri $k$ e $\lambda_s$ che meglio descrivono ogni singolo inseguimento. Per ogni dato viene cos\`i calcolato l'errore rispetto alla relativa curva generata, valore in base al quale verr\'a eliminata la met\'a dei dati peggiori, mentre l'altra met\'a verr\'a utilizzata per calcolare un refit.\\
+Fra i nuovi $\lambda_s$ calcolati viene selezionato il $20\%$ migliore in base ad un valore, calcolato mediante diversi approcci:
+
+\begin{itemize}
+	\item	\emph{errore primo/secondo fitting}: c'\`e poco da spiegare. L'errore viene calcolato come media dei rapporti fra l'errore e la proiezione del dato sulla curva.
+	\item	\emph{variazione dell'errore}: nell'ipotesi di un buon set di dati la variazione dell'errore medio non dovrebbe essere molto grande. Viene quindi tenuta in considerazione la differenza fra gli errori calcolati (prossima a $0$ per buone features) o il rapporto (prossimo a $1$).
+	\item	\emph{differenza curva}: viene calcolata la variazione fra i parametri. Per aggregare i due parametri viene considerata la differenza fra l'area delle due curve, calcolata come $$\left|\int^{\infty}_0\left(k_1e^{-t/\lambda_1} - k_2e^{-t/\lambda_2}\right)dt\right|$$ $$= \left|\left[ k_2\lambda_2e^{-t/\lambda_2} - k_1\lambda_1e^{-t/\lambda_1} \right]^\infty_0\right|$$ $$ = \left|k_2\lambda_2 - k_1\lambda_1\right|$$
+\end{itemize}
+
+\noindent L'ultima soluzione appare essere quella pi\`u robusta, e viene quindi utilizzata. Il $\lambda$ globale viene cos\`i calcolato come la mediana di quelli selezionati.
 
 \subsection{Normalizzazione mediante fitting di $k$ e RANSAC}
 \noindent Un'altra tecnica sperimentata consiste nello sfruttare tutte le informazioni disponibili  per stimare (mediante la funzione \verb|fit| di Matlab) i parametri $k_s$ e $\lambda_s$ che minimizzano l'errore su ogni singolo set di features.\\
 $\lambda_s$, analogamente al metodo precedente, viene sfruttato per eliminare set eccessivamente rumorosi mantenendo solo quelli al di sotto del quantile $0.8$.\\
 Il parametro $k_s$ viene invece utilizzato per normalizzare features con un valore di contrasto ``intrinseco'' (ovvero il massimo livello che otterremmo in condizioni idealei, senza nebbia): considerando $c_{i,s}/k_s$ possiamo cos\`i considerare sulla funzione discreta solo il contributo della nebbia, permettondoci di aggregare i dati di diversi set e stimare il parametro $\lambda$ globale sulla formula $$ c(t) = e^{-t/\lambda} $$ mediante RANSAC.\\
-Questa implementazione di RANSAC seleziona a caso il $25\%$ dei set disponibili, i cui valori di contrasto vengono aggregati, ordinati in base al tempo d'impatto ed infine usati per stimare il $\lambda$ globale. Per tale parametro verrà poi calcolato il set di consenso ed il relativo errore, iterando il processo come da manuale.
+Questa implementazione di RANSAC seleziona a caso il $25\%$ dei set disponibili, i cui valori di contrasto vengono aggregati, ordinati in base al tempo d'impatto ed infine usati per stimare il $\lambda$ globale. Per tale parametro verr\'a poi calcolato il set di consenso ed il relativo errore, iterando il processo come da manuale.
 
-\subsection{Confronto}
-\noindent I test mostrano come il $\lambda_s$ sul singolo set di features ottenuto mediante minMax sia molto vicino a quello ottenuto mediante fitting in caso di campioni smooth (bella forza\dots), mentre per set pi\`u rumorosi (in verit\`a a contare \`e esclusivamente il rumore sui valori estremi) si ottiene una sottostima del valore (causato da un aumento della divergenza fra i valori massimo e minimo che portano ad un incremento del denominatore nella formula).\\
-Gli approcci che fanno uso del fitting risultano essere invece molto pi\`u precisi, dal momento che sfruttano tutte le informazioni sull'intero set di dati, ma come prevedibile pagano un prezzo molto maggiore in termini di complessit\`a di calcolo.
 
-\subsection{Filtro fitting}
-\noindent Viene mantenuto il quantile di ordine $25\%$ di una determinata cifra di merito. Per tale cifra sono stati provati diversi approcci:
 
-\begin{itemize}
-	\item	\emph{errore primo/secondo fitting}: c'\`e poco da spiegare. L'errore viene calcolato come media dei rapporti fra l'errore e la proiezione del dato sulla curva.
-	\item	\emph{variazione dell'errore}: nell'ipotesi di un buon set di dati la variazione dell'errore medio non dovrebbe essere molto grande. Viene quindi tenuta in considerazione la differenza fra gli errori calcolati (prossima a $0$ per buone features) o il rapporto (prossimo a $1$).
-	\item	\emph{differenza curva}: viene calcolata la variazione fra i parametri. Per aggregare i due parametri viene considerata la differenza fra l'area delle due curve, calcolata come $$\left|\int^{\infty}_0\left(k_1e^{-t/\lambda_1} - k_2e^{-t/\lambda_2}\right)dt\right| = \left|\left[ k_2\lambda_2e^{-t/\lambda_2} - k_1\lambda_1e^{-t/\lambda_1} \right]^\infty_0\right| = \left|k_2\lambda_2 - k_1\lambda_1\right|$$
-\end{itemize}
+\chapter{Conclusione e sviluppi futuri}
+\noindent I risultati dei test hanno evidenziato come il problema sia fortemente influenzato dal numero di outliers derivati sia un errato tracking delle features, sia da una non perfetta variazione del contrasto sulle features stesse. Il maggior sforzo computazionale \`e infatti da attribuire alla complessit\`a degli algoritmi utilizzati per escludere gli outliers in tutte le fasi dell'elaborazione in modo da avere dei valori attendibili in ogni condizione.\\
 
-L'ultima soluzione sembra essere quella pi\`u robusta.
+\noindent Sono stati analizzati diversi approcci ed algoritmi per la risoluzione del problema, si \`e preferito in ultimo di sacrificare il tempo di elaborazione in cambio di una migliore affidabilit\`a dei risultati: gli algoritmi utilizzati sono in grado di individuare autonomamente le buone features e scartare quelle meno buone, ottenendo degli ottimi risultati esposti nei capitoli precedenti.\\
+
+\noindent Possibili sviluppi futuri possono riguardare la reimplementazione in C\verb|++| del codice Matlab ed un'ottimizzazione degli algoritmi mirata a migliorarne le performance, eventualmente fino al punto di rendere possibile l'analisi direttamente su di uno streaming video in realtime, senza le rielaborazioni successive del codice attualmente in uso.\\
+
+
 
 
 
@@ -150,16 +176,19 @@ Viene qui presentata una panoramica delle funzioni realizzate. Per informazioni 
 
 \paragraph*{\verb_iaas:_}
 
-\paragraph*{\verb_inspectContrast:_} stampa a video le sequenze di features per un'ispezione visiva
+\paragraph*{\verb_inspectContrast:_} stampa a video le sequenze di features per un'ispezione visiva.
+
+\paragraph*{\verb_inspectFeatures:_}
+
+\paragraph*{\verb_estimateLamFit:_}
+
+\paragraph*{\verb_fitLamContr:_}
+
+\paragraph*{\verb_fitNormContr:_}
 
 \paragraph*{\verb_myRansac:_} implementazione di RANSAC per calcolare il parametro lambda della funzione del contrasto dati in ingresso dei set di features normalizzati.
 
-
-
-
-
-
-\paragraph*{\verb_fogLevel:_} date le coordinate del punto di fuga calcola il livello della nebbia come il livello di grigio medio nell'intorno se questi \`e omogeneo.
+\paragraph*{\verb_compareContrast:_}
 
 \paragraph*{\verb_MichelsonContrast:_} date le coordinate di una feature e la relative immagine restituisce il livello di contrasto nell'intorno come $$c\left(I\right) = \frac{\max(I)-\min(I)}{\max(I)+\min(I)}$$
 
@@ -180,6 +209,10 @@ Viene qui presentata una panoramica delle funzioni realizzate. Per informazioni 
 \noindent Di fatto quella che ci interessa maggiormente \`e \verb|fit|, le altre invece sono principalmente dei tentativi di approccio che non hanno avuto seguito nel progetto.
 
 \chapter{Installazione}
+
+\noindent Il programma \`e stato sviluppato per mezzo di C\verb|++| e Matlab. Per la parte in C\verb|++| \`e necessario essere provvisti delle librerie di OpenCV.\\
+L'ultima versione del codice \`e liberamente scaricabile mediante SVN dalla repository messa a disposizione su Google Code all'indirizzo \url{http://code.google.com/p/iaasfog}.
+
 \section{OpenCV}
 OpenCV (Open Source Computer Vision) \`e una libreria di funzioni per la computer vision, inizialmente sviluppata da Intel e ora distribuita sotto licenza open source. \`E possibile scaricare l'ultima versione all'indirizzo \url{http://sourceforge.net/projects/opencvlibrary/} \footnote{guida d'installazione ufficiale all'indirizzo \url{http://opencv.willowgarage.com/wiki/InstallGuide}}.
 
@@ -240,8 +273,7 @@ Per compilare la libreria \`e necessario installare degli header offerti da MinG
 \noindent dove \verb|<opencv_dir>| \`e la cartella dove abbiamo compilato il le librerie, nel nostro caso \verb|~/OpenCV-2.2.0/release|.
 
 \section{Installazione ed esecuzione del programma}
-\noindent Il progetto \`e disponibile via SVN alla pagina \url{http://code.google.com/p/iaasfog}.\\
-Importare i sorgenti nella cartella \verb|c++| in Eclipse, importare gli header delle funzioni di OpenCV mediante Project $\rightarrow$ Properties  $\rightarrow$ C\slash C\verb|++| Editor $\rightarrow$ Settings $\rightarrow$ GCC C\verb|++| Compiler $\rightarrow$ Directories aggiungendo il percorso \verb|/usr/local/include/| e sotto GCC C\slash C\verb|++| Linker $\rightarrow$ Libraries le librerie \verb|opencv_core|, \verb|opencv_video|, \verb|opencv_highgui| e \verb|opencv_imgproc| in \verb|/usr/local/lib| (o qualunque path sia stato utilizzato per l'installazione).\\
+\noindent Importare i sorgenti nella cartella \verb|c++| in Eclipse, importare gli header delle funzioni di OpenCV mediante Project $\rightarrow$ Properties  $\rightarrow$ C\slash C\verb|++| Editor $\rightarrow$ Settings $\rightarrow$ GCC C\verb|++| Compiler $\rightarrow$ Directories aggiungendo il percorso \verb|/usr/local/include/| e sotto GCC C\slash C\verb|++| Linker $\rightarrow$ Libraries le librerie \verb|opencv_core|, \verb|opencv_video|, \verb|opencv_highgui| e \verb|opencv_imgproc| in \verb|/usr/local/lib| (o qualunque path sia stato utilizzato per l'installazione).\\
 Compilare.\\
 
 \noindent In Matlab aggiungere il path degli m-file ed assicurarsi che il percorso specificato dalla varibile \verb|exec_path| in \verb|iaas.m| corrisponda alla cartella dell'eseguibile del codice C\verb|++|.\\

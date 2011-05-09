@@ -8,36 +8,34 @@
 \defcounter {refsection}{0}
 \contentsline {section}{\numberline {2.1}Tracking delle features}{3}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {2.2}Calcolo vanishing-point}{3}
+\contentsline {section}{\numberline {2.2}Calcolo vanishing point}{4}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {2.3}Calcolo del tempo all'impatto}{3}
+\contentsline {section}{\numberline {2.3}Calcolo del tempo all'impatto}{5}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {2.4}Calcolo del contrasto}{4}
+\contentsline {section}{\numberline {2.4}Calcolo del contrasto}{5}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {2.5}Stima dei parametri}{8}
+\contentsline {section}{\numberline {2.5}Stima dei parametri}{10}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {2.5.1}Stima di $\lambda $ mediante minMax}{8}
+\contentsline {subsection}{\numberline {2.5.1}Stima di $\lambda $ mediante minMax}{10}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {2.5.2}Fitting di $\lambda $}{8}
+\contentsline {subsection}{\numberline {2.5.2}Fitting di $\lambda $}{10}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {2.5.3}Normalizzazione mediante fitting di $k$ e RANSAC}{9}
+\contentsline {subsection}{\numberline {2.5.3}Normalizzazione mediante fitting di $k$ e RANSAC}{11}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {2.5.4}Confronto}{9}
+\contentsline {chapter}{\numberline {3}Conclusione e sviluppi futuri}{13}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {2.5.5}Filtro fitting}{10}
+\contentsline {chapter}{\numberline {4}Funzioni}{14}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {3}Funzioni}{11}
+\contentsline {section}{\numberline {4.1}C++}{14}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {3.1}C++}{11}
+\contentsline {section}{\numberline {4.2}Matlab}{15}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {3.2}Matlab}{12}
+\contentsline {chapter}{\numberline {5}Installazione}{17}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {4}Installazione}{14}
+\contentsline {section}{\numberline {5.1}OpenCV}{17}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {4.1}OpenCV}{14}
+\contentsline {subsection}{\numberline {5.1.1}Windows}{17}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {4.1.1}Windows}{14}
+\contentsline {subsection}{\numberline {5.1.2}Linux / MacOSX}{18}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {4.1.2}Linux / MacOSX}{14}
-\defcounter {refsection}{0}
-\contentsline {section}{\numberline {4.2}Installazione ed esecuzione del programma}{16}
+\contentsline {section}{\numberline {5.2}Installazione ed esecuzione del programma}{19}

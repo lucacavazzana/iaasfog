@@ -1,6 +1,6 @@
 function [lam] = fitNormRansac(feats, showPlot)
 
-%THENEWWAY
+%FITNORMCONTR
 %
 %   something
 
