@@ -80,17 +80,17 @@ disp(['Found ', num2str(size(feats,2)), ' features over ', num2str(size(imPaths,
 switch alg
     case 1, % visually check features
         inspectFeatures(imPaths, feats);
-        lam = -1;
+        lam = NaN;
     case 2, % plots computed contrast
         plotContrasts(feats);
-        lam = -1;
+        lam = NaN;
     case 3, % estimates lamdas by fitting on each single set
         lam = estimateLamFit(feats, showPlot);
     case 4, % computes lambda normalizing by the fitted k and then applying ransac
         lam = fitNormRansac(feats, showPlot);
     case 5, % compare different contrast formulas
         compareContrasts(imPaths, feats, showPlot);
-        lam = -1;
+        lam = NaN;
 end
 
 disp(' ');

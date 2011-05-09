@@ -1,11 +1,15 @@
-function [] = inspectFeatures(imPaths, feats)
+function [] = inspectFeatures(imPaths, feats, vp)
 
 %COMPARECONTRASTS shows contrast levels.
 %
 %   COMPARECONTRASTS(IMPATHS, FEATS, VP) visually compare the computed
 %   levels of fog using RMS. IMPATHS is Mx: matrix containing the complete
 %   paths of the M images in the serie, FEATS a vector of N features as
+% INPUT
 %   rapresented by the output of the function newParser
+%   'imPaths'   :   matrix of image paths
+%   'feats'     :   features struct list as parsed by parseFeatures
+%   'vp'        :   optional, coord struct representing the vanishing point
 
 %   Copyright 2011 Stefano Cadario, Luca Cavazzana.
 %   $Revision: xxxxx $  $Date: 2011/04/11 17:20:22 $
@@ -13,9 +17,18 @@ function [] = inspectFeatures(imPaths, feats)
 % REMEMBER: in 'feats' elements are ordered from the nearest to the
 % farthest
 
+vp.x = 100; vp.y=50;
+if exist('vp','var')
+    vp.x = uint16(vp.x);
+    vp.y = uint16(vp.y);
+    SHOWVP = 1;
+else
+    SHOWVP = 0;
+end
+
 OVERTTI = 1; % =0 plots over frames, =1 over time-to-impact
 
-WIN = 40 /2; % size of the window
+WIN = 30 /2; % size of the window
 
 fig = figure;
 
@@ -30,7 +43,7 @@ for ff = feats
         plot(t,ff.contr(end:-1:1)); % plot contrast graph
     end
     title(['contrast ', num2str(ff.start), ' - ', num2str(ff.start+ff.num-1)]);
-    hold on;
+    hold on; grid on;
     for ii = ff.num:-1:1
         im = imread(imPaths(t(ff.num-ii+1),:));
         img = rgb2gray(im);
@@ -40,15 +53,15 @@ for ff = feats
         hold on;
         
         if OVERTTI
-            plot(ff.tti(ii),ff.contr(ii),'o');
+            plot(ff.tti(ii), ff.contr(ii), 'o');
         else
-            plot(t(ff.num-ii+1),ff.contr(ii),'o');
+            plot(t(ff.num-ii+1), ff.contr(ii), 'o');
         end
         
         % print detail of the current feature
         subplot(2,2,2);
         hold off;
-        imshow(img(max(1,uint16(ff.y(ii)-WIN)):min(size(img,1),uint16(ff.y(ii))+WIN),...
+        imshow(img(max(1,uint16(ff.y(ii)-WIN)):min(size(img,1),uint16(ff.y(ii))+WIN), ...
             max(1,uint16(ff.x(ii)-WIN)):min(size(img,2),uint16(ff.x(ii))+WIN)));
         hold on;
         plot(min(uint16(ff.x(ii)),WIN+1),min(uint16(ff.y(ii)),WIN+1),'o');
@@ -58,13 +71,13 @@ for ff = feats
         subplot(2,2,[3,4]);
         imshow(img);
         hold on;
-        plot(ff.x(ii),ff.y(ii),'*');
-        title(['feat ',num2str(ff.num-ii+1),'/',num2str(ff.num),', set ',num2str(indf),'/',num2str(size(feats,2))]);
+        plot(ff.x(ii), ff.y(ii),'*');
+        title(['feat ', num2str(ff.num-ii+1), '/',num2str(ff.num), ', set ',num2str(indf), '/', num2str(size(feats,2))]);
         pause(.1);
     end
     indf=indf+1;
     drawnow;
-    pause(.3);
+    pause(.2);
     clf(fig);
 end
 

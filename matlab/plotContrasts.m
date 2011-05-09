@@ -17,7 +17,6 @@ OVERTTI = 1;
 
 colors = ['y','m','c','r','g','b','k'];
 
-
 ii = [0,0];
 fig = figure; hold on; grid on;
 if OVERTTI == 1
@@ -37,17 +36,17 @@ end
 
     function l = getFace()
         % dirty function to get graph color and face
-        if ii(1)==7
+        if ii(1) == 7
             ii = [1,rem(ii(2)+1,3)];
         else
-            ii(1)=ii(1)+1;
+            ii(1) = ii(1)+1;
         end
         
         l = colors(ii(1));
         
-        if ii(2)==1
+        if ii(2) == 1
             l=[l,'--'];
-        elseif ii(2)==2
+        elseif ii(2) == 2
             l=[l,'-.'];
         end
     end
