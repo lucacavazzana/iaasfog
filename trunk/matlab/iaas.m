@@ -34,7 +34,7 @@ end
 if regexp(path,'/home/luca/','once')   % for Luca
     imFolder = '/home/luca/Matlab/iaasfog/Images';
     imName = 'frame0020.jpg';
-    imNum = 30;
+    imNum = 50;
     exec_path = ['c++/Debug/', bin_name];
     
 elseif regexp(path,'/Users/stefanocadario','once')  % for Stefano
