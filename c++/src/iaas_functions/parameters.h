@@ -33,7 +33,7 @@
 /**
  * Quality of corner
  */
-#define QUALITY_LEVEL 0.05 //0.1
+#define QUALITY_LEVEL 0.01 //0.1
 /**
  * Minimum distance between two tracked points
  */
@@ -47,16 +47,13 @@
 /**
  * Lukas Kanade algorithm search window size
  */
-#define WIN_SIZE 20//20//50		// TODO: how this parameter change the results
+#define WIN_SIZE 20//50		// TODO: how this parameter change the results
+
 /**
  * Number of pyramid layers used in LK algorithm
  */
 #define PYR_LEVELS 5
 
-/**
- * Size of the patch used in "Hough" algorithm.
- */
-#define PATCH_SIZE 2//20
 
 /**
  * Number of frames corners are to be tracked

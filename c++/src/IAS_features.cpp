@@ -2,8 +2,7 @@
 
 #define NAME_WINDOW "iaasFog"
 
-// Wrote by real programmers (powered by kebab)
-void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile, bool verb){
+void FindFeatures(std::vector<std::string> pathImages, std::string pathOutFile, bool verb){
 	TrackRecord *a_records;
 
 	IplImage *image0;			// Previous image
@@ -50,10 +49,8 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 
 		// Load new image
 		image1 = cvLoadImage(pathImages[frameIndex].c_str(), CV_LOAD_IMAGE_GRAYSCALE);
-		//cvNormalize(image1, image1, 0.0f, 255.0f, cv::NORM_MINMAX);
 
 		// Track NEW features from image0 in image1
-
 		tmpFeatures.reserve(newCornersCount);
 		track_errors = new float[newCornersCount];
 		track_status = new char[newCornersCount];
@@ -98,7 +95,6 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 		// Add new features to features to track
 		featuresAlive.clear();
 
-		// TODO: merge the next two loops
 		feat = listFeatures.begin();
 
 		while (feat != listFeatures.end()) {
@@ -258,19 +254,19 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 				feat->timeToImpact.push_back(mean+(float)i/(float)FRAME_RATE);
 			}
 			iaasDrawStraightLine(image0, &feat->fitLine);
-			//cvShowImage(NAME_WINDOW, image0);
-			//key = cvWaitKey(0);
 			feat++;
 		}
 	}
+
 	if(verb) {
+		cout << endl << "Total features found: " << listFeatures.size() << endl;
 		drawFeatures(image0, &vp, 2);
 		cvShowImage(NAME_WINDOW, image0);
 		key = cvWaitKey(0);
 	}
 	cvReleaseImage(&image0);
 
-	// Extract contrast for each point
+	// Extract contrast for each corner
 #ifdef REVERSE_IMAGE
 	for(int frameIndex=pathImages.size()-1; frameIndex >= 0; frameIndex--) {
 #else
@@ -350,7 +346,7 @@ void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile
 }
 
 // OLD VERSION
-void Find_features(std::vector<std::string> pathImages, std::string pathOutFile, bool verb){
+void OldFind_features(std::vector<std::string> pathImages, std::string pathOutFile, bool verb){
 	TrackRecord *a_records;
 	IplImage *imageA, *imageB, *image1, *image0 /*,*image*/;
 	CvPoint2D32f *cornersA, *cornersB;

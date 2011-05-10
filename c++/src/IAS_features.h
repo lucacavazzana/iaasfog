@@ -10,7 +10,7 @@
 /* New function
  *
  */
-void nuFindFeatures(std::vector<std::string> pathImages, std::string pathOutFile, bool verb);
+void FindFeatures(std::vector<std::string> pathImages, std::string pathOutFile, bool verb);
 
 void printFeatures(std::string filePath, list<featureMovement> listFeatures);
 
@@ -21,7 +21,7 @@ void printFeatures(std::string filePath, list<featureMovement> listFeatures);
  *	pathImages:		paths of the images to analyze;
  *	pathOutFile:	name/path of the file where to write the data found.
  */
-void Find_features(std::vector<std::string> pathImages, std::string pathOutFile, bool verb);
+void OldFind_features(std::vector<std::string> pathImages, std::string pathOutFile, bool verb);
 
 /*Print in the file defined by the input path 'filePath' the vanishin point 'vp' and the feature detected, 
  *that are in 'a_records' in the 'num_records' images.
