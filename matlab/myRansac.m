@@ -28,7 +28,7 @@ NSET = size(feats,2);
 N = ceil(NSET*.25); % model
 K = 15; % max iterations
 D = ceil(NSET*.75); % required number to assert the model fits well the data
-T = .075;
+T = .14;
 
 % some initializations...
 if showPlot
@@ -80,9 +80,9 @@ for ii=1:K
     for ff=feats % for each feat tracked...
         % compute the MSE wrt the fitted function (I know, the regex part
         % is weird, but this way I can globally modify the function used)
-        % mse=sum((ff.contr-eval(regexprep(f,'(?<!e)x(?!0)','(maxTrack-ff.num+1:maxTrack)'))).^2)^.5/ff.num;   % (?<!e) is to avoid to replace the "x" in "exp"... regex FTW! (don't touch if you didn't pass FLC)
-        mse = sum((ff.contr - exp(-ff.tti/lam)).^2)^.5/ff.num;
-        %mse=sum((ff.contr-(1-exp(-(maxTrack-ff.num+1:maxTrack)/lam))).^2)^.5/ff.num
+        % mse=sum((ff.contr-eval(regexprep(f,'(?<!e)x(?!0)','(maxTrack-ff.num+1:maxTrack)'))).^2/ff.num)^.5;   % (?<!e) is to avoid to replace the "x" in "exp"... regex FTW! (don't touch if you didn't pass FLC)
+        mse = sum((ff.contr - exp(-ff.tti/lam)).^2/ff.num)^.5;
+        %mse=sum((ff.contr-(1-exp(-(maxTrack-ff.num+1:maxTrack)/lam))).^2/ff.num)^.5
         
         % plot how the single feature fits the fitting (lol)
         if showPlot > 1
@@ -152,14 +152,13 @@ for ii=1:K
 end
 
 
-if bestError == Inf
-    error 'RANSAC couldn''t find any good model. Life sucks...';
-end
-
 if showPlot
     close;
 end
 
+if bestError == Inf
+    error 'RANSAC couldn''t find any good model. Life sucks...';
+end
 
     function [res] = rndSamples()
         % returns an array of N non-repeated random integers within NSET
