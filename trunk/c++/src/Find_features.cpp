@@ -182,9 +182,8 @@ int main (int argc, char **argv) {
 		// TODO: check image exists
 	}
 
-
 	try {
-		nuFindFeatures(vectPathImages, outFile, verbose);
+		FindFeatures(vectPathImages, outFile, verbose);
 	} catch (cv::Exception e){
 		if (e.code == -5) {
 			std::cout << "- ERROR: no features was present all images, try with a smaller set" << std::endl;

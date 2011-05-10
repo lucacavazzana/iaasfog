@@ -134,7 +134,7 @@ CvPoint2D32f iaasFindBestCrossedPoint(IplImage* image, CvMat *lines, int n_lines
  * @param patch_size Cell size
  * @return Center of the most crossed cell
  */
-CvPoint2D32f iaasHoughMostCrossedPoint(CvMat *lines, int n_lines, bool f_dist=true, int img_width=FRAME_WIDTH, int img_height=FRAME_HEIGHT, int patch_size=PATCH_SIZE);
+CvPoint2D32f iaasHoughMostCrossedPoint(CvMat *lines, int n_lines, bool f_dist=true, int img_width=FRAME_WIDTH, int img_height=FRAME_HEIGHT, int patch_size=2);
 
 /**
  * Estimate vanishing point using an a la Hough approach. Two arrays of point are provided as argument.
@@ -150,7 +150,7 @@ CvPoint2D32f iaasHoughMostCrossedPoint(CvMat *lines, int n_lines, bool f_dist=tr
  * @param patch_size Cell size
  * @return Center of the most crossed cell
  */
-CvPoint2D32f iaasHoughMostCrossedPoint(CvPoint2D32f *points0, CvPoint2D32f *points1, int nPoints, bool f_dist=true, int img_width=FRAME_WIDTH, int img_height=FRAME_HEIGHT, int patch_size=PATCH_SIZE);
+CvPoint2D32f iaasHoughMostCrossedPoint(CvPoint2D32f *points0, CvPoint2D32f *points1, int nPoints, bool f_dist=true, int img_width=FRAME_WIDTH, int img_height=FRAME_HEIGHT, int patch_size=2);
 /**
  * Given two set of points, compute the parameters of each line joining points at the same position and returns
  * the point which minimizes the distance from each line.
