@@ -22,7 +22,7 @@
 \defcounter {refsection}{0}
 \contentsline {subsection}{\numberline {2.5.3}Stima di $\lambda $ mediante minMax (deprecato)}{16}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {3}Conclusione e sviluppi futuri}{18}
+\contentsline {chapter}{\numberline {3}Conclusioni e sviluppi futuri}{18}
 \defcounter {refsection}{0}
 \contentsline {chapter}{\numberline {4}Documentazione}{19}
 \defcounter {refsection}{0}

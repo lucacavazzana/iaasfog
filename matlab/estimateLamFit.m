@@ -47,7 +47,7 @@ if showPlot
     hist(lams);
     title(['mean: ', num2str(mean(lams)), ' median: ' num2str(median(lams))]);
     disp(' ');
-    disp('fitted lambdas');
+    disp('Best fitted lambdas');
     disp(num2str(lams));
 end
 

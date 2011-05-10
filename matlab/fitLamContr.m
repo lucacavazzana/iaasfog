@@ -45,13 +45,19 @@ if showPlot > 2
     asd = figure;
 end
 
-ii=1;
+ii=1; infFit = 0; % to handle possible exceptions caused by fitting generating infinite values
 for ff = feats
     
     options.StartPoint = [max(ff.contr), .5]; % TODO: find good starting points
     
     % first fit
-    [cfun gof] = fit(ff.tti',ff.contr', ft, options);
+    try
+        [cfun gof] = fit(ff.tti',ff.contr', ft, options);
+    catch exc %#ok
+        disp('- Warning: Inf computed by model function. Feat deleted');
+        infFit = infFit +1;
+        feats(ii) = [];
+    end
     
     fitted = cfun.k*exp(-(ff.tti)/cfun.lam);
     err = abs(ff.contr - fitted);   % error 1th fit
@@ -79,7 +85,13 @@ for ff = feats
     ff.bestData = err./fitted <= prctile(err./fitted,50); % err percent
     
     % second fit
-    [cfun gof] = fit(ff.tti(ff.bestData)',ff.contr(ff.bestData)', ft, options);
+    try
+        [cfun gof] = fit(ff.tti(ff.bestData)',ff.contr(ff.bestData)', ft, options);
+    catch exc %#ok
+        disp('- Warning: Inf computed by model function. Feat deleted');
+        infFit = infFit +1;
+        feats(ii) = [];
+    end
     
     fitted = cfun.k*exp(-(ff.tti(ff.bestData))/cfun.lam);
     err = abs(ff.contr(ff.bestData) - fitted);   % error 2nd fit
@@ -115,7 +127,7 @@ for ff = feats
         pause;
     end
     
-    feats(ii) = ff;
+    feats(ii - infFit) = ff;
     ii = ii+1;
 end
 
