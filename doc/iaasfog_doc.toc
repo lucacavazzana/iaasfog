@@ -4,38 +4,38 @@
 \defcounter {refsection}{0}
 \contentsline {chapter}{\numberline {1}Introduzione}{2}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {2}Qualche titolo}{3}
+\contentsline {chapter}{\numberline {2}Implementazione}{4}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {2.1}Tracking delle features}{3}
+\contentsline {section}{\numberline {2.1}Tracking delle features}{4}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {2.2}Calcolo vanishing point}{4}
+\contentsline {section}{\numberline {2.2}Calcolo del vanishing point}{5}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {2.3}Calcolo del tempo all'impatto}{5}
+\contentsline {section}{\numberline {2.3}Calcolo del tempo all'impatto}{7}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {2.4}Calcolo del contrasto}{5}
+\contentsline {section}{\numberline {2.4}Calcolo del contrasto}{7}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {2.5}Stima dei parametri}{10}
+\contentsline {section}{\numberline {2.5}Stima dei parametri}{12}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {2.5.1}Stima di $\lambda $ mediante minMax}{10}
+\contentsline {subsection}{\numberline {2.5.1}Fitting di $\lambda $}{12}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {2.5.2}Fitting di $\lambda $}{10}
+\contentsline {subsection}{\numberline {2.5.2}Normalizzazione mediante fitting di $k$ e RANSAC}{13}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {2.5.3}Normalizzazione mediante fitting di $k$ e RANSAC}{11}
+\contentsline {subsection}{\numberline {2.5.3}Stima di $\lambda $ mediante minMax (deprecato)}{16}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {3}Conclusione e sviluppi futuri}{13}
+\contentsline {chapter}{\numberline {3}Conclusione e sviluppi futuri}{18}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {4}Funzioni}{14}
+\contentsline {chapter}{\numberline {4}Documentazione}{19}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {4.1}C++}{14}
+\contentsline {section}{\numberline {4.1}C++}{19}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {4.2}Matlab}{15}
+\contentsline {section}{\numberline {4.2}Matlab}{20}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {5}Installazione}{17}
+\contentsline {chapter}{\numberline {5}Installazione}{22}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {5.1}OpenCV}{17}
+\contentsline {section}{\numberline {5.1}OpenCV}{22}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {5.1.1}Windows}{17}
+\contentsline {subsection}{\numberline {5.1.1}Windows}{22}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {5.1.2}Linux / MacOSX}{18}
+\contentsline {subsection}{\numberline {5.1.2}Linux / MacOSX}{23}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {5.2}Installazione ed esecuzione del programma}{19}
+\contentsline {section}{\numberline {5.2}Installazione ed esecuzione del programma}{24}

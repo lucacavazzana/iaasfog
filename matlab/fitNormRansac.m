@@ -1,4 +1,4 @@
-function [lam] = fitNormRansac(feats, showPlot)
+    function [lam] = fitNormRansac(feats, showPlot)
 
 %FITNORMCONTR
 %
