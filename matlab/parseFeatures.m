@@ -1,4 +1,4 @@
-function [feats]  = parseFeatures(fileName)
+function [feats]  = parseFeatures(fileName, cleanFeats)
 
 %PARSEFEATURES
 %
@@ -22,7 +22,10 @@ function [feats]  = parseFeatures(fileName)
 %   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 
-CLEANFEATS = 1;  %FIXME: rimuovere cleanFeats quando sarà sistemato in findFeatures
+if ~exist('cleanFeats','var')  %FIXME: rimuovere cleanFeats quando sarà sistemato in findFeatures
+    cleanFeats = 0;
+end
+
 FILLLASTTTI = 1;
 
 
@@ -55,7 +58,7 @@ fclose(f);
 
 %% TODO: remove this when the c function will be fixed---------------------
 % clears too-close tracking set
-if CLEANFEATS
+if cleanFeats
     ii=1;
     while ii<=size(feats,2)
         for jj=size(feats,2):-1:ii+1
@@ -76,13 +79,5 @@ if FILLLASTTTI
         feats(ii).tti = [feats(ii).tti, 2*feats(ii).tti(end)-feats(ii).tti(end-1)];
     end
 end
-
-% colors = ['y','m','c','r','g','b','w','k'];
-% figure; hold on;
-% for ii = 1:max(size(feats))
-% %     plot(feats(ii).start:feats(ii).start+feats(ii).num-1,feats(ii).contr)
-%     plot(feats(ii).start:feats(ii).start+feats(ii).num-1, feats(ii).contr, colors(rem(ii,8)+1));
-%     pause(.3);
-% end
 
 end

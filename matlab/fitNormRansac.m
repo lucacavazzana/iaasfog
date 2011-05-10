@@ -1,8 +1,16 @@
-    function [lam] = fitNormRansac(feats, showPlot)
+function [lam] = fitNormRansac(feats, showPlot)
 
-%FITNORMCONTR
+%FITNORMRANSAC
+%   FITNORMRANSAC(FEATS, PLOT) computes the lambda value of the features
+%   list FEATS using RANSAC after rescaling the contrasts over the fitted k
 %
-%   something
+%   INPUT:
+%       'feat'  :   list of features as parsed by parseFeatures
+%
+%   OUTPUT:
+%       'lam'   :   the computed lambda    
+%
+%   See also PARSEFEATURES, NORMCONTRAST
 
 %   Copyright 2011 Stefano Cadario, Luca Cavazzana.
 %   $Revision: xxxxx $  $Date: 2011/04/09 11:59:22 $

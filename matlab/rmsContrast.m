@@ -1,8 +1,8 @@
 function [contr] = rmsContrast(feature, image, n)
 
-%RMSCONTRAST compute the comtrast level using root mean square. The result
+%RMSCONTRAST compute the contrast level using root mean square. The result
 %   will computed on the image normalized over [0,1] (keep in mind: the
-%   depends on the colo depth)
+%   depends on the color depth)
 %
 %   RMSCONTRAST(FEATURE, IMAGE) computes the root mean square contrast
 %   level in the 21x21 frame around the feature's coords. The FEATURE
