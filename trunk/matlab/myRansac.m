@@ -28,7 +28,7 @@ NSET = size(feats,2);
 N = ceil(NSET*.25); % model
 K = 15; % max iterations
 D = ceil(NSET*.75); % required number to assert the model fits well the data
-T = .10;
+T = .075;
 
 % some initializations...
 if showPlot
@@ -68,7 +68,7 @@ for ii=1:K
         % show how the function fits the model
         yFit = exp(-x/lam);
         plot(x,yFit);
-        title(['lambda: ', num2str(lam)]);
+        title(['candidate lambda: ', num2str(lam)]);
         legend('model data','fitted function');
         drawnow
         hold off
@@ -87,9 +87,11 @@ for ii=1:K
         % plot how the single feature fits the fitting (lol)
         if showPlot > 1
             pause;
+            clf;
             plot(ff.tti,ff.contr,'r*');
             hold on; grid on;
             plot(x,yFit);
+            legend('sample feature','candidate model');
             hold off
             drawnow;
         end
@@ -125,7 +127,7 @@ for ii=1:K
         err=err/size(consSet,2);
         if err < bestError
             if showPlot
-                disp(['- new best model [', num2str(model),']! Error: ', num2str(err)]);
+                disp(['- new best model [', num2str(model),']! Mean error: ', num2str(err)]);
             end
 
             bestPars.lam = lam;
@@ -133,7 +135,7 @@ for ii=1:K
             bestModel = model;
         else
             if showPlot
-                disp(['- model [', num2str(model),'] not good enough. Error: ', num2str(err)]);
+                disp(['- model [', num2str(model),'] not good enough. Mean error: ', num2str(err)]);
             end
         end
     else

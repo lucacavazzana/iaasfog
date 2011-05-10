@@ -16,7 +16,7 @@ function [lam] = iaas(showPlot)
 %   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 % OPTIONS
-GUI = 1;    % if 0 use our default test values
+GUI = 0;    % if 0 use our default test values
 
 if ~exist('showPlot','var')
     showPlot=0;
@@ -31,11 +31,10 @@ else
 end
 
 % REMEMBER TO REMOVE ------------------------------------------------------
-if regexp(path,'/home/lucaz/','once')   % for Luca
+if regexp(path,'/home/luca/','once')   % for Luca
     imFolder = '/home/luca/Matlab/iaasfog/Images';
-    outFile = 'outFile.txt';
-    imName = 'frame0000.jpg';
-    imNum = 50;
+    imName = 'frame0020.jpg';
+    imNum = 30;
     exec_path = ['c++/Debug/', bin_name];
     
 elseif regexp(path,'/Users/stefanocadario','once')  % for Stefano
@@ -47,6 +46,8 @@ else
     exec_path = ['./', bin_name]; % FIXME: EDIT HERE THE PATH OF THE C++ EXE!!!
     GUI = 1;
 end
+outFile = 'outFile.txt';
+
 % -------------------------------------------------------------------------
 
 if exist(exec_path,'file')~=2
