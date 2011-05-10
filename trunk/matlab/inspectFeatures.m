@@ -10,6 +10,8 @@ function [] = inspectFeatures(imPaths, feats, vp)
 %   'imPaths'   :   matrix of image paths
 %   'feats'     :   features struct list as parsed by parseFeatures
 %   'vp'        :   optional, coord struct representing the vanishing point
+%
+%   See also PARSEFEATURES
 
 %   Copyright 2011 Stefano Cadario, Luca Cavazzana.
 %   $Revision: xxxxx $  $Date: 2011/04/11 17:20:22 $

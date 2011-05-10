@@ -1,8 +1,26 @@
 function [feats] = fitLamContr(feats, showPlot)
 
-%   fitLamContr(FEATS, SHOWPLOT) selects the best 50% datas over the
-%   best-fitting curve. Also computes some useful values to use to select
-%   the least-noisy features.
+%FITLAMCONTR
+%   FITLAMCOTR(FEATS, SHOWPLOT) for each feature selects the 0.5 percentile
+%   of datas with the least error over the best-fitting curve, then add to
+%   the struct the parameters of the curve fitting the best datas (PARS
+%   attribute, stored as [k, lambda]).
+%
+%   Various attributes are added to the outputted struct list, like:
+%       bestData : indexes of the least-error data over the fitted function
+%       pars     : [k2, lam2], parameters of the exp fitted using bestData
+%       err1norm : k1-scaled mean error over the first fit
+%       err2norm : k2-scaled mean error over the second fit
+%       err1perc : mean percent error over the first fit
+%       err2perc : mean percent error over the second fit
+%       rmse1    : root mean square error over the first fit
+%       rmse2    : root mean square error over the second fit
+%       intErr   : difference between the integral of the two fitted exp
+%
+%   See also PARSEFEATURES, ESTIMATELAMFIT
+
+%   Copyright 2011 Stefano Cadario, Luca Cavazzana.
+%   $Revision: xxxxx $  $Date: 2011/04/13 17:20:22 $
 
 if ~exist('showPlot','var')
     showPlot = 0;
@@ -17,8 +35,6 @@ feats(1).rmse1 = [];    % rmse error over the first fit
 feats(1).err2norm = []; % k2-scaled mean error over the second fit
 feats(1).err2perc = []; % mean percent error over the second fit
 feats(1).rmse2 = [];    % rmse error over the second fit
-feats(1).step = [];     % difference between mean error over the first fit and the second one
-feats(1).rapp = [];     % ratio between mean error over the first fit and the second one
 feats(1).intErr = [];   % area between the two fitted functions
 
 fun = 'k*exp(-x/lam)';

@@ -1,18 +1,22 @@
 function [lam] = iaas(showPlot)
 %IAAS
 %
-%   bla bla bla bla
+%   iaas(SHOWPLOT) computes the mean impact time in foggy conditions
+%   estimating the lam parameter of the contrast function k*exp(-t/lam),
+%   where t is the time of impact.
 %
 %   INPUT:
-%     'showPlot'  : if 1 shows some cool visual feedback, if 2 shows a lot
-%                   more graphs (mainly for testing purposes, can become
-%                   veeery boring), if 0 plots nothing
+%     'showPlot'    : if 1 shows some cool visual feedback, if 2 shows a lot
+%                     more graphs (mainly for testing purposes, can become
+%                     veeery boring), if 0 plots nothing
+%   OUTPUT:
+%      'lam'        : computed lamda value for k*exp(-t/lam)
 
 %   Copyright 2011 Stefano Cadario, Luca Cavazzana.
 %   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 % OPTIONS
-GUI = 0;    % if 0 use our default test values
+GUI = 1;    % if 0 use our default test values
 
 if ~exist('showPlot','var')
     showPlot=0;
@@ -27,18 +31,22 @@ else
 end
 
 % REMEMBER TO REMOVE ------------------------------------------------------
-if regexp(path,'/home/luca/','once')
+if regexp(path,'/home/lucaz/','once')   % for Luca
     imFolder = '/home/luca/Matlab/iaasfog/Images';
-    exec_path = ['c++/Debug/', bin_name]; % path of the c++ part of the project. Make sure it exists
-elseif regexp(path,'/Users/stefanocadario','once')
+    outFile = 'outFile.txt';
+    imName = 'frame0000.jpg';
+    imNum = 50;
+    exec_path = ['c++/Debug/', bin_name];
+    
+elseif regexp(path,'/Users/stefanocadario','once')  % for Stefano
     imFolder = '../Images';
-    exec_path = ['../Debug/', bin_name]; % path of the c++ part of the project. Make sure it exists
+    exec_path = ['../Debug/', bin_name];
+    GUI = 1;
+    
 else
-    exec_path = ['', bin_name]; % EDIT HERE!
+    exec_path = ['./', bin_name]; % FIXME: EDIT HERE THE PATH OF THE C++ EXE!!!
+    GUI = 1;
 end
-outFile = 'outFile.txt';
-imName = 'frame0000.jpg';
-imNum = 50;
 % -------------------------------------------------------------------------
 
 if exist(exec_path,'file')~=2
@@ -73,7 +81,7 @@ if GUI || exist(outFile,'file')~=2
     end
 end
 
-feats = parseFeatures(outFile); % re-parsing features
+feats = parseFeatures(outFile, 1); % re-parsing features
 
 disp(['Found ', num2str(size(feats,2)), ' features over ', num2str(size(imPaths,1)), ' images']);
 

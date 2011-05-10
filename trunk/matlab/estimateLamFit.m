@@ -1,6 +1,20 @@
 function [lam] = estimateLamFit(feats, showPlot)
 
+%ESTIMATELAMFIT    estimates lambda of the contrast function.
+%   ESTIMATELAMFIT(FEATS, SHOWPLOT) computes the mean time to impact for a
+%   list of FEATS. Selects the lambda parameters of the best .25 percentile
+%   of features (using a value computed by fitLamContrast) and computes the
+%   median as global lambda.
 %
+%   INPUT:  
+%       'feats' :   list of features as parsed by parseFeatures
+%   OUTPUT:
+%       'lam'   :   estimated lambda
+%
+%   See also PARSEFEATURES, FITLAMCONTR
+
+%   Copyright 2011 Stefano Cadario, Luca Cavazzana.
+%   $Revision: xxxxx $  $Date: 2011/04/13 17:20:22 $
 
 if ~exist('showPlot','var')
     showPlot = 0;
@@ -8,7 +22,7 @@ end
 
 feats = fitLamContr(feats, showPlot);
 
-errs = [feats.intErr]; % try this!
+errs = [feats.intErr]; % edit here to try a different criteria for feature "goodness"
 feats = feats(errs <= prctile(errs,25));
 
 if showPlot > 1

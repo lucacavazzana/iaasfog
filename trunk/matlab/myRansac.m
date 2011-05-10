@@ -4,7 +4,7 @@ function [bestPars, bestModel, bestError] = myRansac(feats, showPlot)
 %   RANSAC implementation to find the lambda value of the exponential
 %   visibility function.
 %   INPUT:
-%     'feats'       :   features vector as parsed by parseFeatures.m
+%     'feats'       :   features vector as parsed by parseFeatures
 %     'showPlot'    :   0: shows nothing, 1: shows the fitting curve,
 %                       2: error over fitting
 %

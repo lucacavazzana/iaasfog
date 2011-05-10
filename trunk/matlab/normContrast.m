@@ -6,17 +6,14 @@ function [feats] = normContrast(feats, type, showPlot)
 %   INPUT:
 %     'feats'   :   array of features as parsed by parseFeatures
 %     'type'    :   type of normalization
-%                   'max':
-%                   'minMax':
-%                   'last':
-%                   'firstLast':
-%                   'mean':
 %                   'fitExp': norm over 'k' fitting the function
-%                             'k*exp(-x/lam)
+%                             'k*exp(-x/lam)            <<--- this one rocks
+%                   'mean': rescaled by two times the mean value
+%                   'minMax': equalizes over min and max values (outlier sensitive...)
 %   OUTPUT:
 %      'feats'  :   list of features with contrast properly normalized
 %
-%   See als PARSEFEATURES
+%   See also PARSEFEATURES
 
 %   Copyright 2011 Stefano Cadario, Luca Cavazzana.
 %   $Revision: xxxxx $  $Date: 2011/04/09 11:59:22 $
