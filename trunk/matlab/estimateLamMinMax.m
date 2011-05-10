@@ -1,5 +1,9 @@
 function [] = estimateLamMinMax(feats, showPlot)
 
+%ESTIMATELAMMINMAX
+%   estimateLamMinMax computes lambda as (t_min - t_max)/log(c_max/c_min).
+%   This method is too much sensitive to outliers
+
 if ~exist('showPlot','var')
     showPlot = 0;
 end

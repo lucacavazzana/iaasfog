@@ -1,21 +1,25 @@
 function [feats] = fitLamContr(feats, showPlot)
 
+%   fitLamContr(FEATS, SHOWPLOT) selects the best 50% datas over the
+%   best-fitting curve. Also computes some useful values to use to select
+%   the least-noisy features.
+
 if ~exist('showPlot','var')
     showPlot = 0;
 end
 
 % this is only to make sure these fields are in the struct list
-feats(1).bestData = [];
-feats(1).pars = [];
-feats(1).err1norm = [];
-feats(1).err1perc = [];
-feats(1).rmse1 = [];
-feats(1).err2norm = [];
-feats(1).err2perc = [];
-feats(1).rmse2 = [];
-feats(1).step = [];
-feats(1).rapp = [];
-feats(1).intErr = [];
+feats(1).bestData = []; % index of the best 50% contrast levels (nearest to the fitted function)
+feats(1).pars = [];     % stores [k, lambda]
+feats(1).err1norm = []; % k1-scaled mean error over the first fit
+feats(1).err1perc = []; % mean percent error over the first fit
+feats(1).rmse1 = [];    % rmse error over the first fit
+feats(1).err2norm = []; % k2-scaled mean error over the second fit
+feats(1).err2perc = []; % mean percent error over the second fit
+feats(1).rmse2 = [];    % rmse error over the second fit
+feats(1).step = [];     % difference between mean error over the first fit and the second one
+feats(1).rapp = [];     % ratio between mean error over the first fit and the second one
+feats(1).intErr = [];   % area between the two fitted functions
 
 fun = 'k*exp(-x/lam)';
 ft = fittype(fun);
@@ -49,7 +53,7 @@ for ff = feats
         plot(ff.tti, ff.contr, 'o');
         hold on; grid on;
         plot(x, cfun.k*exp(-x/cfun.lam));
-
+        
         disp(['    k: ', num2str(cfun.k), ',     lambda: ', num2str(cfun.lam), ',     rmse (k-norm): ', num2str(gof.rmse), ' (', num2str(gof.rmse/cfun.k),')']);
         drawnow;
     end
@@ -64,23 +68,23 @@ for ff = feats
     fitted = cfun.k*exp(-(ff.tti(ff.bestData))/cfun.lam);
     err = abs(ff.contr(ff.bestData) - fitted);   % error 2nd fit
     
-    ff.err2norm = mean(err)/cfun.lam; % 2nd mean norm error
+    ff.err2norm = mean(err)/cfun.lam;   % 2nd mean norm error
     ff.err2perc = mean(err ./ fitted);  % 2nd mean perc error
     ff.rmse2 = gof.rmse;    % 2nd rmse
     
-% promettente
-% int(k1*exp(-t/lam1,0,Inf) - k2*exp(-t/lam2)) = k2*lam2*exp(-t/lam2) - k1*lam1*exp(-t/lam1) ~ k2*lam2 - k1*lam1
+    % promettente
+    % int(k1*exp(-t/lam1,0,Inf) - k2*exp(-t/lam2)) = k2*lam2*exp(-t/lam2) - k1*lam1*exp(-t/lam1) ~ k2*lam2 - k1*lam1
     ff.intErr = abs(cfun.k*cfun.lam - oldK*oldLam);
     
     ff.pars = [cfun.k, cfun.lam];
-        
+    
     if showPlot > 2
         plot(ff.tti(ff.bestData),ff.contr(ff.bestData), 'or');
         plot(x, cfun.k*exp(-x/cfun.lam),'r');
         legend(['data - rmse: ', num2str(oldErr)], ...
-                ['first fit - k: ', num2str(oldK), ', \lambda: ', num2str(oldLam)], ...
-                ['best data - rmse: ', num2str(gof.rmse)], ...
-                ['second fit - k: ', num2str(cfun.k), ', \lambda: ', num2str(cfun.lam)]);
+            ['first fit - k: ', num2str(oldK), ', \lambda: ', num2str(oldLam)], ...
+            ['best data - rmse: ', num2str(gof.rmse)], ...
+            ['second fit - k: ', num2str(cfun.k), ', \lambda: ', num2str(cfun.lam)]);
         disp(['new k: ', num2str(cfun.k), ', new lambda: ', num2str(cfun.lam), ', new rmse (k-norm): ', num2str(gof.rmse), ' (', num2str(gof.rmse/cfun.k),')']);
         disp(['err1: ', num2str(ff.err1norm), ...
             ', err1perc: ', num2str(ff.err1perc), ...
