@@ -28,7 +28,8 @@ end
 
 % this is only to make sure these fields are in the struct list
 feats(1).bestData = []; % index of the best 50% contrast levels (nearest to the fitted function)
-feats(1).pars = [];     % stores [k, lambda]
+feats(1).pars = [];     % stores [k2, lambda2]
+feats(1).oldPars = [];  % stores [k1, lambda1]
 feats(1).err1norm = []; % k1-scaled mean error over the first fit
 feats(1).err1perc = []; % mean percent error over the first fit
 feats(1).rmse1 = [];    % rmse error over the first fit
@@ -79,7 +80,7 @@ for ff = feats
         disp(['    k: ', num2str(cfun.k), ',     lambda: ', num2str(cfun.lam), ',     rmse (k-norm): ', num2str(gof.rmse), ' (', num2str(gof.rmse/cfun.k),')']);
         drawnow;
     end
-    oldK = cfun.k; oldLam = cfun.lam; oldErr = gof.rmse;
+    ff.oldPars = [cfun.k, cfun.lam];
     
     % best 50% data
     ff.bestData = err./fitted <= prctile(err./fitted,50); % err percent
@@ -102,7 +103,7 @@ for ff = feats
     
     % promettente
     % int(k1*exp(-t/lam1,0,Inf) - k2*exp(-t/lam2)) = k2*lam2*exp(-t/lam2) - k1*lam1*exp(-t/lam1) ~ k2*lam2 - k1*lam1
-    ff.intErr = abs(cfun.k*cfun.lam - oldK*oldLam);
+    ff.intErr = abs(cfun.k*cfun.lam - ff.oldPars(1)*ff.oldPars(2));
     
     ff.pars = [cfun.k, cfun.lam];
     
@@ -110,7 +111,7 @@ for ff = feats
         plot(ff.tti(ff.bestData),ff.contr(ff.bestData), 'or');
         plot(x, cfun.k*exp(-x/cfun.lam),'r');
         legend(['data - rmse: ', num2str(oldErr)], ...
-            ['first fit - k: ', num2str(oldK), ', \lambda: ', num2str(oldLam)], ...
+            ['first fit - k: ', num2str(ff.oldPars(1)), ', \lambda: ', num2str(ff.oldPars(2))], ...
             ['best data - rmse: ', num2str(gof.rmse)], ...
             ['second fit - k: ', num2str(cfun.k), ', \lambda: ', num2str(cfun.lam)]);
         disp(['new k: ', num2str(cfun.k), ', new lambda: ', num2str(cfun.lam), ', new rmse (k-norm): ', num2str(gof.rmse), ' (', num2str(gof.rmse/cfun.k),')']);

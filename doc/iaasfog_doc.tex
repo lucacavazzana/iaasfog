@@ -307,6 +307,11 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 \section{Stima di $\lambda$ mediante fitting}
 
+
+%% FIXME VISUALIZZAZIONE DELLE FEATURES -------------------
+
+\noindent Le figure \ref{fig:feats1}, \ref{fig:feats2} e \ref{fig:feats2} rappresentano i livelli di contrasto (ordinati sul tempo d'impatto) e le relative curve approssimanti di ciascuna delle features trovate analizzando il set di 50 fra i frames forniti a partire dal numero 0. Appare palese come i dati siano rumorosi, spesso portando a stimare parametri inverosimili.\\
+
 \newcommand{\imFeatScale}{0.27}
 \newcommand{\imFeatAngle}{0}
 \begin{figure}
@@ -338,7 +343,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 	\includegraphics[scale=\imFeatScale, angle=90]{images/feat9}
 \end{minipage}
 \caption[short]{Features. In ascissa il tempo all'impatto.}
-\label{fig:feats}
+\label{fig:feats1}
 \end{figure}
 
 \begin{figure}
@@ -364,52 +369,6 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \label{fig:feats2}
 \end{figure}
 
-\begin{figure}
-\begin{minipage}[t]{0.3\linewidth}
-	\centering
-	\includegraphics[scale=\imFeatScale]{images/feat13}
-	feat7 - $k: , \lambda:  $\\
-	\includegraphics[scale=\imFeatScale]{images/feat15}
-	feat9 - $k: , \lambda:  $\\
-	\includegraphics[scale=\imFeatScale]{images/feat17}
-	feat11 - $k: , \lambda:  $\\
-\end{minipage}
-\begin{minipage}[t]{0.3\linewidth}
-	\centering
-	\includegraphics[scale=\imFeatScale]{images/feat14}
-	feat8 - $k: , \lambda:  $\\
-	\includegraphics[scale=\imFeatScale]{images/feat16}
-	feat10 - $k: , \lambda:  $\\
-	\includegraphics[scale=\imFeatScale]{images/feat18}
-	feat12 - $k: , \lambda:  $\\
-\end{minipage}
-\begin{minipage}[t]{0.3\linewidth}
-	\centering
-	\includegraphics[scale=\imFeatScale]{images/feat14}
-	feat8 - $k: , \lambda:  $\\
-	\includegraphics[scale=\imFeatScale]{images/feat16}
-	feat10 - $k: , \lambda:  $\\
-	\includegraphics[scale=\imFeatScale]{images/feat18}
-	feat12 - $k: , \lambda:  $\\
-\end{minipage}
-\caption[short]{Features. In ascissa il tempo all'impatto.}
-\label{fig:feats3}
-\end{figure}
-
-\begin{figure}
-\begin{minipage}[t]{0.5\linewidth}
-	\centering
-	\includegraphics[scale=\imFeatScale]{images/feat19}
-	feat7 - $k: , \lambda:  $\\
-\end{minipage}
-\begin{minipage}[t]{0.5\linewidth}
-	\centering
-	\includegraphics[scale=\imFeatScale]{images/feat20}
-	feat8 - $k: , \lambda:  $\\
-\end{minipage}
-\caption[short]{Features. In ascissa il tempo all'impatto.}
-\label{fig:feats4}
-\end{figure}
 
 \begin{figure}
 	\includegraphics[scale=.9, angle=90]{images/feats01}
@@ -419,9 +378,70 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 \begin{figure}
 	\includegraphics[scale=.9, angle=90]{images/feats02}
-	\caption[Short]{Features e relative curve fittate. I dati sono ordinati in base al tempo d'impatto.}
+	\caption{Features e relative curve fittate. I dati sono ordinati in base al tempo d'impatto.}
 	\label{fig:feats02}
 \end{figure}
+
+
+%% DATI MIGLIORI E PEGGIORI ----------------------------------
+
+\noindent L'immagine \ref{fig:bestIntErr} invece illustra il quartile dei migliori dati calcolato usando l'area fra i due successivi fitting (ricordiamo che partiamo dall'idea che per buoni set i due curve non differiscono molto). In blu viene visualizzata la curva approssimante l'intero set di dati, mentre in rosso \`e evidenziata la met\`a dei dati con errore minore e la curva approssimante da questi ultimi ottenuta. Similmente, in figura \ref{fig:worstIntErr} sono riportate le features con errore peggiore.\\
+
+\newcommand{\imFeat}{.35}
+\begin{figure}
+\begin{minipage}[t]{0.5\linewidth}
+	\centering
+	\includegraphics[scale=\imFeat]{images/best1}\\
+	\includegraphics[scale=\imFeat]{images/best3}\\
+	\includegraphics[scale=\imFeat]{images/best5}\\
+\end{minipage}
+\begin{minipage}[t]{0.5\linewidth}
+	\centering
+	\includegraphics[scale=\imFeat]{images/best2}\\
+	\includegraphics[scale=\imFeat]{images/best4}\\
+	\includegraphics[scale=\imFeat]{images/best6}\\
+\end{minipage}
+\caption[short]{Migliori features secondo l'errore integrale.}
+\label{fig:bestIntErr}
+\end{figure}
+
+\begin{figure}
+\begin{minipage}[t]{0.5\linewidth}
+	\centering
+	\includegraphics[scale=\imFeat]{images/worst1}\\
+	\includegraphics[scale=\imFeat]{images/worst3}\\
+	\includegraphics[scale=\imFeat]{images/worst5}\\
+\end{minipage}
+\begin{minipage}[t]{0.5\linewidth}
+	\centering
+	\includegraphics[scale=\imFeat]{images/worst2}\\
+	\includegraphics[scale=\imFeat]{images/worst4}\\
+	\includegraphics[scale=\imFeat]{images/worst6}\\
+\end{minipage}
+\caption[short]{Feature peggiori secondo l'errore integrale.}
+\label{fig:worstIntErr}
+\end{figure}
+
+%% ISTOGRAMMI -----------------------------------
+
+\noindent In base ai parametri $\lambda$ delle features migliori viene infine calcolato il valore globale come la mediana, mostrato in figura \ref{fig:intErrHist}
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=.5]{images/intErrhistLamFit}
+	\caption{Istogramma dei migliori $\lambda$ secondo l'errore integrale (mediana: 1.22).}
+	\label{fig:intErrHist}
+\end{figure}
+
+
+
+
+\section{Stima di $\lambda$ mediante RANSAC}
+
+\noindent Lo stesso set di features della sezione precedente viene utilizzato per stimare il $\lambda$ glbale mediante RANSAC: dopo una prima normalizzazione dei dati in base ai singoli $k$ stimati
+
+
+
 
 
 \chapter{Conclusioni e sviluppi futuri}
