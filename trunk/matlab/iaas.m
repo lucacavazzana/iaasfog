@@ -16,7 +16,7 @@ function [lam] = iaas(showPlot)
 %   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 % OPTIONS
-GUI = 1;    % if 0 use our default test values
+GUI = 0;    % if 0 use our default test values
 
 if ~exist('showPlot','var')
     showPlot=0;
@@ -33,7 +33,7 @@ end
 % REMEMBER TO REMOVE ------------------------------------------------------
 if regexp(path,'/home/luca/','once')   % for Luca
     imFolder = '/home/luca/Matlab/iaasfog/Images';
-    imName = 'frame0020.jpg';
+    imName = 'frame0000.jpg';
     imNum = 50;
     exec_path = ['c++/Debug/', bin_name];
     
@@ -65,8 +65,7 @@ imPaths = getPaths(imFolder, imName, imNum);
 alg = selectAlg({'inspect features'; ...
     'plot contrasts'; ...
     'estimate lambda by fitting'; ...
-    'normalize by fitted k and then ransac'; ...
-    'compare constrasts'});
+    'normalize by fitted k and then ransac'});
 
 if GUI || exist(outFile,'file')~=2
     disp('Computing image features. Could take some time and open funny windows...');
@@ -97,12 +96,11 @@ switch alg
         lam = estimateLamFit(feats, showPlot);
     case 4, % computes lambda normalizing by the fitted k and then applying ransac
         lam = fitNormRansac(feats, showPlot);
-    case 5, % compare different contrast formulas
-        compareContrasts(imPaths, feats, showPlot);
-        lam = NaN;
 end
 
-disp(' ');
-disp(['Estimated lambda: ', num2str(lam), 's']);
+if showPlot
+    disp(' ');
+    disp(['Estimated lambda: ', num2str(lam), ' s']);
+end
 
 end
