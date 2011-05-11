@@ -69,7 +69,7 @@ double getMichelsonContrast(const IplImage *img, CvPoint2D32f *point) {
         return (maxV-minV)/(maxV+minV);
 }
 
-void BTTFFeatures(featureMovement &feat, CvPoint2D32f *vp) {
+void BackToTheFeatures(featureMovement &feat, CvPoint2D32f *vp) {
 	int i;
 	// Prolong line, generate virtual features (computed because inside fog)
 	int maxAdd = feat.startFrame - feat.positions.size() + 1;
@@ -81,12 +81,14 @@ void BTTFFeatures(featureMovement &feat, CvPoint2D32f *vp) {
 	CvPoint2D32f lastRealPoint = feat.positions[lastIndex];
 	CvPoint2D32f beforeLastRealPoint = feat.positions[lastIndex-1];
 
+	int nFramesAB = lastIndex;	// Distance (in nFrames) between first point A and last point found B
+
+	// Define X1 and X2
+	CvPoint2D32f x1 = feat.positions[lastIndex];	// B = farest to image plane (nearest to VP)
+	CvPoint2D32f x2 = feat.positions[0];			// A = nearest to image plane (farest to VP)
+
 	for(i=0; i<maxAdd; i++) {
 		float newDistance;
-
-		// Define X1 and X2
-		CvPoint2D32f x1 = feat.positions[lastIndex];
-		CvPoint2D32f x2 = feat.positions[0];
 
 		// If null don't use vanishing point
 		if(vp != NULL) {
@@ -96,7 +98,17 @@ void BTTFFeatures(featureMovement &feat, CvPoint2D32f *vp) {
 			float vpx2 = iaasTwoPointsDistance(x2, *vp);
 			float vpx1 = iaasTwoPointsDistance(x1, *vp);
 
-			newDistance = x2x1 / ((vpx2/vpx1)*(lastIndex+1)-1);
+			//newDistance = x2x1 / ((vpx2/vpx1)*(lastIndex+1)-1);
+
+			// Ratio between m/n where m=BC and n=AB
+			float pointsRatio = (float)(nFramesAB)/(float)(i+1);	//(float)(i+1)/(float)(nFramesAB);
+
+			//cout << "I: " << i+1 << " nFramesAB: " << nFramesAB << " -> " << pointsRatio << endl;
+
+			float oldDistance = newDistance;
+			newDistance = x2x1 / ((vpx2/vpx1)*(1+pointsRatio)-1);
+
+			//cout << "New distance: " << newDistance-oldDistance << endl;
 		}
 		else {
 			newDistance = getCrossRatioDistance(feat.positions[lastIndex-2],feat.positions[lastIndex-1],feat.positions[lastIndex], (4.0f/3.0f));

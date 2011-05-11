@@ -214,8 +214,12 @@ void FindFeatures(std::vector<std::string> pathImages, std::string pathOutFile, 
 	if(verb) {
 		drawFeatures(image0, &vp, 1);
 
-		cvShowImage(NAME_WINDOW, image0);
-		key = cvWaitKey(0);
+		char *outFileName = "beforeFilter.png";
+		// Save screenshot to file
+		if(!cvSaveImage(outFileName,image0)) printf("Could not save: %s\n",outFileName);
+
+		//cvShowImage(NAME_WINDOW, image0);
+		//key = cvWaitKey(0);
 	}
 		cvReleaseImage(&image0);
 
@@ -231,7 +235,7 @@ void FindFeatures(std::vector<std::string> pathImages, std::string pathOutFile, 
 		}
 		else {
 			// Estimate positions of feature using vanishing point
-			BTTFFeatures(*feat, &vp);
+			BackToTheFeatures(*feat, &vp);
 			float TTI = 0;
 			float mean = 0;
 #ifdef _DEBUG
@@ -261,8 +265,14 @@ void FindFeatures(std::vector<std::string> pathImages, std::string pathOutFile, 
 	if(verb) {
 		cout << endl << "Total features found: " << listFeatures.size() << endl;
 		drawFeatures(image0, &vp, 2);
-		cvShowImage(NAME_WINDOW, image0);
-		key = cvWaitKey(0);
+
+
+		char *outFileName = "afterFilter.png";
+		// Save screenshot to file
+		if(!cvSaveImage(outFileName,image0)) printf("Could not save: %s\n",outFileName);
+
+		//cvShowImage(NAME_WINDOW, image0);
+		//key = cvWaitKey(0);
 	}
 	cvReleaseImage(&image0);
 
