@@ -19,9 +19,6 @@ function [feats] = normContrast(feats, type, showPlot)
 %   $Revision: xxxxx $  $Date: 2011/04/09 11:59:22 $
 
 
-PRINTTEST = 1;  % thats to automatically print graph for the documentation
-
-
 if ~exist('showPlot','var')
     showPlot = 0;
 end
@@ -85,12 +82,7 @@ elseif strcmp(type, 'fitExp') %-----------------------------------------------
             hold on; grid on;
             x = feats(ii).tti(1):.01:feats(ii).tti(end);
             plot(x, cfun.k*exp(-x/cfun.lam));
-            title(['feat #', num2str(ii), ' - k: ', num2str(cfun.k), ', lambda: ', num2str(cfun.lam)]);
-            
-            if PRINTTEST
-                fName = ['feat',num2str(ii),'.png'];
-                print('-dpng', fName);
-            end
+            legend(['feat #', num2str(ii)], ['k: ', num2str(cfun.k), ', lambda: ', num2str(cfun.lam)]);
             
             pause();
             clf;
