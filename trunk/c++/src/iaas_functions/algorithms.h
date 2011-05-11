@@ -244,7 +244,7 @@ float getCrossRatioDistance(CvPoint2D32f a, CvPoint2D32f b, CvPoint2D32f c, floa
 float getPointCDistance(CvPoint2D32f a, CvPoint2D32f b, CvPoint2D32f d, float crossRatio);
 void filterFeaturesTooClose(CvPoint2D32f *newPoints, int *nNewPoints, CvPoint2D32f *existingPoints, int nExistingPoints);
 
-void BTTFFeatures(featureMovement &feat, CvPoint2D32f *vp = NULL);
+void BackToTheFeatures(featureMovement &feat, CvPoint2D32f *vp = NULL);
 
 /* ------------------ QUICK SORT (copy & paste from internet) ------------------ */
 
