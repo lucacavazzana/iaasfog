@@ -18,6 +18,10 @@ function [feats] = normContrast(feats, type, showPlot)
 %   Copyright 2011 Stefano Cadario, Luca Cavazzana.
 %   $Revision: xxxxx $  $Date: 2011/04/09 11:59:22 $
 
+
+PRINTTEST = 1;  % thats to automatically print graph for the documentation
+
+
 if ~exist('showPlot','var')
     showPlot = 0;
 end
@@ -77,11 +81,16 @@ elseif strcmp(type, 'fitExp') %-----------------------------------------------
         
         if showPlot > 2 % plotting for debug
             
-            plot(feats(ii).tti,feats(ii).contr(1:end), 'ro');
+            plot(feats(ii).tti,cfun.k*feats(ii).contr(1:end), 'ro');
             hold on; grid on;
             x = feats(ii).tti(1):.01:feats(ii).tti(end);
-            plot(x, exp(-x/cfun.lam));
-            title(['k: ', num2str(cfun.k), ', lambda: ', num2str(cfun.lam)]);
+            plot(x, cfun.k*exp(-x/cfun.lam));
+            title(['feat #', num2str(ii), ' - k: ', num2str(cfun.k), ', lambda: ', num2str(cfun.lam)]);
+            
+            if PRINTTEST
+                fName = ['feat',num2str(ii),'.png'];
+                print('-dpng', fName);
+            end
             
             pause();
             clf;
