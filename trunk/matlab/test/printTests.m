@@ -16,7 +16,9 @@ outFile = 'outFile.txt';
 imPaths = getPaths(imFolder, imName, imNum);
 
 alg = selectAlg({'printFeats',...
-                'printFeats2'});
+                'printFeats2',...
+                'printBestWorst',...
+                'ransac'});
 
 if exist(outFile,'file')~=2
     
@@ -40,6 +42,10 @@ switch alg
         printFeats(feats);
     case 2,
         normContrastTest(feats,'fitExp',3);
+    case 3,
+        printBestWorst(feats);
+    case 4
+        printRansac(feats);
 end
 
 end
