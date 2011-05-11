@@ -548,7 +548,7 @@ void printFeatures(std::string filePath, list<featureMovement> listFeatures) {
 			f_out << feat->startFrame << "\t" << feat->contrast.size() << "\t";
 			for(int rec = 0; rec < feat->contrast.size(); rec++) {
 				f_out << feat->positions[rec].x << "\t"<< feat->positions[rec].y << "\t" << feat->contrast[rec] << "\t";
-				if(rec < feat->contrast.size() - 1)
+				//if(rec < feat->contrast.size() - 1)
 					f_out << feat->timeToImpact[rec] << "\t";
 			}
 			f_out << std::endl;
