@@ -97,16 +97,21 @@ La posizione del vanishing point riveste un ruolo fondamentale nella risoluzione
 
 \noindent Vengono infine scartate le features la cui retta di regressione dista pi\`u della distanza mediana rispetto al vanishing point eletto, in quanto probabili outliers (viene mantenuta quindi solo la met\'a delle features).
 
-\begin{center}
-	\includegraphics[scale=0.50]{images/iaasBefore.png}
-	\captionof{figure}{Vanishing point calcolato mediante RANSAC.}
-	\label{fig:vpBef}
-\end{center}
-\begin{center}
-	\includegraphics[scale=0.50]{images/iaasAfter.png}
-	\captionof{figure}{Linee di fuga coerenti con il vanishing point calcolato.}
-	\label{fig:vpAft}
-\end{center}
+\begin{figure}
+	\begin{minipage}[b]{0.5\linewidth}
+		\centering
+		\includegraphics[scale=0.6]{images/iaasBefore.png}
+		\captionof{figure}{Vanishing point calcolato mediante RANSAC.}
+		\label{fig:vpBef}
+	\end{minipage}
+	\hspace{0.5cm}
+	\begin{minipage}[b]{0.5\linewidth}
+		\centering
+		\includegraphics[scale=0.6]{images/iaasAfter.png}
+		\captionof{figure}{Linee di fuga coerenti con il vanishing point calcolato.}
+		\label{fig:vpAft}
+	\end{minipage}
+\end{figure}
 
 \noindent L'algoritmo applicato a diversi set di dati ha restituito buoni risultati con tempi notevolmente ridotti (circa $1$ secondo di elaborazione per $200$ features) rispetto alla precedente implementazione meno efficiente (complessit\`a $O\left(n^2\log{n}\right)$).\\
 
@@ -232,6 +237,71 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \noindent Tale approccio tuttavia, per quanto computazionalmente leggero, \`e stato abbandonato a causa dell'eccessiva sensibilit\`a all'errore sui dati (dal momento che di sovente vengono selezionati come valori di min e max proprio degli outlier). Gli altri due approcci invece facendo uso di una maggiore quantit\`a di dati risultano essere pi\`u robusti, ma pagano in termini di prestazioni a causa della complessit\`a della fase di fitting delle curve.
 
 
+
+
+\chapter{Risultati sperimentali}
+
+\section{Calcolo del vanishing point}
+
+\noindent Le figure \ref{fig:vp15}, \ref{fig:vp25} e \ref{fig:vp50} rappresentano il risultato dell'elaborazione dell'algoritmo sul calcolo del vanishing point su differenti set di immagini: l'algoritmo restituisce risultati tanto migliori quanto pi\`u sono le features disponibili, a loro volta dipendenti dal numero di frames; mentre per pochi frames (15) il calcolo del vanishing point \`e affetto da errori pi\`u o meno grandi, per tracking pi\`u lunghi ($>30$ frames) l'affidabilit\`a dell'algoritmo migliora notevolmente.\\
+
+\noindent Nelle immagini poste a destra \`e possibile anche verificare come la met\`a delle linee di fuga individuate venga eliminata dal set, perch\'e troppo lontana dal vanishing point trovato.\\
+
+\newcommand{\imLol}{0.57}
+
+\begin{figure}
+\begin{minipage}[b]{0.5\linewidth}
+	\includegraphics[scale=\imLol]{images/bF_0000_15.png}
+	\includegraphics[scale=\imLol]{images/bF_0020_15.png}
+	\includegraphics[scale=\imLol]{images/bF_0040_15.png}
+	\includegraphics[scale=\imLol]{images/bF_0060_15.png}
+\end{minipage}
+\begin{minipage}[b]{0.5\linewidth}
+	\includegraphics[scale=\imLol]{images/aF_0000_15.png}
+	\includegraphics[scale=\imLol]{images/aF_0020_15.png}
+	\includegraphics[scale=\imLol]{images/aF_0040_15.png}
+	\includegraphics[scale=\imLol]{images/aF_0060_15.png}
+\end{minipage}
+\caption[short]{A sinistra: linee di fuga per 15 frames a partire dalle immagini 0, 20, 40 e 60. A destra: stesse features dopo il filtro sul vanishing point.}
+\label{fig:vp15}
+\end{figure}
+
+\begin{figure}
+\begin{minipage}[b]{0.5\linewidth}
+	\includegraphics[scale=\imLol]{images/bF_0000_25.png}
+	\includegraphics[scale=\imLol]{images/bF_0020_25.png}
+	\includegraphics[scale=\imLol]{images/bF_0040_25.png}
+	\includegraphics[scale=\imLol]{images/bF_0060_25.png}
+\end{minipage}
+\begin{minipage}[b]{0.5\linewidth}
+	\includegraphics[scale=\imLol]{images/aF_0000_25.png}
+	\includegraphics[scale=\imLol]{images/aF_0020_25.png}
+	\includegraphics[scale=\imLol]{images/aF_0040_25.png}
+	\includegraphics[scale=\imLol]{images/aF_0060_25.png}
+\end{minipage}
+\caption[short]{A sinistra: linee di fuga per 25 frames a partire dalle immagini 0, 20, 40 e 60. A destra: stesse features dopo il filtro sul vanishing point.}
+\label{fig:vp25}
+\end{figure}
+
+\begin{figure}
+\begin{minipage}[b]{0.5\linewidth}
+	\includegraphics[scale=\imLol]{images/bF_0000_50.png}
+	\includegraphics[scale=\imLol]{images/bF_0020_50.png}
+	\includegraphics[scale=\imLol]{images/bF_0040_50.png}
+	\includegraphics[scale=\imLol]{images/bF_0060_50.png}
+\end{minipage}
+\begin{minipage}[b]{0.5\linewidth}
+	\includegraphics[scale=\imLol]{images/aF_0000_50.png}
+	\includegraphics[scale=\imLol]{images/aF_0020_50.png}
+	\includegraphics[scale=\imLol]{images/aF_0040_50.png}
+	\includegraphics[scale=\imLol]{images/aF_0060_50.png}
+\end{minipage}
+\caption[short]{A sinistra: linee di fuga per 50 frames a partire dalle immagini 0, 20, 40 e 60. A destra: stesse features dopo il filtro sul vanishing point.}
+\label{fig:vp50}
+\end{figure}
+
+
+\section{Stima di $\lambda$ mediante fitting}
 
 
 \chapter{Conclusioni e sviluppi futuri}

@@ -26,7 +26,7 @@ if ~exist('cleanFeats','var')  %FIXME: rimuovere cleanFeats quando sarà sistema
     cleanFeats = 0;
 end
 
-FILLLASTTTI = 1;
+FILLLASTTTI = 0;
 
 
 if ~exist('fileName','var')
@@ -77,6 +77,8 @@ end
 if FILLLASTTTI
     for ii = 1:max(size(feats))
         feats(ii).tti = [feats(ii).tti, 2*feats(ii).tti(end)-feats(ii).tti(end-1)];
+%         disp(feats(ii).tti);
+%         pause;
     end
 end
 
