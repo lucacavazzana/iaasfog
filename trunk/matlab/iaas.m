@@ -16,7 +16,7 @@ function [lam] = iaas(showPlot)
 %   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
 
 % OPTIONS
-GUI = 0;    % if 0 use our default test values
+GUI = 1;    % if 0 use our default test values
 
 if ~exist('showPlot','var')
     showPlot=0;
