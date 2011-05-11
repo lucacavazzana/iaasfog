@@ -28,20 +28,20 @@
 \defcounter {refsection}{0}
 \contentsline {section}{\numberline {3.2}Stima di $\lambda $ mediante fitting}{17}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {4}Conclusioni e sviluppi futuri}{25}
+\contentsline {chapter}{\numberline {4}Conclusioni e sviluppi futuri}{27}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {5}Documentazione}{26}
+\contentsline {chapter}{\numberline {5}Documentazione}{28}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {5.1}C++}{26}
+\contentsline {section}{\numberline {5.1}C++}{28}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {5.2}Matlab}{27}
+\contentsline {section}{\numberline {5.2}Matlab}{29}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {6}Installazione}{29}
+\contentsline {chapter}{\numberline {6}Installazione}{31}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {6.1}OpenCV}{29}
+\contentsline {section}{\numberline {6.1}OpenCV}{31}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {6.1.1}Windows}{29}
+\contentsline {subsection}{\numberline {6.1.1}Windows}{31}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {6.1.2}Linux / MacOSX}{30}
+\contentsline {subsection}{\numberline {6.1.2}Linux / MacOSX}{32}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {6.2}Installazione ed esecuzione del programma}{31}
+\contentsline {section}{\numberline {6.2}Installazione ed esecuzione del programma}{33}
