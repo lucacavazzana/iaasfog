@@ -3,7 +3,7 @@ function [] = printTests()
 %PRINTTESTS stampa immagini per la relazione
 
 % to recompute feats
-!rm ./outFile.txt
+%!rm ./outFile.txt
 
 imFolder = '/home/luca/Matlab/iaasfog/Images';
 imName = 'frame0000.jpg';

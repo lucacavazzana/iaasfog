@@ -26,9 +26,6 @@ if ~exist('cleanFeats','var')  %FIXME: rimuovere cleanFeats quando sarà sistema
     cleanFeats = 0;
 end
 
-FILLLASTTTI = 0;
-
-
 if ~exist('fileName','var')
     error '    - ERROR: fileName needed'
 % elseif ~exist('fileName','file') % FIXME: it doesn't work... why?
@@ -72,14 +69,6 @@ if cleanFeats
         ii=ii+1;
     end
     disp(['- After cleaning: ', num2str(size(feats,2)), ' feats']);
-end
-%--------------------------------------------------------------------------
-if FILLLASTTTI
-    for ii = 1:max(size(feats))
-        feats(ii).tti = [feats(ii).tti, 2*feats(ii).tti(end)-feats(ii).tti(end-1)];
-%         disp(feats(ii).tti);
-%         pause;
-    end
 end
 
 end
