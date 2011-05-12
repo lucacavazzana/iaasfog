@@ -4,45 +4,45 @@
 \defcounter {refsection}{0}
 \contentsline {chapter}{\numberline {1}Introduzione}{2}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {2}Implementazione}{4}
+\contentsline {chapter}{\numberline {2}Implementazione}{3}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {2.1}Tracking delle features}{4}
+\contentsline {section}{\numberline {2.1}Tracking delle features}{3}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {2.2}Calcolo del vanishing point}{5}
+\contentsline {section}{\numberline {2.2}Calcolo del vanishing point}{4}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {2.3}Calcolo del tempo all'impatto}{7}
+\contentsline {section}{\numberline {2.3}Calcolo del tempo all'impatto}{5}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {2.4}Calcolo del contrasto}{7}
+\contentsline {section}{\numberline {2.4}Calcolo del contrasto}{5}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {2.5}Stima dei parametri}{11}
+\contentsline {section}{\numberline {2.5}Stima dei parametri}{10}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {2.5.1}Fitting di $\lambda $}{11}
+\contentsline {subsection}{\numberline {2.5.1}Fitting di $\lambda $}{10}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {2.5.2}Normalizzazione mediante fitting di $k$ e RANSAC}{12}
+\contentsline {subsection}{\numberline {2.5.2}Normalizzazione mediante fitting di $k$ e RANSAC}{11}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {2.5.3}Stima di $\lambda $ mediante minMax (deprecato)}{15}
+\contentsline {subsection}{\numberline {2.5.3}Stima di $\lambda $ mediante minMax (deprecato)}{13}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {3}Risultati sperimentali}{17}
+\contentsline {chapter}{\numberline {3}Risultati sperimentali}{14}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {3.1}Calcolo del vanishing point}{17}
+\contentsline {section}{\numberline {3.1}Calcolo del vanishing point}{14}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {3.2}Stima di $\lambda $ mediante fitting}{17}
+\contentsline {section}{\numberline {3.2}Stima di $\lambda $ mediante fitting}{18}
 \defcounter {refsection}{0}
 \contentsline {section}{\numberline {3.3}Stima di $\lambda $ mediante RANSAC}{25}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {4}Conclusioni e sviluppi futuri}{29}
+\contentsline {chapter}{\numberline {4}Conclusioni e sviluppi futuri}{30}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {5}Documentazione}{30}
+\contentsline {chapter}{\numberline {5}Documentazione}{31}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {5.1}C++}{30}
+\contentsline {section}{\numberline {5.1}C++}{31}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {5.2}Matlab}{31}
+\contentsline {section}{\numberline {5.2}Matlab}{32}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {6}Installazione}{33}
+\contentsline {chapter}{\numberline {6}Installazione}{34}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {6.1}OpenCV}{33}
+\contentsline {section}{\numberline {6.1}OpenCV}{34}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {6.1.1}Windows}{33}
+\contentsline {subsection}{\numberline {6.1.1}Windows}{34}
 \defcounter {refsection}{0}
 \contentsline {subsection}{\numberline {6.1.2}Linux / MacOSX}{34}
 \defcounter {refsection}{0}
