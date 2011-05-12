@@ -38,6 +38,8 @@ for ii = 1:10;
     for st = 1:size(imStart,1)
         for num = 1:size(n,2)
             
+            disp([ii,st,num]);
+            
             cmd = ['c++/Debug/iaasfog -f /home/luca/Matlab/iaasfog/Images -i ', imStart(st,:),' -n ', num2str(n(num)),' -o compare.txt'];
             system(cmd);
             feats = parseFeatures('compare.txt', 1);

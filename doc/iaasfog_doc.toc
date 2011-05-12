@@ -24,26 +24,26 @@
 \defcounter {refsection}{0}
 \contentsline {chapter}{\numberline {3}Risultati sperimentali}{15}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {3.1}Calcolo del vanishing point}{15}
+\contentsline {section}{\numberline {3.1}Calcolo del vanishing point}{16}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {3.2}Stima di $\lambda $ mediante fitting}{19}
+\contentsline {section}{\numberline {3.2}Stima di $\lambda $ mediante fitting}{21}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {3.3}Stima di $\lambda $ mediante RANSAC}{26}
+\contentsline {section}{\numberline {3.3}Stima di $\lambda $ mediante RANSAC}{29}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {4}Conclusioni e sviluppi futuri}{32}
+\contentsline {chapter}{\numberline {4}Conclusioni e sviluppi futuri}{34}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {5}Documentazione}{33}
+\contentsline {chapter}{\numberline {5}Documentazione}{35}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {5.1}C++}{33}
+\contentsline {section}{\numberline {5.1}C++}{35}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {5.2}Matlab}{34}
+\contentsline {section}{\numberline {5.2}Matlab}{36}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {6}Installazione}{36}
+\contentsline {chapter}{\numberline {6}Installazione}{38}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {6.1}OpenCV}{36}
+\contentsline {section}{\numberline {6.1}OpenCV}{38}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {6.1.1}Windows}{36}
+\contentsline {subsection}{\numberline {6.1.1}Windows}{38}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {6.1.2}Linux / MacOSX}{36}
+\contentsline {subsection}{\numberline {6.1.2}Linux / MacOSX}{38}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {6.2}Installazione ed esecuzione del programma}{37}
+\contentsline {section}{\numberline {6.2}Installazione ed esecuzione del programma}{39}
