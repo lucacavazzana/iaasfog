@@ -20,7 +20,8 @@ alg = selectAlg({'printFeats',...
                 'printBestWorst',...
                 'ransac',...
                 'compareRansac',...
-                'compareFits'});
+                'compareFits',...
+                'showVideo'});
 
 if exist(outFile,'file')~=2
     
@@ -52,6 +53,8 @@ switch alg
         compareRansac(feats);
     case 6
         compareFits();
+    case 7
+        showVideo();
 end
 
 end

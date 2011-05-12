@@ -251,7 +251,13 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 \chapter{Risultati sperimentali}
 
-\noindent I test sono stati eseguiti su una sequenza di 113 immagini estratte da un video con un framerate di 30fps. La telecamera \`e fissata su un veicolo che viaggia a velocit\`a supposta costante. Come si nota dal campione di immagini mostrate in figura \ref{fig:video} la visibilit\`a migliora nel corso della sequenza.
+\noindent I test sono stati eseguiti su una sequenza di 113 immagini estratte da un video acquisito mediante una telecamera fissata su un veicolo. Per ovviare a diverse incognite sono state fatte diverse assunzioni:
+\begin{itemize}
+	\item	framerate a 30fps: una diversa frequenza d'acquisizione porterebbe a calcolare diversi tempi d'impatto, ma i valori rimarrebbero comunque congruenti fra di loro. Molto pi\`u rilevante \`e che il framerate si mantenga costante per tutto il filmato.
+	\item	moto rettilineo: necessaria per semplificare il tracking delle features. Ispezionando il filmato tuttavia si notano delle vistose oscillazioni, possibili cause di problemi in fase di tracking.
+	\item	velocit\'a costante: il tempo all'impatto medio (in secondi) si relaziona alla visibilit\`a (in metri) mediante la velocit\`a del veicolo, parametro purtroppo non \`e disponibile. In mancanza di migliori soluzioni questo valore \`e stato ipotizzato come costante, in modo da poter considerare il tempo d'impatto come stima della velocit\`a. Sfortunatamente neanche questa assunzione appare essere particolarmente evidente: una variazione nella velocit\`a del veicolo porterebbe a rendere incongruenti i tempi d'impatto (\`e infatti possibile ottenere uno stesso tti in condizioni di visibilit\`a peggiori semplicemente rallentando).
+\end{itemize}
+\noindent Come si nota dal campione di immagini mostrate in figura \ref{fig:video} la visibilit\`a migliora nel corso della sequenza.
 
 \newcommand{\videoScale}{0.5}
 \begin{figure}[H]
@@ -266,7 +272,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 	\includegraphics[scale=\videoScale]{images/frame0090.jpg} & \includegraphics[scale=\videoScale]{images/frame0100.jpg} & \includegraphics[scale=\videoScale]{images/frame0110.jpg}\\
 	frame0090 & frame0100 & frame0110 \\
 \end{tabular}
-\caption{Campioni estratti dalla sequenza di immagini analizzate. Si nota come le condizioni di visibilit\`a migliorino.}
+\caption{Campioni estratti dalla sequenza di immagini analizzate. Si noti come le condizioni di visibilit\`a migliorano.}
 \label{fig:video}
 \end{figure}
 
@@ -512,8 +518,6 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 \noindent Sono infine stati analizzati i diversi valori di $\lambda$ restituiti dal presente algoritmo al variare del numero di frame analizzati e dal frame di partenza; ogni test \`e stato eseguito dieci volte per verificare anche la ripetibilit\`a dei risultati a causa della componente stocastica introdotta da RANSAC nella determinazione del punto di fuga.\\
 
-\noindent Il diverso valore di $\lambda$, trovato al variare del frame di partenza, indica un cambiamento nei livelli di nebbia nel tempo, riscontrabile visivamente anche nel campione di immagini in figura \ref{fig:video}.
-
 \begin{table}[H]
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|}
@@ -534,11 +538,13 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \end{center}
 \end{table}
 
+\noindent Osservando il filmato campione ci si aspetterebbe di osservare un miglioramento nelle condizioni di visibili\`a, cosa non evidente dai valori restituiti. La causa di tale incongruenza potrebbe essere ricondotta a violazioni nelle ipotesi esposte all'inizio del capitolo, in particolare alla possibile non uniformit\`a della velocit\`a.
+
 
 \newpage
 \section{Stima di $\lambda$ mediante RANSAC}
 
-\noindent Lo stesso set di features della sezione precedente viene utilizzato per stimare il $\lambda$ globale mediante RANSAC.
+\noindent Lo stesso set di features della sezione precedente viene utilizzato per stimare il $\lambda$ globale mediante RANSAC, di cui sono riportate alcune iterazioni nelle seguenti immagini.
 
 \newcommand{\imFeatRan}{0.45}
 \begin{figure}[H]
@@ -582,12 +588,16 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 	\label{fig:ransacWin}
 \end{figure}
 
+\noindent Allo scopo di verificare la variabilit\`a dei risultati di RANSAC \`e stato ripetuto il calcolo per cinquanta volte sullo stesso set di features.
+
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=.75]{images/multiRansac}
 	\caption{Istogramma dei $\lambda$ ottenuti eseguendo RANSAC cinquanta volte sullo stesso set di dati.}
 	\label{fig:multiRansac}
 \end{figure}
+
+\noindent In modo analogo al caso precedente, l'algoritmo \`e stato eseguito dieci volte per diversi frame di partenza e numero di immagini.
 
 \begin{table}[H]
 \begin{center}
@@ -606,6 +616,26 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \end{tabular}
 \caption{Media (deviazione standard campionaria) del $\lambda$ calcolato mediante RANSAC. Sulle righe l'immagine di partenza, sulle colonne il numero di frame analizzati.}
 \label{tabRans}
+\end{center}
+\end{table}
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+	\hline
+	& 15 & 25 & 35 & 50 \\
+	\hline
+	frame0000 & 2.2951 (0.10126) & 0.70166 (0.17513) & 1.7832 (1.3057) & 1.3418 (0.21269)\\
+	\hline
+	frame0020 & 0.68235 (0.23275) & 12.6856 (1.4202) & 1.3026 (0.16435) & 0.94356 (0.034169)\\
+	\hline
+	frame0040 & 0.70609 (0.21565) & 0.57862 (0.019586) & 0.56058 (0.051861) & 0.94022 (0.074242)\\
+	\hline
+	frame0060 & 0.36377 (0.059513) & 0.53882 (0.069068) & 1.0892 (0.19126) & 1.5443 (0.2292)\\
+	\hline
+\end{tabular}
+\caption{Media (deviazione standard campionaria) del $\lambda$ calcolato mediante RANSAC. Sulle righe l'immagine di partenza, sulle colonne il numero di frame analizzati.}
+\label{tabRans2}
 \end{center}
 \end{table}
 
