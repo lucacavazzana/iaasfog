@@ -18,7 +18,8 @@ imPaths = getPaths(imFolder, imName, imNum);
 alg = selectAlg({'printFeats',...
                 'printFeats2',...
                 'printBestWorst',...
-                'ransac'});
+                'ransac',...
+                'compareRansac'});
 
 if exist(outFile,'file')~=2
     
@@ -46,6 +47,8 @@ switch alg
         printBestWorst(feats);
     case 4
         printRansac(feats);
+    case 5
+        compareRansac(feats);
 end
 
 end

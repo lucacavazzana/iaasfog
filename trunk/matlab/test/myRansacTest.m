@@ -8,7 +8,7 @@ NSET = size(feats,2);
 N = ceil(NSET*.25); % model
 K = 15; % max iterations
 D = ceil(NSET*.75); % required number to assert the model fits well the data
-T = .14;
+T = .3;
 
 % some initializations...
 x = linspace(min([feats.tti]),max([feats.tti]),100);
@@ -71,21 +71,25 @@ for ii=1:K
     if size(consSet,2)>=D
         err=err/size(consSet,2);
         if err < bestError
+            title('new best model');
             disp(['- new best model [', num2str(model),']! Mean error: ', num2str(err)]);
 
             bestPars.lam = lam;
             bestError = err;
             bestModel = model;
         else
+            title('good but not better than current best');
             disp(['- model [', num2str(model),'] not good enough. Mean error: ', num2str(err)]);
         end
     else
+        title('not enough consensus');
         disp(['- model [', num2str(model),']: not enough consensus']);
     end
     
-    legend('data: ', ['\lambda: ',num2str(lam)], 'model');
+    legend(['data RMSE: ',num2str(err)], ['\lambda: ',num2str(lam)], 'model');
+    print('-depsc',['ransac',num2str(ii),'.eps']);
+    print('-dpng',['ransac',num2str(ii),'.png']);
     
-    pause;
     clf;
 end
 
@@ -93,6 +97,17 @@ end
 if bestError == Inf
     error 'RANSAC couldn''t find any good model. Life sucks...';
 end
+
+
+hold on; grid on;
+plot([feats.tti],[feats.contr],'o');
+plot(x,exp(-x/bestPars.lam),'y*');
+plot([feats(bestModel).tti],[feats(bestModel).contr],'r*');
+axis([x(1),x(end),minMax([feats.contr])]);
+legend(['data RMSE: ',num2str(bestError)], ['\lambda: ',num2str(bestPars.lam)], 'model');
+print('-depsc','ransacWin.eps');
+print('-dpng','ransacWin.png');
+
 
     function [res] = rndSamples()
         % returns an array of N non-repeated random integers within NSET

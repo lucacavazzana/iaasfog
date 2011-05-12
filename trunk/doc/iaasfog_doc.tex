@@ -7,6 +7,8 @@
 \usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage{caption}
+\usepackage[top=3cm, bottom=3cm, left=2cm, right=2cm]{geometry}
+
 
 \hyphenation{ransac}
 	
@@ -249,14 +251,17 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 \newcommand{\imTrackScale}{0.6}
 
+
 \begin{figure}
 \begin{minipage}[c]{0.5\linewidth}
+	\centering
 	\includegraphics[scale=\imTrackScale]{images/bF_0000_15.png}
 	\includegraphics[scale=\imTrackScale]{images/bF_0020_15.png}
 	\includegraphics[scale=\imTrackScale]{images/bF_0040_15.png}
 	\includegraphics[scale=\imTrackScale]{images/bF_0060_15.png}
 \end{minipage}
 \begin{minipage}[c]{0.5\linewidth}
+	\centering
 	\includegraphics[scale=\imTrackScale]{images/aF_0000_15.png}
 	\includegraphics[scale=\imTrackScale]{images/aF_0020_15.png}
 	\includegraphics[scale=\imTrackScale]{images/aF_0040_15.png}
@@ -268,12 +273,14 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 \begin{figure}
 \begin{minipage}[c]{0.5\linewidth}
+	\centering
 	\includegraphics[scale=\imTrackScale]{images/bF_0000_25.png}
 	\includegraphics[scale=\imTrackScale]{images/bF_0020_25.png}
 	\includegraphics[scale=\imTrackScale]{images/bF_0040_25.png}
 	\includegraphics[scale=\imTrackScale]{images/bF_0060_25.png}
 \end{minipage}
 \begin{minipage}[c]{0.5\linewidth}
+	\centering
 	\includegraphics[scale=\imTrackScale]{images/aF_0000_25.png}
 	\includegraphics[scale=\imTrackScale]{images/aF_0020_25.png}
 	\includegraphics[scale=\imTrackScale]{images/aF_0040_25.png}
@@ -285,12 +292,14 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 \begin{figure}
 \begin{minipage}[c]{0.5\linewidth}
+	\centering
 	\includegraphics[scale=\imTrackScale]{images/bF_0000_50.png}
 	\includegraphics[scale=\imTrackScale]{images/bF_0020_50.png}
 	\includegraphics[scale=\imTrackScale]{images/bF_0040_50.png}
 	\includegraphics[scale=\imTrackScale]{images/bF_0060_50.png}
 \end{minipage}
 \begin{minipage}[c]{0.5\linewidth}
+	\centering
 	\includegraphics[scale=\imTrackScale]{images/aF_0000_50.png}
 	\includegraphics[scale=\imTrackScale]{images/aF_0020_50.png}
 	\includegraphics[scale=\imTrackScale]{images/aF_0040_50.png}
@@ -303,7 +312,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 
 
-
+\newpage
 
 \section{Stima di $\lambda$ mediante fitting}
 
@@ -387,7 +396,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 \noindent L'immagine \ref{fig:bestIntErr} invece illustra il quartile dei migliori dati calcolato usando l'area fra i due successivi fitting (ricordiamo che partiamo dall'idea che per buoni set i due curve non differiscono molto). In blu viene visualizzata la curva approssimante l'intero set di dati, mentre in rosso \`e evidenziata la met\`a dei dati con errore minore e la curva approssimante da questi ultimi ottenuta. Similmente, in figura \ref{fig:worstIntErr} sono riportate le features con errore peggiore.\\
 
-\newcommand{\imFeat}{.35}
+\newcommand{\imFeat}{.45}
 \begin{figure}
 \begin{minipage}[t]{0.5\linewidth}
 	\centering
@@ -434,14 +443,61 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \end{figure}
 
 
-
+\newpage
 
 \section{Stima di $\lambda$ mediante RANSAC}
 
-\noindent Lo stesso set di features della sezione precedente viene utilizzato per stimare il $\lambda$ glbale mediante RANSAC: dopo una prima normalizzazione dei dati in base ai singoli $k$ stimati
+\noindent Lo stesso set di features della sezione precedente viene utilizzato per stimare il $\lambda$ globale mediante RANSAC.
+
+\begin{figure}
+\begin{minipage}[t]{0.5\linewidth}
+	\centering
+	\includegraphics[scale=\imFeat]{images/ransac1}\\
+	\includegraphics[scale=\imFeat]{images/ransac3}\\
+	\includegraphics[scale=\imFeat]{images/ransac5}\\
+\end{minipage}
+\begin{minipage}[t]{0.5\linewidth}
+	\centering
+	\includegraphics[scale=\imFeat]{images/ransac2}\\
+	\includegraphics[scale=\imFeat]{images/ransac4}\\
+	\includegraphics[scale=\imFeat]{images/ransac6}\\
+\end{minipage}
+\caption[short]{Iterazioni di RANSAC. In blu i dati, in giallo le curva candidata, in rosso i campioni del relativo modello.}
+\label{fig:ransac1}
+\end{figure}
+
+\begin{figure}
+\begin{minipage}[t]{0.5\linewidth}
+	\centering
+	\includegraphics[scale=\imFeat]{images/ransac7}\\
+	\includegraphics[scale=\imFeat]{images/ransac9}\\
+	\includegraphics[scale=\imFeat]{images/ransac11}\\
+\end{minipage}
+\begin{minipage}[t]{0.5\linewidth}
+	\centering
+	\includegraphics[scale=\imFeat]{images/ransac8}\\
+	\includegraphics[scale=\imFeat]{images/ransac10}\\
+	\includegraphics[scale=\imFeat]{images/ransac12}\\
+\end{minipage}
+\caption[short]{Iterazioni di RANSAC. In blu i dati, in giallo le curva candidata, in rosso i campioni del relativo modello.}
+\label{fig:ransac2}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=.75]{images/ransacWin}
+	\caption{Migliore curva trovata mediante RANSAC. $\lambda = $, RMSE = .}
+	\label{fig:ransacWin}
+\end{figure}
 
 
 
+\begin{figure}
+	\centering
+	\includegraphics[scale=.75]{images/multiRansac}
+	\caption{Istogramma dei $\lambda$ ottenuti eseguendo RANSAC cinquanta volte sullo stesso set di dati.}
+	\label{fig:multiRansac}
+\end{figure}
 
 
 \chapter{Conclusioni e sviluppi futuri}
