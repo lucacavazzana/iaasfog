@@ -120,7 +120,7 @@ La posizione del vanishing point riveste un ruolo fondamentale nella risoluzione
 \noindent Opzionalmente la posizione del vanishing point reale pu\`o essere affinata utilizzando SVD con il $50\%$ delle rette pi\`u vicine al vanishing point trovato in precedenza.\\
 
 \begin{center}
-	\includegraphics[scale=0.50]{images/iaasAfterArrow.png}
+	\includegraphics[scale=0.7]{images/iaasAfterArrow.png}
 	\captionof{figure}{Flusso delle features inseguite.}
 	\label{fig:vpAftArr}
 \end{center}
@@ -149,17 +149,17 @@ $$ c\left(I_{M\times N}\right) = \sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(i_{i
 \noindent Confrontando i valori ottenuti calcolando i livelli di contrasto utilizzando i diversi metodi si nota come RMS tenda a generare curve pi\`u smooth.
 
 \begin{center}
-	\includegraphics[scale=0.60, angle=90.0]{images/compContr1.png}
+	\includegraphics[scale=0.7, angle=90.0]{images/compContr1.png}
 	\captionof{figure}{confronto fra i valori di contrasto ottenuti mediante i differenti approcci.}
 	\label{fig:contr01}
 \end{center}
 \begin{center}
-	\includegraphics[scale=0.60, angle=90.0]{images/compContr2.png}
+	\includegraphics[scale=0.7, angle=90.0]{images/compContr2.png}
 	\captionof{figure}{confronto su nuove features.}
 	\label{fig:contr02}
 \end{center}
 \begin{center}
-	\includegraphics[scale=0.60, angle=90.0]{images/compContr3.png}
+	\includegraphics[scale=0.7, angle=90.0]{images/compContr3.png}
 	\captionof{figure}{confronto su nuove features.}
 	\label{fig:contr03}
 \end{center}
@@ -194,7 +194,7 @@ $$ c\left(I_{M\times N}\right) = \sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(i_{i
 
 \begin{center}
 	\includegraphics[scale=0.75]{images/fitting.png}
-	\captionof{figure}{Fitting di una singola feature.}
+	\captionof{figure}{Fitting e rescaling di una singola feature.}
 	\label{fig:fitting}
 \end{center}
 
@@ -247,7 +247,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 \noindent Le figure \ref{fig:vp15}, \ref{fig:vp25} e \ref{fig:vp50} rappresentano il risultato dell'elaborazione dell'algoritmo sul calcolo del vanishing point su differenti set di immagini: l'algoritmo restituisce risultati tanto migliori quanto pi\`u sono le features disponibili, a loro volta dipendenti dal numero di frames; mentre per pochi frames (15) il calcolo del vanishing point \`e affetto da errori pi\`u o meno grandi, per tracking pi\`u lunghi ($>30$ frames) l'affidabilit\`a dell'algoritmo migliora notevolmente.\\
 
-\noindent Nelle immagini poste a destra \`e possibile anche verificare come la met\`a delle linee di fuga individuate venga eliminata dal set, perch\'e troppo lontana dal vanishing point trovato.\\
+\noindent Nelle immagini poste a destra \`e possibile verificare come la met\`a delle linee di fuga individuate venga eliminata dal set, perch\'e troppo lontana dal vanishing point trovato.\\
 
 \newcommand{\imTrackScale}{0.6}
 
@@ -319,39 +319,29 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 %% FIXME VISUALIZZAZIONE DELLE FEATURES -------------------
 
-\noindent Le figure \ref{fig:feats1}, \ref{fig:feats2} e \ref{fig:feats2} rappresentano i livelli di contrasto (ordinati sul tempo d'impatto) e le relative curve approssimanti di ciascuna delle features trovate analizzando il set di 50 fra i frames forniti a partire dal numero 0. Appare palese come i dati siano rumorosi, spesso portando a stimare parametri inverosimili.\\
+\noindent Le figure \ref{fig:feats1}, \ref{fig:feats2}, \ref{fig:feats3} e \ref{fig:feats4} rappresentano i livelli di contrasto (ordinati sul tempo d'impatto) e le relative curve approssimanti di ciascuna delle features trovate analizzando il set di 50 fra i frames forniti a partire dal numero 0. Appare palese come i dati siano rumorosi, spesso portando a stimare parametri inverosimili.\\
 
-\newcommand{\imFeatScale}{0.27}
-\newcommand{\imFeatAngle}{0}
+\newcommand{\imFeat}{.4}
 \begin{figure}
-\begin{minipage}[t]{0.3\linewidth}
+\begin{minipage}[t]{0.5\linewidth}
 	\centering
-	feat7 - $k: , \lambda:  $\\
-	\includegraphics[scale=\imFeatScale, angle=90]{images/feat1}
-	feat7 - $k: , \lambda:  $\\
-	\includegraphics[scale=\imFeatScale, angle=90]{images/feat4}
-	feat7 - $k: , \lambda:  $\\
-	\includegraphics[scale=\imFeatScale, angle=90]{images/feat7}
+	feat1 - $k: , \lambda:  $\\
+	\includegraphics[scale=\imFeat]{images/feat1}\\
+	feat3 - $k: , \lambda:  $\\
+	\includegraphics[scale=\imFeat]{images/feat3}\\
+	feat5 - $k: , \lambda:  $\\
+	\includegraphics[scale=\imFeat]{images/feat5}\\
 \end{minipage}
-\begin{minipage}[t]{0.3\linewidth}
+\begin{minipage}[t]{0.5\linewidth}
 	\centering
-	feat7 - $k: , \lambda:  $\\
-	\includegraphics[scale=\imFeatScale, angle=90]{images/feat2}
-	feat7 - $k: , \lambda:  $\\
-	\includegraphics[scale=\imFeatScale, angle=90]{images/feat5}
-	feat7 - $k: , \lambda:  $\\
-	\includegraphics[scale=\imFeatScale, angle=90]{images/feat8}
+	feat2 - $k: , \lambda:  $\\
+	\includegraphics[scale=\imFeat]{images/feat2}\\
+	feat4 - $k: , \lambda:  $\\
+	\includegraphics[scale=\imFeat]{images/feat4}\\
+	feat6 - $k: , \lambda:  $\\
+	\includegraphics[scale=\imFeat]{images/feat6}\\
 \end{minipage}
-\begin{minipage}[t]{0.3\linewidth}
-	\centering
-	feat7 - $k: , \lambda:  $\\
-	\includegraphics[scale=\imFeatScale, angle=90]{images/feat3}
-	feat7 - $k: , \lambda:  $\\
-	\includegraphics[scale=\imFeatScale, angle=90]{images/feat6}
-	feat7 - $k: , \lambda:  $\\
-	\includegraphics[scale=\imFeatScale, angle=90]{images/feat9}
-\end{minipage}
-\caption[short]{Features. In ascissa il tempo all'impatto.}
+\caption[short]{Features e relative curve fittate. I dati sono ordinati in base al tempo d'impatto.}
 \label{fig:feats1}
 \end{figure}
 
@@ -359,56 +349,90 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \begin{minipage}[t]{0.5\linewidth}
 	\centering
 	feat7 - $k: , \lambda:  $\\
-	\includegraphics[scale=\imFeatScale, angle=\imFeatAngle]{images/feat7}\\
-	feat7 - $k: , \lambda:  $\\
-	\includegraphics[scale=\imFeatScale, angle=\imFeatAngle]{images/feat9}\\
+	\includegraphics[scale=\imFeat]{images/feat7}\\
 	feat9 - $k: , \lambda:  $\\
-	\includegraphics[scale=\imFeatScale, angle=\imFeatAngle]{images/feat11}\\
+	\includegraphics[scale=\imFeat]{images/feat9}\\
+	feat11 - $k: , \lambda:  $\\
+	\includegraphics[scale=\imFeat]{images/feat11}\\
 \end{minipage}
 \begin{minipage}[t]{0.5\linewidth}
 	\centering
-	feat7 - $k: , \lambda:  $\\
-	\includegraphics[scale=\imFeatScale, angle=\imFeatAngle]{images/feat8}\\
 	feat8 - $k: , \lambda:  $\\
-	\includegraphics[scale=\imFeatScale, angle=\imFeatAngle]{images/feat10}\\
+	\includegraphics[scale=\imFeat]{images/feat8}\\
 	feat10 - $k: , \lambda:  $\\
-	\includegraphics[scale=\imFeatScale, angle=\imFeatAngle]{images/feat12}\\
+	\includegraphics[scale=\imFeat]{images/feat10}\\
+	feat12 - $k: , \lambda:  $\\
+	\includegraphics[scale=\imFeat]{images/feat12}\\
 \end{minipage}
-\caption[short]{Features. In ascissa il tempo all'impatto.}
+\caption[short]{Features e relative curve fittate. I dati sono ordinati in base al tempo d'impatto.}
 \label{fig:feats2}
 \end{figure}
 
-
 \begin{figure}
-	\includegraphics[scale=.9, angle=90]{images/feats01}
-	\caption[Short]{Features e relative curve fittate. I dati sono ordinati in base al tempo d'impatto.}
-	\label{fig:feats01}
+\begin{minipage}[t]{0.5\linewidth}
+	\centering
+	feat13 - $k: , \lambda:  $\\
+	\includegraphics[scale=\imFeat]{images/feat13}\\
+	feat15 - $k: , \lambda:  $\\
+	\includegraphics[scale=\imFeat]{images/feat15}\\
+	feat17 - $k: , \lambda:  $\\
+	\includegraphics[scale=\imFeat]{images/feat17}\\
+\end{minipage}
+\begin{minipage}[t]{0.5\linewidth}
+	\centering
+	feat14 - $k: , \lambda:  $\\
+	\includegraphics[scale=\imFeat]{images/feat14}\\
+	feat16 - $k: , \lambda:  $\\
+	\includegraphics[scale=\imFeat]{images/feat16}\\
+	feat18 - $k: , \lambda:  $\\
+	\includegraphics[scale=\imFeat]{images/feat18}\\
+\end{minipage}
+\caption[short]{Features e relative curve fittate. I dati sono ordinati in base al tempo d'impatto.}
+\label{fig:feats3}
 \end{figure}
 
 \begin{figure}
-	\includegraphics[scale=.9, angle=90]{images/feats02}
-	\caption{Features e relative curve fittate. I dati sono ordinati in base al tempo d'impatto.}
-	\label{fig:feats02}
+\begin{minipage}[t]{0.5\linewidth}
+	\centering
+	feat19 - $k: , \lambda:  $\\
+	\includegraphics[scale=\imFeat]{images/feat19}\\
+	feat21 - $k: , \lambda:  $\\
+	\includegraphics[scale=\imFeat]{images/feat21}\\
+	feat23 - $k: , \lambda:  $\\
+	\includegraphics[scale=\imFeat]{images/feat23}\\
+\end{minipage}
+\begin{minipage}[t]{0.5\linewidth}
+	\centering
+	feat20 - $k: , \lambda:  $\\
+	\includegraphics[scale=\imFeat]{images/feat20}\\
+	feat22 - $k: , \lambda:  $\\
+	\includegraphics[scale=\imFeat]{images/feat22}\\
+%	feat24 - $k: , \lambda:  $\\
+%	\includegraphics[scale=\imFeat]{images/feat24}\\
+\end{minipage}
+\caption[short]{Features e relative curve fittate. I dati sono ordinati in base al tempo d'impatto.}
+\label{fig:feats4}
 \end{figure}
+
 
 
 %% DATI MIGLIORI E PEGGIORI ----------------------------------
 
-\noindent L'immagine \ref{fig:bestIntErr} invece illustra il quartile dei migliori dati calcolato usando l'area fra i due successivi fitting (ricordiamo che partiamo dall'idea che per buoni set i due curve non differiscono molto). In blu viene visualizzata la curva approssimante l'intero set di dati, mentre in rosso \`e evidenziata la met\`a dei dati con errore minore e la curva approssimante da questi ultimi ottenuta. Similmente, in figura \ref{fig:worstIntErr} sono riportate le features con errore peggiore.\\
+\noindent L'immagine \ref{fig:bestIntErr} invece illustra il quartile dei migliori dati calcolato usando l'area fra i due successivi fitting (ricordiamo che partiamo dall'idea che per buoni set le due curve non differiscono molto). In blu viene visualizzata la curva approssimante l'intero set di dati, mentre in rosso \`e evidenziata la met\`a dei dati con errore minore e la curva approssimante da questi ultimi ottenuta. Similmente, in figura \ref{fig:worstIntErr} sono riportate le features con errore peggiore.\\
 
-\newcommand{\imFeat}{.45}
+\newcommand{\imFeatBW}{.45}
 \begin{figure}
 \begin{minipage}[t]{0.5\linewidth}
 	\centering
-	\includegraphics[scale=\imFeat]{images/best1}\\
-	\includegraphics[scale=\imFeat]{images/best3}\\
-	\includegraphics[scale=\imFeat]{images/best5}\\
+	\includegraphics[scale=\imFeatBW]{images/best1}\\
+	\includegraphics[scale=\imFeatBW]{images/best3}\\
+	\includegraphics[scale=\imFeatBW]{images/best5}\\
 \end{minipage}
 \begin{minipage}[t]{0.5\linewidth}
 	\centering
-	\includegraphics[scale=\imFeat]{images/best2}\\
-	\includegraphics[scale=\imFeat]{images/best4}\\
-	\includegraphics[scale=\imFeat]{images/best6}\\
+	\includegraphics[scale=\imFeatBW]{images/best2}\\
+	\includegraphics[scale=\imFeatBW]{images/best4}\\
+	\includegraphics[scale=\imFeatBW]{images/best6}\\
 \end{minipage}
 \caption[short]{Migliori features secondo l'errore integrale.}
 \label{fig:bestIntErr}
@@ -417,15 +441,15 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \begin{figure}
 \begin{minipage}[t]{0.5\linewidth}
 	\centering
-	\includegraphics[scale=\imFeat]{images/worst1}\\
-	\includegraphics[scale=\imFeat]{images/worst3}\\
-	\includegraphics[scale=\imFeat]{images/worst5}\\
+	\includegraphics[scale=\imFeatBW]{images/worst1}\\
+	\includegraphics[scale=\imFeatBW]{images/worst3}\\
+	\includegraphics[scale=\imFeatBW]{images/worst5}\\
 \end{minipage}
 \begin{minipage}[t]{0.5\linewidth}
 	\centering
-	\includegraphics[scale=\imFeat]{images/worst2}\\
-	\includegraphics[scale=\imFeat]{images/worst4}\\
-	\includegraphics[scale=\imFeat]{images/worst6}\\
+	\includegraphics[scale=\imFeatBW]{images/worst2}\\
+	\includegraphics[scale=\imFeatBW]{images/worst4}\\
+	\includegraphics[scale=\imFeatBW]{images/worst6}\\
 \end{minipage}
 \caption[short]{Feature peggiori secondo l'errore integrale.}
 \label{fig:worstIntErr}
@@ -449,37 +473,38 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 \noindent Lo stesso set di features della sezione precedente viene utilizzato per stimare il $\lambda$ globale mediante RANSAC.
 
+\newcommand{\imFeatRan}{0.45}
 \begin{figure}
 \begin{minipage}[t]{0.5\linewidth}
 	\centering
-	\includegraphics[scale=\imFeat]{images/ransac1}\\
-	\includegraphics[scale=\imFeat]{images/ransac3}\\
-	\includegraphics[scale=\imFeat]{images/ransac5}\\
+	\includegraphics[scale=\imFeatRan]{images/ransac1}\\
+	\includegraphics[scale=\imFeatRan]{images/ransac3}\\
+	\includegraphics[scale=\imFeatRan]{images/ransac5}\\
 \end{minipage}
 \begin{minipage}[t]{0.5\linewidth}
 	\centering
-	\includegraphics[scale=\imFeat]{images/ransac2}\\
-	\includegraphics[scale=\imFeat]{images/ransac4}\\
-	\includegraphics[scale=\imFeat]{images/ransac6}\\
+	\includegraphics[scale=\imFeatRan]{images/ransac2}\\
+	\includegraphics[scale=\imFeatRan]{images/ransac4}\\
+	\includegraphics[scale=\imFeatRan]{images/ransac6}\\
 \end{minipage}
-\caption[short]{Iterazioni di RANSAC. In blu i dati, in giallo le curva candidata, in rosso i campioni del relativo modello.}
+\caption[short]{Esempio di iterazioni di RANSAC. In blu i dati, in giallo le curva candidata, in rosso i campioni del relativo modello.}
 \label{fig:ransac1}
 \end{figure}
 
 \begin{figure}
 \begin{minipage}[t]{0.5\linewidth}
 	\centering
-	\includegraphics[scale=\imFeat]{images/ransac7}\\
-	\includegraphics[scale=\imFeat]{images/ransac9}\\
-	\includegraphics[scale=\imFeat]{images/ransac11}\\
+	\includegraphics[scale=\imFeatRan]{images/ransac7}\\
+	\includegraphics[scale=\imFeatRan]{images/ransac9}\\
+	\includegraphics[scale=\imFeatRan]{images/ransac11}\\
 \end{minipage}
 \begin{minipage}[t]{0.5\linewidth}
 	\centering
-	\includegraphics[scale=\imFeat]{images/ransac8}\\
-	\includegraphics[scale=\imFeat]{images/ransac10}\\
-	\includegraphics[scale=\imFeat]{images/ransac12}\\
+	\includegraphics[scale=\imFeatRan]{images/ransac8}\\
+	\includegraphics[scale=\imFeatRan]{images/ransac10}\\
+	\includegraphics[scale=\imFeatRan]{images/ransac12}\\
 \end{minipage}
-\caption[short]{Iterazioni di RANSAC. In blu i dati, in giallo le curva candidata, in rosso i campioni del relativo modello.}
+\caption[short]{Esempio di iterazioni di RANSAC. In blu i dati, in giallo le curva candidata, in rosso i campioni del relativo modello.}
 \label{fig:ransac2}
 \end{figure}
 
@@ -498,6 +523,87 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 	\caption{Istogramma dei $\lambda$ ottenuti eseguendo RANSAC cinquanta volte sullo stesso set di dati.}
 	\label{fig:multiRansac}
 \end{figure}
+
+\noindent Sono infine stati analizzati i diversi valori di $\lambda$ restituiti dagli algoritmi al variare del numero di frame analizzati e dal frame di partenza; ogni test \`e stato eseguito 10 volte per verificare anche la ripetibilit\`a dei risultati a causa della componente stocastica introdotta da RANSAC nella determinazione del punto di fuga e nelle elaborazioni successive.\\
+
+\noindent Il diverso valore di $\lambda$, trovato al variare del frame di partenza, indica un cambiamento nei livelli di nebbia nel tempo, riscontrabile visivamente anche nel campione di immagini in figura \ref{fig:video}.
+
+\newcommand{\videoScale}{0.4}
+\begin{figure}
+\begin{tabular}{ccc}
+	\includegraphics[scale=\videoScale]{images/frame0000.jpg} & \includegraphics[scale=\videoScale]{images/frame0010.jpg} & \includegraphics[scale=\videoScale]{images/frame0020.jpg}\\
+	frame0000 & frame0010 & frame0020 \\
+	\includegraphics[scale=\videoScale]{images/frame0030.jpg} & \includegraphics[scale=\videoScale]{images/frame0040.jpg} & \includegraphics[scale=\videoScale]{images/frame0050.jpg}\\
+	frame0030 & frame0040 & frame0050 \\
+	\includegraphics[scale=\videoScale]{images/frame0060.jpg} & \includegraphics[scale=\videoScale]{images/frame0070.jpg} & \includegraphics[scale=\videoScale]{images/frame0080.jpg}\\
+	frame0060 & frame0070 & frame0080 \\
+	\includegraphics[scale=\videoScale]{images/frame0090.jpg} & \includegraphics[scale=\videoScale]{images/frame0100.jpg} & \includegraphics[scale=\videoScale]{images/frame0110.jpg}\\
+	frame0090 & frame0100 & frame0110 \\
+\end{tabular}
+\label{fig:video}
+\end{figure}
+
+\begin{table}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+	\hline
+	& 15 & 25 & 35 & 50 \\
+	\hline
+	frame0000 & 0.51242 (2.2294e-07) & 1.0259 (0.13114) & 0.92892 (0.27711) & 1.217 (0.27272)\\
+	\hline
+	frame0020 & 0.94626 (0.023624) & 0.83583 (0.35476) & 0.75068 (0.16246) & 1.0123 (0.12878)\\
+	\hline
+	frame0040 & 0.52983 (0.073719) & 0.59726 (0.032103) & 0.68024 (0.05821) & 0.92369 (0.067124)\\
+	\hline
+	frame0060 & 0.6039 (0.061717) & 0.60004 (0.084892) & 0.7747 (0.0087826) & 0.72864 (0.059721)\\
+	\hline
+\end{tabular}
+\caption{Media (deviazione standard campionaria) del $\lambda$ calcolato mediante fitting. Sulle righe l'immagine di partenza, sulle colonne il numero di frame analizzati.}
+\label{tabFit}
+\end{center}
+\end{table}
+
+\begin{table}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+	\hline
+	& 15 & 25 & 35 & 50 \\
+	\hline
+	frame0000 & 0.72224 (0.096333) & 0.91077 (0.16737) & 1.0033 (0.65278) & 1.2289 (0.12142)\\
+	\hline
+	frame0020 & 0.50379 (0.062369) & 1.5982 (0.51735) & 0.83693 (0.14097) & 0.87359 (0.024909)\\
+	\hline
+	frame0040 & 0.53189 (0.14799) & 0.54959 (0.01375) & 0.55191 (0.010494) & 0.90524 (0.062828)\\
+	\hline
+	frame0060 & 0.21356 (0.42649) & 0.57252 (0.073703) & 0.63189 (0.0516) & 1.0276 (0.16565)\\
+	\hline
+\end{tabular}
+\caption{Media (deviazione standard campionaria) del $\lambda$ calcolato mediante RANSAC. Sulle righe l'immagine di partenza, sulle colonne il numero di frame analizzati.}
+\label{tabRans}
+\end{center}
+\end{table}
+
+
+
+\begin{table}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+	\hline
+	& 15 & 25 & 35 & 50 \\
+	\hline
+	frame0000 & 11 & 12 & 20 & 23\\
+	\hline
+	frame0020 & 15 & 18 & 18 & 28\\
+	\hline
+	frame0040 & 6 & 18 & 25 & 25\\
+	\hline
+	frame0060 & 24 & 23 & 22 & 23\\
+	\hline
+\end{tabular}
+\caption{Numero di frame medi estratti dalla sequenza di immagini. Sulle righe l'immagine di partenza, sulle colonne il numero di frame analizzati.}
+\label{tabNum}
+\end{center}
+\end{table}
 
 
 \chapter{Conclusioni e sviluppi futuri}
@@ -554,6 +660,7 @@ Viene qui presentata una panoramica delle funzioni realizzate. Per informazioni 
 \paragraph*{\verb_myRansac:_} implementazione di RANSAC per calcolare il parametro $\lambda$ della funzione del contrasto dati in ingresso una lista di features.
 
 \paragraph*{\verb_inspectFeatures:_} stampa a video le sequenze di features per un'ispezione visiva, visualizzandone i relativi valori di contrasto.
+
 
 \paragraph*{\verb_inspectContrasts:_} data una serie di features ne stampa a video i livelli di contrasto ordinati sul tempo d'impatto.
 

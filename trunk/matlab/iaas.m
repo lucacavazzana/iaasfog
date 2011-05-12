@@ -33,7 +33,7 @@ end
 % REMEMBER TO REMOVE ------------------------------------------------------
 if regexp(path,'/home/luca/','once')   % for Luca
     imFolder = '/home/luca/Matlab/iaasfog/Images';
-    imName = 'frame0000.jpg';
+    imName = 'frame0060.jpg';
     imNum = 50;
     exec_path = ['c++/Debug/', bin_name];
     
