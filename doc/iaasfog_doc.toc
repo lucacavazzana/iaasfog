@@ -22,28 +22,28 @@
 \defcounter {refsection}{0}
 \contentsline {subsection}{\numberline {2.5.3}Stima di $\lambda $ mediante minMax (deprecato)}{13}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {3}Risultati sperimentali}{14}
+\contentsline {chapter}{\numberline {3}Risultati sperimentali}{15}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {3.1}Calcolo del vanishing point}{14}
+\contentsline {section}{\numberline {3.1}Calcolo del vanishing point}{15}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {3.2}Stima di $\lambda $ mediante fitting}{18}
+\contentsline {section}{\numberline {3.2}Stima di $\lambda $ mediante fitting}{19}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {3.3}Stima di $\lambda $ mediante RANSAC}{25}
+\contentsline {section}{\numberline {3.3}Stima di $\lambda $ mediante RANSAC}{26}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {4}Conclusioni e sviluppi futuri}{30}
+\contentsline {chapter}{\numberline {4}Conclusioni e sviluppi futuri}{32}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {5}Documentazione}{31}
+\contentsline {chapter}{\numberline {5}Documentazione}{33}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {5.1}C++}{31}
+\contentsline {section}{\numberline {5.1}C++}{33}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {5.2}Matlab}{32}
+\contentsline {section}{\numberline {5.2}Matlab}{34}
 \defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {6}Installazione}{34}
+\contentsline {chapter}{\numberline {6}Installazione}{36}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {6.1}OpenCV}{34}
+\contentsline {section}{\numberline {6.1}OpenCV}{36}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {6.1.1}Windows}{34}
+\contentsline {subsection}{\numberline {6.1.1}Windows}{36}
 \defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {6.1.2}Linux / MacOSX}{34}
+\contentsline {subsection}{\numberline {6.1.2}Linux / MacOSX}{36}
 \defcounter {refsection}{0}
-\contentsline {section}{\numberline {6.2}Installazione ed esecuzione del programma}{35}
+\contentsline {section}{\numberline {6.2}Installazione ed esecuzione del programma}{37}
