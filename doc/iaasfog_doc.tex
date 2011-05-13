@@ -63,11 +63,12 @@ Prof.~Vincenzo \textsc{Caglioti}
 
 L'obbiettivo del progetto \`e estrarre un parametro numerico indicante la visibilit\`a in caso di nebbia utilizzando esclusivamente delle immagini riprese da una telecamera montata su un'automobile. La tecnica utilizzata si basa sull'analisi della variazione del contrasto delle features individuate in ogni frame dell'immagine con il fine di trovare il parametro $\lambda$ della funzione
 
-$$k_fe^{-t/\lambda}$$
+$$k_fe^{-t_{imp}/\lambda}$$
 
-\noindent Tale funzione deriva da una prima analisi teorica del problema in questione: il parametro $k_f$ rappresenta il massimo livello di contasto di una generica feature $f$ in condizioni di visibilit\'a ideali, mentre $\lambda$, globale, rappresenta il tempo medio d'impatto per una feature che sta emergendo dalla nebbia, prendendo come riferimento il valore di contrasto come pari a $k_f/e$.\\
+\noindent Tale funzione deriva da una prima analisi teorica del problema in questione: la variabile $t_{imp}$ rappresenta il tempo che occorre ad una feature per attraversare il piano immagine, $k_f$ \`e il massimo livello di contasto di una generica feature $f$ in condizioni di visibilit\'a ideali, mentre il parametro $\lambda$, globale, pu\`o essere visto come il tempo d'impatto per una feature che sta emergendo dalla nebbia prendendo come riferimento l'istante in cui il livello di contrasto assume il valore $k_f/e$.\\
+\noindent Il livello di visibilit\`a, che \`e una distanza, dovr\`a poi essere calcolato considerando la velocit\`a del veicolo come $\lambda v_t$.\\
 
-\noindent I problemi affrontati nel corso di questo progetto consistono nello sviluppo di una tecnica performante per l'individuazione e il tracking di features il cui movimento relativo sia consistente con quello del veicolo, e trovare un metodo per il calcolo del contrasto e la stima dei parametri in questione sufficientemente robusto ai livelli di rumore sui dati.\\
+\noindent I problemi affrontati nel corso di questo progetto consistono nello sviluppo di una tecnica performante per l'individuazione e il tracking di features il cui movimento relativo sia consistente con quello del veicolo, e trovare un metodo per il calcolo del contrasto e per la stima dei parametri in questione sufficientemente robusto ai livelli di rumore sui dati.\\
 	 	
 \noindent Un simile sistema potrebbe essere integrato fra i sensori di un veicolo, monitorando l'idoneit\`a della velocit\`a di crociera rispetto alle condizioni di visibilit\`a e ai tempi di reazione del conducente. Nel campo emergente dei veicoli autonomi, similmente, potrebbe vincolare il valore massimo di velocit\`a in base ai tempi di risposta, oppure potenziare la consapevolezza del sistema di analisi d'immagine fornendo un parametro per la stima della qualit\`a dei dati a seconda della distanza dell'elemento da cui sono state ricavati.
 
@@ -176,6 +177,8 @@ $$ c\left(I_{M\times N}\right) = \sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(i_{i
 
 \section{Stima dei parametri}
 
+\noindent La visibilit\`a viene espressa come una distanza: tale misura potrebbe essere calcolata mediante il birapporto note le posizioni di un numero di landmark presenti nella scena o mediante il tempo all'impatto data la velocit\`a del veicolo. Sfortunatamente tali informazioni per il video campione disponibile non sono disponibili, quindi ci si \`e limitati a considerare il tempo d'impatto medio fornito dal parametro $\lambda$ come valutazione delle condizioni di visibilit\`a nell'ipotesi (forte) di velocit\`a costante.\\
+
 \subsection{Fitting di $\lambda$}
 
 \noindent Una prima tecnica adottata \`e stata quella di sfruttare la funzione \verb|fit| di Matlab per estrarre il parametri $k_f$ e $\lambda_f$ che meglio descrivono ogni singola feature. Per ogni dato viene cos\`i calcolato l'errore rispetto alla curva generata, valore in base al quale verr\'a selezionata la met\'a dei dati migliori che verranno riutilizzati per approssimare nuovamente i parametri di una seconda curva esponenziale.\\
@@ -186,12 +189,12 @@ $$ c\left(I_{M\times N}\right) = \sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(i_{i
 	\label{fig:twoFits}
 \end{center}
 
-\noindent Fra i nuovi $\lambda_f$ calcolati vengono selezionati quelli associati al quartile delle migliori curve, scelte in base ad un valore, calcolato mediante diversi approcci:
+\noindent Fra i nuovi $\lambda_f$ calcolati vengono selezionati quelli associati al quartile delle migliori curve (meno affette da rumore), scelte in base ad un valore calcolato mediante diversi approcci:
 
 \begin{itemize}
 	\item	\emph{errore primo/secondo fitting}: l'errore viene calcolato come media dei rapporti fra l'errore e la proiezione del dato sulla prima/seconda curva approssimante calcolata.
 	\item	\emph{variazione dell'errore}: nell'ipotesi di un buon set di dati la variazione dell'errore medio non dovrebbe essere molto grande. Viene quindi tenuta in considerazione la differenza fra gli errori dei dati sulle due curve (prossima a $0$ per buone features) o il loro rapporto (prossimo a $1$).
-	\item	\emph{errore integrale}: sempre nell'ipotesi che per un buon set di dati la variazione fra le due curve \`e minima, viene calcolata la variazione sui parametri. Per aggregare i due valori viene considerata la differenza fra l'area delle due curve, calcolata come $$\left|\int^{\infty}_0\left(k_1e^{-t/\lambda_1} - k_2e^{-t/\lambda_2}\right)dt\right| =$$ $$= \left|\left[ k_2\lambda_2e^{-t/\lambda_2} - k_1\lambda_1e^{-t/\lambda_1} \right]^\infty_0\right| =$$ $$ = \left|k_2\lambda_2 - k_1\lambda_1\right|$$
+	\item	\emph{errore integrale}: sempre nell'ipotesi che per un buon set di dati la variazione fra le due curve \`e minima, viene calcolata la variazione sui parametri. Per aggregare i due valori viene considerata la differenza fra l'area delle due curve, calcolata come $$\left|\int^{\infty}_0\left(k_1e^{-t_{imp}/\lambda_1} - k_2e^{-t_{imp}/\lambda_2}\right)dt\right| =$$ $$= \left|\left[ k_2\lambda_2e^{-t_{imp}/\lambda_2} - k_1\lambda_1e^{-t_{imp}/\lambda_1} \right]^\infty_0\right| =$$ $$ = \left|k_2\lambda_2 - k_1\lambda_1\right|$$
 \end{itemize}
 
 \noindent L'ultimo approccio appare essere quello pi\`u robusto, ed \`e quello selezionato di default nel codice. Il $\lambda$ globale viene cos\`i calcolato come la mediana di quelli delle features selezionate.
@@ -207,7 +210,7 @@ $$ c\left(I_{M\times N}\right) = \sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(i_{i
 	\label{fig:fitting}
 \end{figure}
 
-\noindent Tale parametro viene utilizzato per normalizzare features con differenti valore di contrasto ``intrinseco'' (ovvero il massimo livello che otterremmo in condizioni ideali, senza nebbia): utilizzando $c_{i,f}/k_f$ possiamo cos\`i considerare sulla funzione discreta solo il contributo della nebbia, permettendoci di aggregare i contrasti di diverse features e stimare il parametro $\lambda$ globale sulla formula $ c(t) = e^{-t/\lambda} $ mediante RANSAC.\\
+\noindent Tale parametro viene utilizzato per normalizzare features con differenti valori di contrasto ``intrinseco'' (ovvero il massimo livello che otterremmo in condizioni ideali, senza nebbia): utilizzando $c_{i,f}/k_f$ possiamo cos\`i considerare sulla funzione discreta solo il contributo della nebbia, permettendoci di aggregare i contrasti di diverse features e stimare il parametro $\lambda$ globale sulla formula $ c\left(t_{imp}\right) = e^{-t_{imp}/\lambda} $ mediante RANSAC.\\
 
 \noindent Questa implementazione di RANSAC seleziona a caso il $25\%$ dei set disponibili: i valori di contrasto vengono aggregati, ordinati in base al tempo d'impatto ed infine usati per stimare il $\lambda$ globale usando il parametro della curva approssimante. Per tale parametro verr\`a poi calcolato il set di consenso ed il relativo errore, iterando il processo come da manuale.\\
 

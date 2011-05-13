@@ -6,9 +6,9 @@ NSET = size(feats,2);
 
 % PARAMETERS
 N = ceil(NSET*.25); % model
-K = 15; % max iterations
+K = 40; % max iterations
 D = ceil(NSET*.75); % required number to assert the model fits well the data
-T = .3;
+T = .12;
 
 % some initializations...
 x = linspace(min([feats.tti]),max([feats.tti]),100);
@@ -46,13 +46,9 @@ for ii=1:K
     % count the number of inliers
     ind = 1;
     for ff=feats % for each feat tracked...
-        % compute the MSE wrt the fitted function (I know, the regex part
-        % is weird, but this way I can globally modify the function used)
-        % mse=sum((ff.contr-eval(regexprep(f,'(?<!e)x(?!0)','(maxTrack-ff.num+1:maxTrack)'))).^2/ff.num)^.5;   % (?<!e) is to avoid to replace the "x" in "exp"... regex FTW! (don't touch if you didn't pass FLC)
-        mse = sum((ff.contr - exp(-ff.tti/lam)).^2/ff.num)^.5;
-        %mse=sum((ff.contr-(1-exp(-(maxTrack-ff.num+1:maxTrack)/lam))).^2/ff.num)^.5
-       
-        
+
+        mse = (sum((ff.contr - exp(-ff.tti/lam)).^2)/(ff.num-1));
+               
         if any(ind==model) % if is in the model add error contribution
             err = err+mse;
             
