@@ -5,8 +5,8 @@ function [bestPars, bestModel, bestError] = myRansac(feats, showPlot)
 %   visibility function.
 %   INPUT:
 %     'feats'       :   features vector as parsed by parseFeatures
-%     'showPlot'    :   0: shows nothing, 1: shows the fitting curve,
-%                       2: error over fitting
+%     'showPlot'    :   0: shows nothing, 1: shows messages,
+%                       2: plots all ransac models and errors over data
 %
 %   OUTPUT:
 %     'bestPars'    :   computed list of parameters
@@ -26,9 +26,9 @@ NSET = size(feats,2);
 
 % PARAMETERS
 N = ceil(NSET*.25); % model
-K = 15; % max iterations
+K = 40; % max iterations
 D = ceil(NSET*.75); % required number to assert the model fits well the data
-T = .4;
+T = .12;
 
 % some initializations...
 if showPlot
@@ -50,7 +50,7 @@ for ii=1:K
     options.startPoint = 1; % TODO: find a good starting point
 
     % plots model data
-    if showPlot
+    if showPlot > 1
         plot([modelSet.tti], [modelSet.contr],'ro');
         hold on; grid on;
         drawnow;
@@ -65,24 +65,23 @@ for ii=1:K
         disp(' ');
         disp(['- trying with lambda = ' num2str(lam)]);
         
-        % show how the function fits the model
-        yFit = exp(-x/lam);
-        plot(x,yFit);
-        title(['candidate lambda: ', num2str(lam)]);
-        legend('model data','fitted function');
-        drawnow
-        hold off
+        if showPlot > 1
+            % show how the function fits the model
+            yFit = exp(-x/lam);
+            plot(x,yFit);
+            title(['candidate lambda: ', num2str(lam)]);
+            legend('model data','fitted function');
+            drawnow
+            hold off
+        end
     end
     
     err = 0;
     % count the number of inliers
     ind = 1;
     for ff=feats % for each feat tracked...
-        % compute the MSE wrt the fitted function (I know, the regex part
-        % is weird, but this way I can globally modify the function used)
-        % mse=sum((ff.contr-eval(regexprep(f,'(?<!e)x(?!0)','(maxTrack-ff.num+1:maxTrack)'))).^2/ff.num)^.5;   % (?<!e) is to avoid to replace the "x" in "exp"... regex FTW! (don't touch if you didn't pass FLC)
-        mse = sum((ff.contr - exp(-ff.tti/lam)).^2/ff.num)^.5;
-        %mse=sum((ff.contr-(1-exp(-(maxTrack-ff.num+1:maxTrack)/lam))).^2/ff.num)^.5
+        
+        mse = (sum((ff.contr - exp(-ff.tti/lam)).^2)/(ff.num-1));
         
         % plot how the single feature fits the fitting (lol)
         if showPlot > 1
@@ -144,7 +143,7 @@ for ii=1:K
         end
     end
     
-    if showPlot
+    if showPlot > 1
         pause;
         clf;
     end
