@@ -28,8 +28,6 @@ else
     SHOWVP = 0;
 end
 
-OVERTTI = 1; % =0 plots over frames, =1 over time-to-impact
-
 WIN = 30 /2; % size of the window
 
 fig = figure;
@@ -39,26 +37,25 @@ for ff = feats
     subplot(2,2,1);
     t = ff.start:ff.start+ff.num-1;
     hold off;
-    if OVERTTI
-        plot(ff.tti,ff.contr);
-    else
-        plot(t,ff.contr(end:-1:1)); % plot contrast graph
-    end
+
+    plot(ff.tti,ff.contr);
     title(['contrast ', num2str(ff.start), ' - ', num2str(ff.start+ff.num-1)]);
+    axis([ff.tti(1) ff.tti(end) minmax(ff.contr)]);
     hold on; grid on;
+
     for ii = ff.num:-1:1
         im = imread(imPaths(t(ff.num-ii+1),:));
-        img = rgb2gray(im);
+        if size(im,3)==3
+            img = rgb2gray(im);
+        else
+            img = im;
+        end
         
         % print current contrast
         subplot(2,2,1);
         hold on;
         
-        if OVERTTI
-            plot(ff.tti(ii), ff.contr(ii), 'o');
-        else
-            plot(t(ff.num-ii+1), ff.contr(ii), 'o');
-        end
+        plot(ff.tti(ii), ff.contr(ii), 'o');
         
         % print detail of the current feature
         subplot(2,2,2);
