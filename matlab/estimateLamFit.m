@@ -33,6 +33,7 @@ if showPlot > 1
         plot(ff.tti, ff.contr, 'o');
         plot(ff.tti(ff.bestData), ff.contr(ff.bestData), 'ro');
         plot(xx, ff.pars(1)*exp(-xx/ff.pars(2)));
+        axis([ff.tti(1) ff.tti(end) minmax(ff.contr)]);
         
         legend('all data', 'best data', 'fitted');
         title(['fitted \lambda: ', num2str(ff.pars(2))]);
