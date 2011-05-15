@@ -5,8 +5,8 @@ function [] = printTests()
 % to recompute feats
 %!rm ./outFile.txt
 
-imFolder = '/home/luca/Matlab/iaasfog/Images';
-imName = 'frame0000.jpg';
+imFolder = '/home/luca/Matlab/iaasfog/Images03';
+imName = 'frame0000.png';
 imNum = 50;
 exec_path = 'c++/Debug/iaasfog';
 outFile = 'outFile.txt';
@@ -21,7 +21,8 @@ alg = selectAlg({'printFeats',...
                 'ransac',...
                 'compareRansac',...
                 'compareFits',...
-                'showVideo'});
+                'showVideo',...
+                'checkTti'});
 
 if exist(outFile,'file')~=2
     
@@ -55,6 +56,8 @@ switch alg
         compareFits();
     case 7
         showVideo();
+    case 8
+        inspectTti(feats,imPaths);
 end
 
 end

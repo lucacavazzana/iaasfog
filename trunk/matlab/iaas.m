@@ -18,7 +18,7 @@ function [lam] = iaas(showPlot)
 % OPTIONS
 GUI = 0;    % if 0 use our default test values
 
-%!rm outFile.txt
+!rm outFile.txt
 
 if ~exist('showPlot','var')
     showPlot=0;
@@ -34,9 +34,9 @@ end
 
 % REMEMBER TO REMOVE ------------------------------------------------------
 if regexp(path,'/home/luca/','once')   % for Luca
-    imFolder = '/home/luca/Matlab/iaasfog/Images01';
+    imFolder = '/home/luca/Matlab/iaasfog/Images03';
     imName = 'frame0000.png';
-    imNum = 60;
+    imNum = 50;
     exec_path = ['c++/Debug/', bin_name];
     
 elseif regexp(path,'/Users/stefanocadario','once')  % for Stefano
@@ -64,10 +64,11 @@ end
 % checks the image list
 imPaths = getPaths(imFolder, imName, imNum);
 
-alg = selectAlg({'inspect features'; ...
-    'plot contrasts'; ...
-    'estimate lambda by fitting'; ...
-    'normalize by fitted k and then ransac'});
+alg = 4;
+% alg = selectAlg({'inspect features'; ...
+%     'plot contrasts'; ...
+%     'estimate lambda by fitting'; ...
+%     'normalize by fitted k and then ransac'});
 
 if GUI || exist(outFile,'file')~=2
     disp('Computing image features. Could take some time and open funny windows...');

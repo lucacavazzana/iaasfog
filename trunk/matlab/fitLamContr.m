@@ -77,6 +77,7 @@ for ff = feats
         hold on; grid on;
         plot(x, cfun.k*exp(-x/cfun.lam));
         
+        title(['feat #',num2str(ii)]);
         disp(['    k: ', num2str(cfun.k), ',     lambda: ', num2str(cfun.lam), ',     rmse (k-norm): ', num2str(gof.rmse), ' (', num2str(gof.rmse/cfun.k),')']);
         drawnow;
     end
