@@ -35,7 +35,6 @@ fig = figure;
 indf=1;
 for ff = feats
     subplot(2,2,1);
-    t = ff.start:ff.start+ff.num-1;
     hold off;
 
     plot(ff.tti,ff.contr);
@@ -44,7 +43,7 @@ for ff = feats
     hold on; grid on;
 
     for ii = ff.num:-1:1
-        im = imread(imPaths(t(ff.num-ii+1),:));
+        im = imread(imPaths(ff.start+ff.num-ii,:));
         if size(im,3)==3
             img = rgb2gray(im);
         else
@@ -71,12 +70,12 @@ for ff = feats
         imshow(img);
         hold on;
         plot(ff.x(ii), ff.y(ii),'*');
-        title(['feat ', num2str(ff.num-ii+1), '/',num2str(ff.num), ', set ',num2str(indf), '/', num2str(size(feats,2))]);
+        title(['corner ', num2str(ff.num-ii+1), '/',num2str(ff.num), ', feat ',num2str(indf), '/', num2str(size(feats,2))]);
         pause(.1);
     end
     indf=indf+1;
     drawnow;
-    pause(.2);
+    pause();
     clf(fig);
 end
 

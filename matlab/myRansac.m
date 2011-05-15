@@ -26,9 +26,9 @@ NSET = size(feats,2);
 
 % PARAMETERS
 N = ceil(NSET*.25); % model
-K = 40; % max iterations
+K = 45; % max iterations
 D = ceil(NSET*.75); % required number to assert the model fits well the data
-T = .12;
+T = .2;
 
 % some initializations...
 if showPlot
