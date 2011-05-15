@@ -21,7 +21,7 @@
 %\bibliography{bib}
 
 \begin{titlepage}
-\begin{adjustwidth}{}{-4cm}
+\begin{adjustwidth}{}{-3.5cm}
 \begin{center}
 
 \\[2.1cm]
@@ -107,7 +107,7 @@ La posizione del vanishing point riveste un ruolo fondamentale nella risoluzione
 \item	Il ciclo termina quando vengono analizzati un numero di intersezioni ritenuto sufficiente (il $5\%$ di tutte le possibili intersezioni tra rette).
 \end{itemize}
 
-\noindent Vengono infine scartate le features la cui retta di regressione dista pi\`u della distanza mediana rispetto al vanishing point eletto, in quanto probabili outliers (viene mantenuta quindi solo la met\'a delle features).
+\noindent Vengono infine scartate le features la cui retta di regressione dista pi\`u della distanza mediana rispetto al vanishing point eletto in quanto probabili outliers (viene mantenuta quindi solo la met\'a delle features).
 
 \begin{figure}
 	\begin{minipage}[b]{0.5\linewidth}
@@ -127,7 +127,7 @@ La posizione del vanishing point riveste un ruolo fondamentale nella risoluzione
 
 \noindent L'algoritmo applicato a diversi set di dati ha restituito buoni risultati con tempi notevolmente ridotti (circa $1$ secondo di elaborazione per $200$ features) rispetto alla precedente implementazione meno efficiente (complessit\`a $O\left(n^2\log{n}\right)$).\\
 
-\noindent Opzionalmente la posizione del vanishing point reale pu\`o essere affinata utilizzando SVD con il $50\%$ delle rette pi\`u vicine al vanishing point trovato in precedenza.\\
+\noindent Opzionalmente la posizione del vanishing point reale pu\`o essere affinata utilizzando SVD sul $50\%$ delle rette pi\`u vicine al vanishing point trovato in precedenza.\\
 
 \begin{center}
 	\includegraphics[scale=0.7]{images/iaasAfterArrow.png}
@@ -141,13 +141,14 @@ La posizione del vanishing point riveste un ruolo fondamentale nella risoluzione
 
 $$ cross(i,a,b,v) = \frac{\overline{ia}}{\overline{ab}}\frac{\overline{av}}{\overline{iv}} = \frac{\overline{i'a'}}{\overline{a'b'}}\frac{\overline{a'v'}}{\overline{i'v'}} $$
 
+\noindent dove $a$ e $b$ sono le coordinate delle feature, $v$ quelle del vanishing point e $i$ l'intersezione della traiettoria con il piano immagine, nel mondo reale e all'interno dei frames.\\
 \noindent Essendo nel mondo reale le distanze rispetto al vanishing point infinite, cos\`i come quelle rispetto al piano della telecamera nelle immagini, la formula si semplifica in
 
 $$ \frac{\overline{ia}}{\overline{ab}} = \frac{\overline{a'v'}}{\overline{a'b'}} $$
 
 \noindent Dal momento che $\overline{a'v'}$ e $\overline{a'b'}$ sono noti, ed essendo $ab$ la distanza percorsa dal veicolo fra le due immagini ($velocit\`a/frame rate$), il tempo d'impatto pu\`o essere ottenuto come
 
-$$ t_{i} = \frac{\overline{a'v'}}{\overline{a'b'}}\frac{\overline{ab}}{v} = \frac{\overline{a'v'}}{\overline{a'b'}}*f^{-1} $$
+$$ t_{i} = \frac{\overline{a'v'}}{\overline{a'b'}}\frac{\overline{ab}}{v} = \frac{\overline{a'v'}}{\overline{a'b'}}f^{-1} $$
 
 \section{Calcolo del contrasto}
 
@@ -182,7 +183,7 @@ $$ c\left(I_{M\times N}\right) = \sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(i_{i
 
 \section{Stima dei parametri}
 
-\noindent La visibilit\`a viene espressa come una distanza: tale misura potrebbe essere calcolata mediante il birapporto note le posizioni di un numero di landmark presenti nella scena o mediante il tempo all'impatto data la velocit\`a del veicolo. Sfortunatamente tali informazioni per il video campione disponibile non sono disponibili, quindi ci si \`e limitati a considerare il tempo d'impatto medio fornito dal parametro $\lambda$ come valutazione delle condizioni di visibilit\`a nell'ipotesi (forte) di velocit\`a costante.\\
+\noindent La visibilit\`a viene espressa come una distanza: tale misura potrebbe essere calcolata mediante il birapporto note le posizioni di un certo numero di landmark presenti nella scena o mediante il tempo all'impatto data la velocit\`a del veicolo. Sfortunatamente tali informazioni per il video campione fornito non sono disponibili, quindi ci si \`e limitati a considerare il tempo d'impatto medio calcolato per il parametro $\lambda$ come valutazione delle condizioni di visibilit\`a nell'ipotesi (forte) di velocit\`a costante.\\
 
 \subsection{Fitting di $\lambda$}
 
@@ -252,7 +253,9 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 \noindent Successivamente si pu\`o procedere al calcolo di un $\lambda$ globale in base a quelli stimati calcolandone la media o la mediana.\\
 
-\noindent Tale approccio tuttavia, per quanto computazionalmente leggero, \`e stato abbandonato a causa dell'eccessiva sensibilit\`a all'errore sui dati (dal momento che di sovente vengono selezionati come valori di min e max proprio degli outlier). Gli altri due approcci invece facendo uso di una maggiore quantit\`a di dati risultano essere pi\`u robusti, ma pagano in termini di prestazioni a causa della complessit\`a della fase di fitting delle curve.
+\noindent Tale approccio tuttavia, per quanto computazionalmente leggero, \`e stato abbandonato a causa dell'eccessiva sensibilit\`a all'errore sui dati (dal momento che di sovente vengono selezionati come valori di min e max proprio degli outlier). Gli altri due approcci invece facendo uso di una maggiore quantit\`a di dati risultano essere molto pi\`u robusti, ma pagano in termini di prestazioni a causa della complessit\`a dei fitting delle curve.
+
+
 
 
 
@@ -265,7 +268,10 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 	\item	moto rettilineo: necessaria per semplificare il tracking delle features. Ispezionando il filmato tuttavia si notano delle vistose oscillazioni, possibili cause di problemi in fase di tracking.
 	\item	velocit\'a costante: il tempo all'impatto medio (in secondi) si relaziona alla visibilit\`a (in metri) mediante la velocit\`a del veicolo, parametro purtroppo non \`e disponibile. In mancanza di migliori soluzioni questo valore \`e stato ipotizzato come costante, in modo da poter considerare il tempo d'impatto come stima della velocit\`a. Sfortunatamente neanche questa assunzione appare essere particolarmente evidente: una variazione nella velocit\`a del veicolo porterebbe a rendere incongruenti i tempi d'impatto (\`e infatti possibile ottenere uno stesso tti in condizioni di visibilit\`a peggiori semplicemente rallentando).
 \end{itemize}
-\noindent Come si nota dal campione di immagini mostrate in figura \ref{fig:video} la visibilit\`a migliora nel corso della sequenza.
+\noindent Come si nota dal campione di immagini mostrate in figura \ref{fig:video} la visibilit\`a migliora nel corso della sequenza.\\
+
+\noindent A causa di risultati poco congruenti registrati nei test mostrati nelle sezioni \ref{fittest} e \ref{ransactest} potenzialmente riconducibili ad una violazione della terza ipotesi, \`e stato deciso di acquisire appositamente dei nuovi filmati ad una velocit\`a nota e costante, annotando tutti i parametri necessari per completare i test. Sfortunatamente essendo la nebbia in questa stagione di difficile reperibilit\`a ci si \`e dovuti accontentare di riprendere in condizioni di visibilit\`a quasi ideali.\\
+
 
 \newcommand{\videoScale}{0.5}
 \begin{figure}[H]
@@ -284,9 +290,9 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \label{fig:video}
 \end{figure}
 
-\section{Calcolo del vanishing point}
+\section{Calcolo del vanishing pointe e tracking delle features}
 
-\noindent Le figure \ref{fig:vp15}, \ref{fig:vp25} e \ref{fig:vp50} rappresentano il risultato dell'elaborazione dell'algoritmo sul calcolo del vanishing point su differenti set di immagini: l'algoritmo restituisce risultati tanto migliori quanto pi\`u sono le features disponibili, a loro volta dipendenti dal numero di frames; mentre per pochi frames (quindici) il calcolo del vanishing point \`e affetto da errori pi\`u o meno grandi, per tracking pi\`u lunghi (oltre i trenta frames) l'affidabilit\`a dell'algoritmo migliora notevolmente.\\
+\noindent Le figure \ref{fig:vp15}, \ref{fig:vp25} e \ref{fig:vp50} rappresentano il risultato dell'elaborazione dell'algoritmo sul calcolo del vanishing point su differenti spezzoni del video con la nebbia: l'algoritmo restituisce risultati tanto migliori quanto pi\`u sono le features disponibili, a loro volta dipendenti dal numero di frames; mentre per pochi frames (quindici) il calcolo del vanishing point \`e affetto da errori pi\`u o meno grandi, per tracking pi\`u lunghi (oltre i trenta frames) l'affidabilit\`a dell'algoritmo migliora notevolmente.\\
 
 \noindent Nelle immagini poste a destra \`e possibile verificare come la met\`a delle linee di fuga individuate venga eliminata dal set, perch\'e troppo lontana dal vanishing point trovato.\\
 
@@ -348,7 +354,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \label{fig:vp50}
 \end{figure}
 
-\noindent L'algoritmo \`e stato testato per diversi punti di partenza e diverse lunghezze di inseguimento, allo scopo di osservare il numero di features restituite. Dal momento che la presenza di RANSAC in fase di calcolo del vanishing point porta ad una certa variabilit\`a del risultato, ogni caso \`e stato ripetuto dieci volte e ne \`e stata considerato il valore medio.\\
+\noindent L'algoritmo \`e stato testato per diversi punti di partenza e diverse lunghezze di inseguimento, allo scopo di osservare il numero di features restituite. Dal momento che la presenza di RANSAC in fase di calcolo del vanishing point porta ad una certa variabilit\`a del risultato \`e stato considerato il valore medio su dieci esecuzioni per ogni condizione iniziale.\\
 \noindent I risultati nella tabella \ref{tabNum} mostrano come il numero di feature estratte aumenti con la lunghezza del tracking e con il migliorare delle condizioni di visibilit\`a. La variabilit\`a del numero di features a partire dalle stesse condizioni (frame iniziale e lunghezza inseguimento) \`e parsa minima.
 
 \begin{table}[H]
@@ -373,15 +379,73 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 
 
+\newpage
+\section{Tempi d'impatto}
+\noindent Allo scopo di determinare l'affidabilit\`a dei tempi d'impatto calcolati si \`e deciso di allestire un test per confrontarli con quelli reali utilizzando uno dei nuovi filmati acquisiti: una volta selezionato un insieme di features inseguite correttamente ne viene calcolato il tempo d'impatto rispetto al punto in cui \`e stato acquisito il primo frame (uguale al tti calcolato in una qualsiasi immagine $i$ pi\`u il tempo di frame moltiplicato per $i-1$), valore che verr\`a confrontato con quello effettivo ottenuto dividendo la distanza reale~\footnote{In mancanza di strumenti appositi le misurazioni sono state effettuate usando Google Earth} dell'elemento che ha generato la feature per la velocit\`a del veicolo.\\
+
+\newcommand{\ttiScale}{0.25}
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+	\hline
+	& distanza & tti reale & tti calcolato al frame 0 & errore\\
+	\hline
+	\includegraphics[scale=\ttiScale]{images/tti1.png} & 32m	& 2.88s	& 2.72s	& 0.16s	\\ \hline
+	\includegraphics[scale=\ttiScale]{images/tti2.png} & 24m	& 2.16s	& 2.22s	& 0.06s	\\ \hline
+	\includegraphics[scale=\ttiScale]{images/tti3.png} & 46m	& 4.14s	& 5.08s	& 0.96s	\\ \hline
+	\includegraphics[scale=\ttiScale]{images/tti4.png} & 19m	& 1.71s	& 1.9s	& 0.19s	\\ \hline
+\end{tabular}
+\caption{Valori ottenuti viaggiando ad una velocit\`a di 40 km/h. In giallo la feature inseguita.}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+	\hline
+	& distanza & tti reale & tti calcolato al frame 0 & errore\\
+	\hline
+	\includegraphics[scale=\ttiScale]{images/tti5.png} & 20m	& 1.8s	& 2.08s	& 0.28s	\\ \hline
+	\includegraphics[scale=\ttiScale]{images/tti6.png} & 64m	& 5.76s	& 3.86s	& 1.9s	\\ \hline
+	\includegraphics[scale=\ttiScale]{images/tti7.png} & 46m	& 4.14s	& 4.32s	& 0.18s	\\ \hline
+	\includegraphics[scale=\ttiScale]{images/tti6.png} & 64m	& 5.76s	& 5.34s	& 0.42s	\\ \hline
+\end{tabular}
+\caption{Valori ottenuti viaggiando ad una velocit\`a di 40 km/h. In giallo la feature inseguita.}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}
+	\hline
+	distanza & tti reale & tti calcolato al frame 0 & errore\\ \hline
+	32m	& 2.88s	& 2.72s	& 0.16s	\\ \hline
+	24m	& 2.16s	& 2.22s	& 0.06s	\\ \hline
+	46m	& 4.14s	& 5.08s	& 0.96s	\\ \hline
+	19m	& 1.71s	& 1.9s	& 0.19s	\\ \hline
+	20m	& 1.8s	& 2.08s	& 0.28s	\\ \hline
+	64m	& 5.76s	& 3.86s	& 1.9s	\\ \hline
+	46m	& 4.14s	& 4.32s	& 0.18s	\\ \hline
+	46m	& 4.14s	& 4.76s	& 0.62s	\\ \hline
+	21m	& 1.89s	& 2.4s	& 0.61s	\\ \hline
+	17m	& 1.53s	& 1.73s	& 0.2s	\\ \hline
+	46m	& 4.14s	& 4.26s	& 0.08s	\\ \hline
+\end{tabular}
+\caption{Valori ottenuti viaggiando ad una velocit\`a di 40 km/h.}
+\end{table}
+
+\noindent I risultati per i livelli di precisione dei valori considerati (precisione del tachimetro analogico nel misurare la velocit\`a, precisione con cui \`e stata ricostruita la posizione del veicolo nel primo frame, precisione delle distanze misurate) possono considerarsi ampiamente soddisfacenti.\\
+
+
+
+
+
 
 \newpage
-
 \section{Stima di $\lambda$ mediante fitting}
-
+\label{fittest}
 
 %% FIXME VISUALIZZAZIONE DELLE FEATURES -------------------
 
-\noindent Le figure \ref{fig:feats1}, \ref{fig:feats2}, \ref{fig:feats3} e \ref{fig:feats4} rappresentano i livelli di contrasto (ordinati sul tempo d'impatto) e le relative curve approssimanti di ciascuna delle features trovate analizzando il set di cinquanta fra i frames forniti a partire da \verb|frame0000|. Appare palese come i dati siano rumorosi, spesso portando a stimare parametri inverosimili.\\
+\noindent Le figure \ref{fig:feats1}, \ref{fig:feats2}, \ref{fig:feats3} e \ref{fig:feats4} rappresentano i livelli di contrasto (ordinati sul tempo d'impatto) e le relative curve approssimanti di ciascuna delle features trovate analizzando il set di cinquanta fra i frames forniti a partire da \verb|frame0000| del video con nebbia. Appare palese come i dati siano rumorosi, spesso portando a stimare parametri inverosimili.\\
 
 \newcommand{\imFeat}{.4}
 \begin{figure}[H]
@@ -475,7 +539,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 
 %% DATI MIGLIORI E PEGGIORI ----------------------------------
-\nwapage
+\newapage
 \noindent L'immagine \ref{fig:bestIntErr} invece illustra il quartile dei migliori dati calcolato usando l'area fra i due successivi fitting (ricordiamo che partiamo dall'idea che per buoni set le due curve non differiscono molto). In blu viene visualizzata la curva approssimante l'intero set di dati, mentre in rosso \`e evidenziata la met\`a dei dati con errore minore e la curva approssimante da questi ultimi ottenuta. Similmente, in figura \ref{fig:worstIntErr} sono riportate le features con errore peggiore.\\
 
 \noindent In base ai parametri $\lambda$ delle features migliori viene infine calcolato il valore globale come la mediana, mostrato in figura \ref{fig:intErrHist}
@@ -542,16 +606,35 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \end{center}
 \end{table}
 
-\noindent Osservando il filmato campione ci si aspetterebbe di osservare un miglioramento nelle condizioni di visibili\`a, cosa non evidente dai valori restituiti. Tali incongruenze potrebbero essere imputabili a possibili variazioni della velocit\`a nel veicolo usato per l'acquisizione del filmato, in violazione delle ipotesi fatte in partenza.\\
+\noindent Osservando il filmato campione ci si aspetterebbe di osservare un miglioramento nelle condizioni di visibili\`a, cosa non evidente dai valori restituiti. Tali incongruenze potrebbero essere imputabili a possibili variazioni della velocit\`a nel veicolo usato per l'acquisizione del filmato, in violazione delle ipotesi fatte in partenza. Per questo motivo l'esperimento \`e stato ripetuto utilizzando i nuovi filmati acquisiti.\\
+
+\noindent Il filmato \`e stato ripreso con una videocamera a 30fps su di un veicolo alla velocit\`a costante di 50 km/h (precisione ottenibile con un tachimetro analogico) in condizioni di visibilit\`a ideali, e da questi sono state estratte diverse sequenze di immagini da massimo cinquanta frames. Ciascuna sequenza \`e stata analizzata dieci volte.\\
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+	\hline
+	$\lambda$ medio	& deviazione standard	& visibilit\`a a 50 km/h \\ \hline
+	1.36s		& 0.31s		& 18.9m \\ \hline
+	1.33s		& 0.072s	& 18.4m \\ \hline
+\end{tabular}
+\end{table}
+
+\noindent I risultati appaiono essere congruenti, dal momento che le condizioni nei vari spezzoni possono essere considerate identiche. \\
+
+\noindent Ricordiamo che il $\lambda$ ottenuto corrisponde alla distanza media per cui la curva teorica del contrasto delle varie features raggiunge il valore $k_f/e$, scelto in quanto comodo per i calcoli, e non va quindi interpretato come visibilit\`a in termini ``umani'': per far ci\`o si dovrebbe determinare un valore percentuale $q$ sul contrasto raggiunto il quale una feature campione pu\`o essere considerata visibile per un occhio umano e semplicemente riscalare i valori ottenuti mediante un coefficiente $\alpha$ (pari a $-log\left(q\right)$) come mostra la formula
+
+$$qk_f = k_fe^{-t_{imp,q}/\lambda}$$
+$$t_{imp,q} = -\lambda\log \left(q\right) = \alpha\lambda$$
+
+\noindent ricordando che $q$ \`e inferiore all'unit\`a e quindi $\alpha$ risulter\`a essere positivo. Calcolato il $\lambda$ come mostrato fin'ora, non rimarr\`a che moltiplicarlo per $\alpha$ per ottenere la distanza cui la feature assume il livello $qk_f$ per cui possiamo considerarla come visibile.\\
 
 
 \newpage
 \section{Stima di $\lambda$ mediante RANSAC}
+\label{ransactest}
 
 \noindent Lo stesso set di features della sezione precedente viene utilizzato per stimare il $\lambda$ globale mediante RANSAC, di cui sono riportate alcune iterazioni nelle seguenti immagini.
-
-
-
 
 \newcommand{\imFeatRan}{0.45}
 \begin{figure}[H]
@@ -590,7 +673,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[scale=.75]{images/ransacWin}
+	\includegraphics[scale=.7]{images/ransacWin}
 	\caption{Migliore curva trovata mediante RANSAC. $\lambda = $, RMSE = .}
 	\label{fig:ransacWin}
 \end{figure}
@@ -599,12 +682,12 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[scale=.75]{images/multiRansac}
+	\includegraphics[scale=.6]{images/multiRansac}
 	\caption{Istogramma dei $\lambda$ ottenuti eseguendo RANSAC cinquanta volte sullo stesso set di dati.}
 	\label{fig:multiRansac}
 \end{figure}
 
-\noindent In modo analogo al caso precedente, l'algoritmo \`e stato eseguito dieci volte per diversi frame di partenza e numero di immagini.
+\noindent In modo analogo al caso precedente, l'algoritmo \`e stato eseguito dieci volte per diversi frame di partenza e numero di immagini, con risultati difficilmente interpretabili.
 
 \begin{table}[H]
 \begin{center}
@@ -638,82 +721,9 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 
 
-\section{Ulteriori test}
-\nonindent Allo scopo di meglio verificare le prestazioni  del codice sviluppato si \`e deciso di tentare ulteriori test utilizzando nuovi filmati, questa volta misurando tutti i parametri mancanti. Sfortunatamente, essendo la nebbia in questa stagione di difficile reperibilit\`a, ci si \`e dovuti accontentare di un test in condizioni di visibilit\`a quasi ideali.\\
-
-\subsection{Tempi d'impatto}
-\noindent Allo scopo di determinare l'affidabilit\`a dei tempi d'impatto calcolati si \`e deciso di sviluppare un test per confrontarli con quelli reali: una volta selezionato un insieme di features inseguite correttamente ne viene calcolato il tempo d'impatto rispetto al punto in cui \`e stato acquisito il primo frame (uguale al tti calcolato in una qualsiasi immagine $i$ pi\`u il tempo di frame moltiplicato per $i-1$), valore che verr\`a confrontato con quello effettivo ottenuto dividendo la distanza reale dell'elemento che ha generato la feature per la velocit\`a del veicolo.\\
-
-\newcommand{\ttiScale}{0.25}
-\begin{table}[H]
-\centering
-\begin{tabular}{|c|c|c|c|c|}
-	\hline
-	& distanza & tti reale & tti calcolato al frame 0 & errore\\
-	\hline
-	\includegraphics[scale=\ttiScale]{images/tti1.png} & 32m	& 2.88s	& 2.72s	& 0.16s	\\ \hline
-	\includegraphics[scale=\ttiScale]{images/tti2.png} & 24m	& 2.16s	& 2.22s	& 0.06s	\\ \hline
-	\includegraphics[scale=\ttiScale]{images/tti3.png} & 46m	& 4.14s	& 5.08s	& 0.96s	\\ \hline
-	\includegraphics[scale=\ttiScale]{images/tti4.png} & 19m	& 1.71s	& 1.9s	& 0.19s	\\ \hline
-	\includegraphics[scale=\ttiScale]{images/tti5.png} & 20m	& 1.8s	& 2.08s	& 0.28s	\\ \hline
-\end{tabular}
-\caption{Valori ottenuti viaggiando ad una velocit\`a di 40 km/h. In giallo la feature inseguita.}
-\end{table}
-
-\begin{table}[H]
-\centering
-\begin{tabular}{|c|c|c|c|c|}
-	\hline
-	& distanza & tti reale & tti calcolato al frame 0 & errore\\
-	\hline
-	\includegraphics[scale=\ttiScale]{images/tti6.png} & 64m	& 5.76s	& 3.86s	& 1.9s	\\ \hline
-	\includegraphics[scale=\ttiScale]{images/tti7.png} & 46m	& 4.14s	& 4.32s	& 0.18s	\\ \hline
-	\includegraphics[scale=\ttiScale]{images/tti6.png} & 64m	& 5.76s	& 5.34s	& 0.42s	\\ \hline
-\end{tabular}
-\caption{Valori ottenuti viaggiando ad una velocit\`a di 40 km/h. In giallo la feature inseguita.}
-\end{table}
-
-\begin{table}[H]
-\centering
-\begin{tabular}{|c|c|c|c|}
-	\hline
-	distanza & tti reale & tti calcolato al frame 0 & errore\\ \hline
-	32m	& 2.88s	& 2.72s	& 0.16s	\\ \hline
-	24m	& 2.16s	& 2.22s	& 0.06s	\\ \hline
-	46m	& 4.14s	& 5.08s	& 0.96s	\\ \hline
-	19m	& 1.71s	& 1.9s	& 0.19s	\\ \hline
-	20m	& 1.8s	& 2.08s	& 0.28s	\\ \hline
-	64m	& 5.76s	& 3.86s	& 1.9s	\\ \hline
-	46m	& 4.14s	& 4.32s	& 0.18s	\\ \hline
-	46m	& 4.14s	& 4.76s	& 0.62s	\\ \hline
-	21m	& 1.89s	& 2.4s	& 0.61s	\\ \hline
-	17m	& 1.53s	& 1.73s	& 0.2s	\\ \hline
-	46m	& 4.14s	& 4.26s	& 0.08s	\\ \hline
-\end{tabular}
-\caption{Valori ottenuti viaggiando ad una velocit\`a di 40 km/h.}
-\end{table}
-
-\noindent I risultati per i livelli di precisione dei valori considerati (precisione del tachimetro analogico nel misurare la velocit\`a, precisione con cui \`e stata ricostruita la posizione del veicolo nel primo frame, precisione delle distanze misurate) possono considerarsi ampiamente soddisfacienti.\\
-
-\subsection{Visibilit\`a}
-\label{sec:vis}
-
-\noindent Data una sequenza di 50 frame ripresi a 30fps su di un veicolo a 50 km/h (con la precisione ottenibile con un tachimetro analogico) ed analizzata per dieci volte mediante il metodo di fitting di $\lambda$ ha restituito un valore di 1.36 (con deviazione standard 0.31s), corrispondente ad una visibilit\`a di 18,9m.\\
-\noindent Un secondo filmato acquisito nella corsia opposta rispetto al precedente (in condizioni simili quindi) ed analizzato per dieci volte ha decretato un $\lambda$ di 1.33 (deviazione standard 0.072s), corrispondenti a 18.4m. I risultati sembrano dunque essere congruenti.\\
-
-\noindent Similmente, dieci iterazioni di RANSAC sul primo filmato hanno calcolato un $\lambda$ medio di 1.41s con deviazione standard 0.22s, mentre sul secondo una media di con deviazione standard .\\
-
-\noindent Ricordiamo che il $\lambda$ ottenuto corrisponde alla distanza media per cui la curva teorica del contrasto delle varie features raggiunge il valore $k_f/e$, scelto in modo da semplificare i calcoli, e non va quindi interpretato come visibilit\`a in termini ``umani'': per far ci\`o si dovrebbe determinare un valore percentuale $q$ sul contrasto raggiunto il quale una feature campione pu\`o essere considerata visibile per un occhio umano e semplicemente riscalare i valori ottenuti mediante un coefficiente $\alpha$ (pari a $-log\left(q\right)$) come mostra la seguente formula:
-
-$$qk_f = k_fe^{-t_{imp,q}/\lambda}$$
-$$t_{imp,q} = -\lambda\log \left(q\right) = \alpha\lambda$$
-
-\noindent ricordando che $q$ \`e inferiore all'unit\`a e quindi $\alpha$ risulter\`a essere positivo. Calcolato il $\lambda$ come mostrato fin'ora, non rimarr\`a che moltiplicarlo per $\alpha$ per ottenere la distanza cui la feature assume il livello $qk_f$ per cui possiamo considerarla come visibile.\\
-
-
 \chapter{Conclusioni e sviluppi futuri}
 
-\noindent I risultati dei test hanno evidenziato come il problema sia fortemente influenzato dal numero di outliers derivati sia un errato tracking delle features, sia da una non perfetta variazione del contrasto sulle features stesse. Il maggior sforzo computazionale \`e infatti da attribuire alla complessit\`a degli algoritmi utilizzati per escludere gli outliers in tutte le fasi dell'elaborazione in modo da avere valori attendibili in ogni condizione.\\
+\noindent I risultati dei test hanno evidenziato come il problema sia fortemente influenzato dal numero di outliers derivati sia da un errato tracking delle features, sia da una non perfetta variazione del contrasto sulle features stesse. Il maggior sforzo computazionale \`e infatti da attribuire alla complessit\`a degli algoritmi utilizzati per escludere gli outliers in tutte le fasi dell'elaborazione in modo da avere valori attendibili in ogni condizione.\\
 
 \noindent Sono stati analizzati diversi approcci ed algoritmi per la risoluzione del problema, e si \`e preferito, in ultimo, sacrificare il tempo di elaborazione in favore di una migliore affidabilit\`a dei risultati: gli algoritmi utilizzati sono in grado di individuare autonomamente le features migliori e scartare quelle meno buone, ottenendo dei buoni risultati come esposto nei capitoli precedenti.\\
 
@@ -721,7 +731,7 @@ $$t_{imp,q} = -\lambda\log \left(q\right) = \alpha\lambda$$
 
 \noindent Possibili sviluppi futuri possono riguardare la reimplementazione in C\verb|++| del codice Matlab ed un'ottimizzazione degli algoritmi mirata a migliorarne le performance, eventualmente fino al punto di rendere possibile l'analisi direttamente su uno streaming video in realtime, senza le rielaborazioni successive del codice attualmente in uso.\\
 
-\noindent \`E inoltre necessario uno studio su come manipolare il $\lambda$ restituito in modo da conferirgli un significato pi\`u vicino al mondo delle percezioni umane, pi\'u intuitivo per l'utente, in modo simile a come suggerito alla fine della sezione \ref{sec:vis}.\\
+\noindent \`E inoltre necessario uno studio su come manipolare il $\lambda$ restituito in modo da conferirgli un significato pi\`u vicino al mondo delle percezioni umane, pi\'u intuitivo per l'utente, in modo simile a come suggerito alla fine della sezione \ref{fittest}.\\
 
 \begin{itemize}
 	\item	DATA VELOCIT\`A NOTA, FILTRARE FEAT IN BASE A VEL IN QUALCHE MODO?
@@ -845,7 +855,7 @@ Per compilare la libreria \`e necessario installare gli header offerti da MinGW 
 	$ sudo ldconfig
 \end{verbatim}
 
-\noindent dove \verb|<opencv_dir>| \`e la cartella dove abbiamo compilato le librerie, nel nostro caso \verb|~/OpenCV-2.2.0/release|.
+\noindent dove \verb|<opencv_dir>| \`e la cartella dove abbiamo compilato le librerie, nel nostro caso\\ \verb|~/OpenCV-2.2.0/release|.
 
 \section{Installazione ed esecuzione del programma}
 
