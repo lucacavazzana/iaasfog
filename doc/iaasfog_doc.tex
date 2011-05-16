@@ -11,9 +11,10 @@
 \usepackage{caption}
 \usepackage{float}
 \usepackage{array}
-%\usepackage[top=3cm, bottom=3cm, left=2cm, right=2cm]{geometry}
 \usepackage[margin=2cm]{geometry}
 \usepackage{changepage}
+\usepackage{color}
+\usepackage{multirow}
 
 
 \hyphenation{ransac}
@@ -123,6 +124,8 @@ La posizione del vanishing point riveste un ruolo fondamentale nella risoluzione
 		\captionof{figure}{Linee di fuga coerenti con il vanishing point calcolato.}
 		\label{fig:vpAft}
 	\end{minipage}
+
+
 \end{figure}
 
 \noindent L'algoritmo applicato a diversi set di dati ha restituito buoni risultati con tempi notevolmente ridotti (circa $1$ secondo di elaborazione per $200$ features) rispetto alla precedente implementazione meno efficiente (complessit\`a $O\left(n^2\log{n}\right)$).\\
@@ -187,10 +190,10 @@ $$ c\left(I_{M\times N}\right) = \sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(i_{i
 
 \subsection{Fitting di $\lambda$}
 
-\noindent Una prima tecnica adottata \`e stata quella di sfruttare la funzione \verb|fit| di Matlab per estrarre il parametri $k_f$ e $\lambda_f$ che meglio descrivono ogni singola feature. Per ogni dato viene cos\`i calcolato l'errore rispetto alla curva generata, valore in base al quale verr\'a selezionata la met\'a dei dati migliori che verranno riutilizzati per approssimare nuovamente i parametri di una seconda curva esponenziale.\\
+\noindent Una prima tecnica adottata \`e stata quella di sfruttare la funzione \verb|fit| di Matlab per estrarre il parametri $k_f$ e $\lambda_f$ che meglio descrivono ogni singola feature mediante il metodo dei minimo quadrati non lineare. Per ogni dato viene cos\`i calcolato l'errore rispetto alla curva generata, valore in base al quale verr\'a selezionata la met\'a dei dati migliori che verranno riutilizzati per approssimare nuovamente i parametri di una seconda curva esponenziale.\\
 
 \begin{center}
-	\includegraphics[scale=0.75]{images/twoFits.png}
+	\includegraphics[scale=0.7]{images/twoFits.png}
 	\captionof{figure}{Due fitting consecutivi: il blu usando tutta la sequenza di contrasti, in rosso la curva ottenuta usando solo il $50\%$ dei dati con errore migliore.}
 	\label{fig:twoFits}
 \end{center}
@@ -211,7 +214,7 @@ $$ c\left(I_{M\times N}\right) = \sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(i_{i
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[scale=0.75]{images/fitting.png}
+	\includegraphics[scale=0.6]{images/fitting.png}
 	\captionof{figure}{Fitting e rescaling di una singola feature.}
 	\label{fig:fitting}
 \end{figure}
@@ -222,7 +225,7 @@ $$ c\left(I_{M\times N}\right) = \sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(i_{i
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[scale=0.6]{images/ransac1}
+	\includegraphics[scale=0.55]{images/ransac1}
 	\captionof{figure}{In blu i livelli di contrasto di tutte le features, in rosso quelli del modello e in giallo la curva approssimante candidata.}
 	\label{fig:tryLam}
 \end{figure}
@@ -231,8 +234,8 @@ $$ c\left(I_{M\times N}\right) = \sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(i_{i
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[scale=0.6]{images/ransacWin}
-	\captionof{figure}{Miglior curva calcolata da RANSAC.}
+	\includegraphics[scale=0.55]{images/ransacWin}
+	\captionof{figure}{Miglior curva calcolata da RANSAC. In rosso i valori del modello eletto.}
 	\label{fig:ransac}
 \end{figure}
 
@@ -262,7 +265,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 \chapter{Risultati sperimentali}
 
-\noindent I test sono stati eseguiti su una sequenza di 113 immagini estratte da un video acquisito mediante una telecamera fissata su un veicolo. Per ovviare a diverse incognite sono state fatte diverse assunzioni:
+\noindent I test sono stati eseguiti sulla sequenza di immagini fornite, consistenti in 113 frames estratti da un video acquisito mediante una telecamera in condizioni di nebbia. Di tale filmato tuttavia non sono noti parametri quali il framerate e la velocit\`a del veicolo; per ovviare a queste incognite sono state fatte diverse assunzioni:
 \begin{itemize}
 	\item	framerate a 30fps: una diversa frequenza d'acquisizione porterebbe a calcolare diversi tempi d'impatto, ma i valori rimarrebbero comunque congruenti fra di loro. Molto pi\`u rilevante \`e che il framerate si mantenga costante per tutto il filmato.
 	\item	moto rettilineo: necessaria per semplificare il tracking delle features. Ispezionando il filmato tuttavia si notano delle vistose oscillazioni, possibili cause di problemi in fase di tracking.
@@ -270,7 +273,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \end{itemize}
 \noindent Come si nota dal campione di immagini mostrate in figura \ref{fig:video} la visibilit\`a migliora nel corso della sequenza.\\
 
-\noindent A causa di risultati poco congruenti registrati nei test mostrati nelle sezioni \ref{fittest} e \ref{ransactest} potenzialmente riconducibili ad una violazione della terza ipotesi, \`e stato deciso di acquisire appositamente dei nuovi filmati ad una velocit\`a nota e costante, annotando tutti i parametri necessari per completare i test. Sfortunatamente essendo la nebbia in questa stagione di difficile reperibilit\`a ci si \`e dovuti accontentare di riprendere in condizioni di visibilit\`a quasi ideali.\\
+\noindent A causa di risultati poco congruenti registrati nei test mostrati nelle sezioni \ref{fittest} e \ref{ransactest} potenzialmente riconducibili ad una violazione della terza ipotesi \`e stato deciso di acquisire appositamente dei nuovi filmati ad una velocit\`a nota e costante, annotando tutti i parametri necessari per completare i test. Sfortunatamente essendo la nebbia in questa stagione di difficile reperibilit\`a ci si \`e dovuti accontentare di riprendere in condizioni di visibilit\`a quasi ideali.\\
 
 
 \newcommand{\videoScale}{0.5}
@@ -286,7 +289,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 	\includegraphics[scale=\videoScale]{images/frame0090.jpg} & \includegraphics[scale=\videoScale]{images/frame0100.jpg} & \includegraphics[scale=\videoScale]{images/frame0110.jpg}\\
 	frame0090 & frame0100 & frame0110 \\
 \end{tabular}
-\caption{Campioni estratti dalla sequenza di immagini analizzate. Si noti come le condizioni di visibilit\`a migliorano.}
+\caption{Campioni estratti dalla sequenza di immagini fornite. Si noti come le condizioni di visibilit\`a migliorano.}
 \label{fig:video}
 \end{figure}
 
@@ -296,7 +299,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 \noindent Nelle immagini poste a destra \`e possibile verificare come la met\`a delle linee di fuga individuate venga eliminata dal set, perch\'e troppo lontana dal vanishing point trovato.\\
 
-\newcommand{\imTrackScale}{0.6}
+\newcommand{\imTrackScale}{0.7}
 \begin{figure}[H]
 \begin{minipage}[c]{0.5\linewidth}
 	\centering
@@ -355,7 +358,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \end{figure}
 
 \noindent L'algoritmo \`e stato testato per diversi punti di partenza e diverse lunghezze di inseguimento, allo scopo di osservare il numero di features restituite. Dal momento che la presenza di RANSAC in fase di calcolo del vanishing point porta ad una certa variabilit\`a del risultato \`e stato considerato il valore medio su dieci esecuzioni per ogni condizione iniziale.\\
-\noindent I risultati nella tabella \ref{tabNum} mostrano come il numero di feature estratte aumenti con la lunghezza del tracking e con il migliorare delle condizioni di visibilit\`a. La variabilit\`a del numero di features a partire dalle stesse condizioni (frame iniziale e lunghezza inseguimento) \`e parsa minima.
+\noindent I risultati nella tabella \ref{tabNum} mostrano come il numero di feature estratte aumenti con la lunghezza del tracking e con il migliorare delle condizioni di visibilit\`a. La varianza sul numero di features a parit\`a di condizioni iniziali \`e minima.
 
 \begin{table}[H]
 \begin{center}
@@ -381,42 +384,13 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 \newpage
 \section{Tempi d'impatto}
-\noindent Allo scopo di determinare l'affidabilit\`a dei tempi d'impatto calcolati si \`e deciso di allestire un test per confrontarli con quelli reali utilizzando uno dei nuovi filmati acquisiti: una volta selezionato un insieme di features inseguite correttamente ne viene calcolato il tempo d'impatto rispetto al punto in cui \`e stato acquisito il primo frame (uguale al tti calcolato in una qualsiasi immagine $i$ pi\`u il tempo di frame moltiplicato per $i-1$), valore che verr\`a confrontato con quello effettivo ottenuto dividendo la distanza reale~\footnote{In mancanza di strumenti appositi le misurazioni sono state effettuate usando Google Earth} dell'elemento che ha generato la feature per la velocit\`a del veicolo.\\
-
-\newcommand{\ttiScale}{0.25}
-\begin{table}[H]
-\centering
-\begin{tabular}{|c|c|c|c|c|}
-	\hline
-	& distanza & tti reale & tti calcolato al frame 0 & errore\\
-	\hline
-	\includegraphics[scale=\ttiScale]{images/tti1.png} & 32m	& 2.88s	& 2.72s	& 0.16s	\\ \hline
-	\includegraphics[scale=\ttiScale]{images/tti2.png} & 24m	& 2.16s	& 2.22s	& 0.06s	\\ \hline
-	\includegraphics[scale=\ttiScale]{images/tti3.png} & 46m	& 4.14s	& 5.08s	& 0.96s	\\ \hline
-	\includegraphics[scale=\ttiScale]{images/tti4.png} & 19m	& 1.71s	& 1.9s	& 0.19s	\\ \hline
-\end{tabular}
-\caption{Valori ottenuti viaggiando ad una velocit\`a di 40 km/h. In giallo la feature inseguita.}
-\end{table}
-
-\begin{table}[H]
-\centering
-\begin{tabular}{|c|c|c|c|c|}
-	\hline
-	& distanza & tti reale & tti calcolato al frame 0 & errore\\
-	\hline
-	\includegraphics[scale=\ttiScale]{images/tti5.png} & 20m	& 1.8s	& 2.08s	& 0.28s	\\ \hline
-	\includegraphics[scale=\ttiScale]{images/tti6.png} & 64m	& 5.76s	& 3.86s	& 1.9s	\\ \hline
-	\includegraphics[scale=\ttiScale]{images/tti7.png} & 46m	& 4.14s	& 4.32s	& 0.18s	\\ \hline
-	\includegraphics[scale=\ttiScale]{images/tti6.png} & 64m	& 5.76s	& 5.34s	& 0.42s	\\ \hline
-\end{tabular}
-\caption{Valori ottenuti viaggiando ad una velocit\`a di 40 km/h. In giallo la feature inseguita.}
-\end{table}
+\noindent Allo scopo di determinare l'affidabilit\`a dei tempi d'impatto calcolati si \`e deciso di allestire un test per confrontarli con quelli reali utilizzando uno dei nuovi filmati acquisiti: una volta selezionato un insieme di features inseguite correttamente ne viene calcolato il tempo d'impatto rispetto al punto in cui \`e stato acquisito il primo frame (uguale al tti calcolato in una qualsiasi immagine $i$ pi\`u il tempo di frame moltiplicato per $i-1$), valore che verr\`a confrontato con quello effettivo ottenuto dividendo la distanza reale\footnote{In mancanza di strumenti appositi le misurazioni sono state effettuate usando Google Earth.} dell'elemento che ha generato la feature per la velocit\`a del veicolo.\\
 
 \begin{table}[H]
 \centering
 \begin{tabular}{|c|c|c|c|}
 	\hline
-	distanza & tti reale & tti calcolato al frame 0 & errore\\ \hline
+	distanza & tti reale & \begin{minipage}{2.5cm}\centering tti calcolato al frame 0 \end{minipage}& errore\\[6pt] \hline
 	32m	& 2.88s	& 2.72s	& 0.16s	\\ \hline
 	24m	& 2.16s	& 2.22s	& 0.06s	\\ \hline
 	46m	& 4.14s	& 5.08s	& 0.96s	\\ \hline
@@ -434,9 +408,34 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 \noindent I risultati per i livelli di precisione dei valori considerati (precisione del tachimetro analogico nel misurare la velocit\`a, precisione con cui \`e stata ricostruita la posizione del veicolo nel primo frame, precisione delle distanze misurate) possono considerarsi ampiamente soddisfacenti.\\
 
-
-
-
+\newcommand{\ttiScale}{0.304}
+\begin{table}[H]
+\centering
+\begin{tabular}{|@{}c@{}|@{}c@{}c@{}|@{}c|}
+	\hline
+	\begin{minipage}[H]{0.35\linewidth}\includegraphics[scale=\ttiScale]{images/tti1.png} \end{minipage} & 
+	\begin{minipage}[H]{0.13\linewidth} \begin{tabular}{l} dist: 32m \\ tti_r: 2.88s \\ tti_0: 2.72s \\ err : 0.16s \\ \end{tabular}\end{minipage} & 
+	\begin{minipage}[H]{0.35\linewidth}\includegraphics[scale=\ttiScale]{images/tti2.png} \end{minipage} & 
+	\begin{minipage}[H]{0.13\linewidth} \begin{tabular}{l} dist: 24m \\ tti_r: 2.16s \\ tti_0: 2.22s \\ err : 0.06s \\ \end{tabular}\end{minipage} \\
+	\hline
+	\begin{minipage}[H]{0.35\linewidth}\includegraphics[scale=\ttiScale]{images/tti3.png} \end{minipage} & 
+	\begin{minipage}[H]{0.13\linewidth} \begin{tabular}{l} dist: 46m \\ tti_r: 4.14s \\ tti_0: 5.08s \\ err : 0.96s \\ \end{tabular}\end{minipage} & 
+	\begin{minipage}[H]{0.35\linewidth}\includegraphics[scale=\ttiScale]{images/tti4.png} \end{minipage} & 
+	\begin{minipage}[H]{0.13\linewidth} \begin{tabular}{l} dist: 19m \\ tti_r: 1.71s \\ tti_0: 1.9s \\ err : 0.19s \\ \end{tabular}\end{minipage} \\
+	\hline
+	\begin{minipage}[H]{0.35\linewidth}\includegraphics[scale=\ttiScale]{images/tti5.png} \end{minipage} & 
+	\begin{minipage}[H]{0.13\linewidth} \begin{tabular}{l} dist: 20m \\ tti_r: 1.8s \\ tti_0: 2.08s \\ err : 0.28s \\ \end{tabular}\end{minipage} & 
+	\begin{minipage}[H]{0.35\linewidth}\includegraphics[scale=\ttiScale]{images/tti6.png} \end{minipage} & 
+	\begin{minipage}[H]{0.13\linewidth} \begin{tabular}{l} dist: 64m \\ tti_r: 5.76s \\ tti_0: 3.86s \\ err : 1.9s \\ \end{tabular}\end{minipage} \\
+	\hline
+	\begin{minipage}[H]{0.35\linewidth}\includegraphics[scale=\ttiScale]{images/tti7.png} \end{minipage} & 
+	\begin{minipage}[H]{0.13\linewidth} \begin{tabular}{l} dist: 46m \\ tti_r: 4.14s \\ tti_0: 4.32s \\ err : 0.18s \\ \end{tabular}\end{minipage} & 
+	\begin{minipage}[H]{0.35\linewidth}\includegraphics[scale=\ttiScale]{images/tti8.png} \end{minipage} & 
+	\begin{minipage}[H]{0.13\linewidth} \begin{tabular}{l} dist: 64m \\ tti_r: 5.76s \\ tti_0: 5.34s \\ err : 0.42s \\ \end{tabular}\end{minipage} \\
+	\hline
+\end{tabular}
+\caption{Valori ottenuti viaggiando ad una velocit\`a di 40 km/h. In giallo la feature inseguita.}
+\end{table}
 
 
 \newpage
@@ -447,20 +446,20 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 \noindent Le figure \ref{fig:feats1}, \ref{fig:feats2}, \ref{fig:feats3} e \ref{fig:feats4} rappresentano i livelli di contrasto (ordinati sul tempo d'impatto) e le relative curve approssimanti di ciascuna delle features trovate analizzando il set di cinquanta fra i frames forniti a partire da \verb|frame0000| del video con nebbia. Appare palese come i dati siano rumorosi, spesso portando a stimare parametri inverosimili.\\
 
-\newcommand{\imFeat}{.4}
+\newcommand{\imFeat}{.42}
 \begin{figure}[H]
 \begin{minipage}[t]{0.5\linewidth}
 	\centering
-	feat1 - $k: , \lambda:  $\\
+	feat1 - $k: 10.81, \lambda: 1.5 $\\
 	\includegraphics[scale=\imFeat]{images/feat1}\\
-	feat3 - $k: , \lambda:  $\\
+	feat3 - $k: 8.05, \lambda: 2.62 $\\
 	\includegraphics[scale=\imFeat]{images/feat3}\\
 \end{minipage}
 \begin{minipage}[t]{0.5\linewidth}
 	\centering
-	feat2 - $k: , \lambda:  $\\
+	feat2 - $k: 10.3, \lambda: 1.69 $\\
 	\includegraphics[scale=\imFeat]{images/feat2}\\
-	feat4 - $k: , \lambda:  $\\
+	feat4 - $k: 24.99, \lambda: 1.1 $\\
 	\includegraphics[scale=\imFeat]{images/feat4}\\
 \end{minipage}
 \caption[short]{Features e relative curve fittate. I dati sono ordinati in base al tempo d'impatto.}
@@ -470,20 +469,20 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \begin{figure}[H]
 \begin{minipage}[t]{0.5\linewidth}
 	\centering
-	feat5 - $k: , \lambda:  $\\
+	feat5 - $k: 17.16, \lambda: 400.55 $\\
 	\includegraphics[scale=\imFeat]{images/feat5}\\
-	feat7 - $k: , \lambda:  $\\
+	feat7 - $k: 18.09, \lambda: 1.22 $\\
 	\includegraphics[scale=\imFeat]{images/feat7}\\
-	feat9 - $k: , \lambda:  $\\
+	feat9 - $k: 6.35, \lambda: 2.28 $\\
 	\includegraphics[scale=\imFeat]{images/feat9}\\
 \end{minipage}
 \begin{minipage}[t]{0.5\linewidth}
 	\centering
-	feat6 - $k: , \lambda:  $\\
+	feat6 - $k: 3.76, \lambda: 43672 $\\
 	\includegraphics[scale=\imFeat]{images/feat6}\\
-	feat8 - $k: , \lambda:  $\\
+	feat8 - $k: 6.17, \lambda: 2.24 $\\
 	\includegraphics[scale=\imFeat]{images/feat8}\\
-	feat10 - $k: , \lambda:  $\\
+	feat10 - $k: 402.16, \lambda: 0.61 $\\
 	\includegraphics[scale=\imFeat]{images/feat10}\\
 \end{minipage}
 \caption[short]{Features e relative curve fittate. I dati sono ordinati in base al tempo d'impatto.}
@@ -493,20 +492,22 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \begin{figure}[H]
 \begin{minipage}[t]{0.5\linewidth}
 	\centering
-	feat11 - $k: , \lambda:  $\\
+	feat11 - $k: 12.4, \lambda: 0.91 $\\
 	\includegraphics[scale=\imFeat]{images/feat11}\\
-	feat13 - $k: , \lambda:  $\\
+
+
+	feat13 - $k: 16.76, \lambda: 3.04 $\\
 	\includegraphics[scale=\imFeat]{images/feat13}\\
-	feat15 - $k: , \lambda:  $\\
+	feat15 - $k: 21.28, \lambda: 1.09 $\\
 	\includegraphics[scale=\imFeat]{images/feat15}\\
 \end{minipage}
 \begin{minipage}[t]{0.5\linewidth}
 	\centering
-	feat12 - $k: , \lambda:  $\\
+	feat12 - $k: 11.65, \lambda: 1.4 $\\
 	\includegraphics[scale=\imFeat]{images/feat12}\\
-	feat14 - $k: , \lambda:  $\\
+	feat14 - $k: 10.11, \lambda: 12.4 $\\
 	\includegraphics[scale=\imFeat]{images/feat14}\\
-	feat16 - $k: , \lambda:  $\\
+	feat16 - $k: 6.09, \lambda: 2.82 $\\
 	\includegraphics[scale=\imFeat]{images/feat16}\\
 \end{minipage}
 \caption[short]{Features e relative curve fittate. I dati sono ordinati in base al tempo d'impatto.}
@@ -516,20 +517,20 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \begin{figure}[H]
 \begin{minipage}[t]{0.5\linewidth}
 	\centering
-	feat17 - $k: , \lambda:  $\\
+	feat17 - $k: 2.09, \lambda: 23824.37 $\\
 	\includegraphics[scale=\imFeat]{images/feat17}\\
-	feat19 - $k: , \lambda:  $\\
+	feat19 - $k: 22.84, \lambda: 0.52 $\\
 	\includegraphics[scale=\imFeat]{images/feat19}\\
-	feat21 - $k: , \lambda:  $\\
+	feat21 - $k: 179.3, \lambda: 0.13 $\\
 	\includegraphics[scale=\imFeat]{images/feat21}\\
 \end{minipage}
 \begin{minipage}[t]{0.5\linewidth}
 	\centering
-	feat18 - $k: , \lambda:  $\\
+	feat18 - $k: 2.04, \lambda: 2.63 $\\
 	\includegraphics[scale=\imFeat]{images/feat18}\\
-	feat20 - $k: , \lambda:  $\\
+	feat20 - $k: 46.83, \lambda: 0.8 $\\
 	\includegraphics[scale=\imFeat]{images/feat20}\\
-	feat22 - $k: , \lambda:  $\\
+	feat22 - $k: 38.25, \lambda: 0.73 $\\
 	\includegraphics[scale=\imFeat]{images/feat22}\\
 \end{minipage}
 \caption[short]{Features e relative curve fittate. I dati sono ordinati in base al tempo d'impatto.}
@@ -544,7 +545,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 \noindent In base ai parametri $\lambda$ delle features migliori viene infine calcolato il valore globale come la mediana, mostrato in figura \ref{fig:intErrHist}
 
-\newcommand{\imFeatBW}{.45}
+\newcommand{\imFeatBW}{.48}
 \begin{figure}[H]
 \begin{minipage}[t]{0.5\linewidth}
 	\centering
@@ -606,28 +607,33 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \end{center}
 \end{table}
 
-\noindent Osservando il filmato campione ci si aspetterebbe di osservare un miglioramento nelle condizioni di visibili\`a, cosa non evidente dai valori restituiti. Tali incongruenze potrebbero essere imputabili a possibili variazioni della velocit\`a nel veicolo usato per l'acquisizione del filmato, in violazione delle ipotesi fatte in partenza. Per questo motivo l'esperimento \`e stato ripetuto utilizzando i nuovi filmati acquisiti.\\
-
-\noindent Il filmato \`e stato ripreso con una videocamera a 30fps su di un veicolo alla velocit\`a costante di 50 km/h (precisione ottenibile con un tachimetro analogico) in condizioni di visibilit\`a ideali, e da questi sono state estratte diverse sequenze di immagini da massimo cinquanta frames. Ciascuna sequenza \`e stata analizzata dieci volte.\\
+\noindent Osservando il filmato campione ci si aspetterebbe di osservare un miglioramento nelle condizioni di visibili\`a, cosa non evidente dai valori restituiti. Tali incongruenze potrebbero essere imputabili a possibili variazioni della velocit\`a nel veicolo usato per l'acquisizione del filmato, in violazione delle ipotesi fatte in partenza. Per questo motivo l'esperimento \`e stato ripetuto utilizzando i nuovi filmati acquisiti: diverse sequenza di immagini sono state estratte da un filmato ripreso con una videocamera a 30fps su di un veicolo alla velocit\`a costante di 60 km/h (precisione ottenibile con un tachimetro analogico) in condizioni di visibilit\`a ideali. Ciascuna sequenza \`e stata analizzata dieci volte.\\
 
 \begin{table}[H]
 \centering
-\begin{tabular}{|c|c|c|}
+\begin{tabular}{|c|c|c|c|c|}
 	\hline
-	$\lambda$ medio	& deviazione standard	& visibilit\`a a 50 km/h \\ \hline
-	1.36s		& 0.31s		& 18.9m \\ \hline
-	1.33s		& 0.072s	& 18.4m \\ \hline
+	& 15 & 25 & 35 & 50 \\ \hline
+	Images01/frame0000.png & 1.57s (0.18s) & 2.01s (0.63s) & 1.27s (0.18s) & 1.57s (0.45s) \\ \hline
+	Images02/frame0000.png & 1.20s (0.08s) & 0.95s (0.18s) & 1.12s (0.14s) & 1.34s (0.08s) \\ \hline
+	Images02/frame0060.png & 1.4s (0.28s) & 1.22s (0.12s) & 1.15s (0.09s) & 1.39s (0.14s)\\ \hline
+	Images03/frame0000.png & 1.02s (0.94s) & 1.17s (0.06s) & 1.34s (0.19s) & 1.37s (0.03s) \\ \hline
+	Images04/frame0000.png & 1.57s (0.18s) & 2.01s (0.63s) & 1.27s (0.18s) & 1.57s (0.45s) \\ \hline
+	Images04/frame0040.png & 1.2s (0.08s) & 0.95s (0.18s) & 1.12s (0.14s) & 1.34s (0.08s) \\ \hline
+	Images05/frame0000.png & 1.24s (0.02s) & 1.65s (0.01s) & 1.87s (0.35s) & 1.5s (0.05s) \\ \hline
+	Images05/frame0100.png & 1.4s (0.28s) & 1.22s (0.12s) & 1.15s (0.09s) & 1.39s (0.14s) \\ \hline
 \end{tabular}
+\caption{$\lambda$ medio e deviazione standard campionaria per diversi frame iniziali e lunghezze d'analisi.}
 \end{table}
 
-\noindent I risultati appaiono essere congruenti, dal momento che le condizioni nei vari spezzoni possono essere considerate identiche. \\
+\noindent Si nota come all'aumentare della lunghezza dell'analisi le soluzioni tendono a convergere, essendo le condizioni di visibilit\`a sostanzialmente simili nelle diverse sequenze. Per una $\lambda$ pari ad 1.4s ad una velocit\`a di 60 km/h la visibilit\`a risulta essere di 23.3m\\
 
-\noindent Ricordiamo che il $\lambda$ ottenuto corrisponde alla distanza media per cui la curva teorica del contrasto delle varie features raggiunge il valore $k_f/e$, scelto in quanto comodo per i calcoli, e non va quindi interpretato come visibilit\`a in termini ``umani'': per far ci\`o si dovrebbe determinare un valore percentuale $q$ sul contrasto raggiunto il quale una feature campione pu\`o essere considerata visibile per un occhio umano e semplicemente riscalare i valori ottenuti mediante un coefficiente $\alpha$ (pari a $-log\left(q\right)$) come mostra la formula
+\noindent \footnote{\color{red} QUESTO COMMENTO VA BENE QUI O VA SPOSTATO PRIMA?}Ricordiamo che il $\lambda$ ottenuto corrisponde alla distanza media per cui la curva teorica del contrasto delle varie features raggiunge il valore $k_f/e$, scelto in quanto comodo per i calcoli, e non va quindi interpretato come visibilit\`a in termini ``umani'': per far ci\`o si dovrebbe determinare un valore percentuale $q$ sul contrasto raggiunto il quale una feature campione pu\`o essere considerata visibile per un occhio umano e semplicemente riscalare i valori ottenuti mediante un coefficiente $\alpha$ (pari a $-log\left(q\right)$) come mostra la formula
 
 $$qk_f = k_fe^{-t_{imp,q}/\lambda}$$
 $$t_{imp,q} = -\lambda\log \left(q\right) = \alpha\lambda$$
 
-\noindent ricordando che $q$ \`e inferiore all'unit\`a e quindi $\alpha$ risulter\`a essere positivo. Calcolato il $\lambda$ come mostrato fin'ora, non rimarr\`a che moltiplicarlo per $\alpha$ per ottenere la distanza cui la feature assume il livello $qk_f$ per cui possiamo considerarla come visibile.\\
+\noindent ricordando che $q$ \`e inferiore all'unit\`a e quindi $\alpha$ risulter\`a essere positivo. Una volta calcolato il $\lambda$ come mostrato fin'ora non rimarr\`a che moltiplicarlo per $\alpha$ per ottenere la distanza cui la feature assume il livello $qk_f$ per cui possiamo considerarla come visibile.\\
 
 
 \newpage
@@ -642,13 +648,13 @@ $$t_{imp,q} = -\lambda\log \left(q\right) = \alpha\lambda$$
 	\centering
 	\includegraphics[scale=\imFeatRan]{images/ransac1}\\
 	\includegraphics[scale=\imFeatRan]{images/ransac3}\\
-	\includegraphics[scale=\imFeatRan]{images/ransac5}\\
+%	\includegraphics[scale=\imFeatRan]{images/ransac5}\\
 \end{minipage}
 \begin{minipage}[t]{0.5\linewidth}
 	\centering
 	\includegraphics[scale=\imFeatRan]{images/ransac2}\\
 	\includegraphics[scale=\imFeatRan]{images/ransac4}\\
-	\includegraphics[scale=\imFeatRan]{images/ransac6}\\
+%	\includegraphics[scale=\imFeatRan]{images/ransac6}\\
 \end{minipage}
 \caption[short]{Esempio di iterazioni di RANSAC. In blu i dati, in giallo le curva candidata, in rosso i campioni del relativo modello.}
 \label{fig:ransac1}
@@ -674,7 +680,7 @@ $$t_{imp,q} = -\lambda\log \left(q\right) = \alpha\lambda$$
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=.7]{images/ransacWin}
-	\caption{Migliore curva trovata mediante RANSAC. $\lambda = $, RMSE = .}
+	\caption{Migliore curva trovata mediante RANSAC. $\lambda: 1.5$.}
 	\label{fig:ransacWin}
 \end{figure}
 
@@ -687,7 +693,7 @@ $$t_{imp,q} = -\lambda\log \left(q\right) = \alpha\lambda$$
 	\label{fig:multiRansac}
 \end{figure}
 
-\noindent In modo analogo al caso precedente, l'algoritmo \`e stato eseguito dieci volte per diversi frame di partenza e numero di immagini, con risultati difficilmente interpretabili.
+\noindent In modo analogo al caso precedente, l'algoritmo \`e stato eseguito dieci volte per diversi frame di partenza e numero di immagini, con risultati ancora una volta difficilmente interpretabili.
 
 \begin{table}[H]
 \begin{center}
@@ -719,15 +725,39 @@ $$t_{imp,q} = -\lambda\log \left(q\right) = \alpha\lambda$$
 \end{center}
 \end{table}
 
+\noindent Il test \`e stato quindi ripetuto utilizzando le nuove sequenze di immagini acquisite:
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+	\hline
+	& 15 & 25 & 35 & 50 \\ \hline
+	Images01/frame0000.png & 1.43s (0.075s) & 1.98s (0.15s) & 0.889s (0.01s) & 1.18s (0.11s)\\ \hline
+	Images02/frame0000.png & 1.17s (0.12s) & 2.52s (0.95s) & 1.59s (0.19s) & 1.93s (0.3s)\\ \hline
+	Images02/frame0060.png & 3.12s (0.87s) & 2.23s (2.4s) & 3.21s (0.79s) & 3.07s (0.41s)\\ \hline
+	Images03/frame0000.png & 0.173s (0.0019s) & 0.568s (0.085s) & 0.721s (0.13s) & 1.08s (0.13s)\\ \hline
+	Images04/frame0000.png & 49.4s (20s) & 2.94s (1.9s) & 1.04s (0.09s) & 1.62s (0.15s)\\ \hline
+	Images04/frame0040.png & 0.469s (0.095s) & 3.01s (0.26s) & 2.39s (0.33s) & 2.29s (0.19s)\\ \hline
+	Images05/frame0000.png & 0.823s (0.11s) & 1.11s (0.29s) & 4.3s (0.78s) & 1.62s (0.37s)\\ \hline
+	Images05/frame0100.png & 0.897s (0.044s) & 0.908s (0.051s) & 0.932s (0.02s) & 0.686s (0.11s)\\ \hline
+\end{tabular}
+\caption{Media (deviazione standard campionaria) del $\lambda$ calcolato mediante RANSAC sulle nuove sequenze acquisite. Sulle righe l'immagine di partenza, sulle colonne il numero di frame analizzati.}
+\label{tab:ransNew}
+\end{center}
+\end{table}
+
+
+\noindent Dalla tabella \ref{tab:ransNew} si nota qualcosa \dots Cosa? Mah \dots
+
 
 
 \chapter{Conclusioni e sviluppi futuri}
 
 \noindent I risultati dei test hanno evidenziato come il problema sia fortemente influenzato dal numero di outliers derivati sia da un errato tracking delle features, sia da una non perfetta variazione del contrasto sulle features stesse. Il maggior sforzo computazionale \`e infatti da attribuire alla complessit\`a degli algoritmi utilizzati per escludere gli outliers in tutte le fasi dell'elaborazione in modo da avere valori attendibili in ogni condizione.\\
 
-\noindent Sono stati analizzati diversi approcci ed algoritmi per la risoluzione del problema, e si \`e preferito, in ultimo, sacrificare il tempo di elaborazione in favore di una migliore affidabilit\`a dei risultati: gli algoritmi utilizzati sono in grado di individuare autonomamente le features migliori e scartare quelle meno buone, ottenendo dei buoni risultati come esposto nei capitoli precedenti.\\
+\noindent Sono stati analizzati diversi approcci ed algoritmi per la risoluzione del problema, e si \`e preferito, in ultimo, sacrificare il tempo di elaborazione in favore di una migliore affidabilit\`a dei risultati: gli algoritmi utilizzati sono in grado di individuare autonomamente le features migliori e scartare quelle meno buone, ottenendo dei buoni risultati fcome esposto nei capitoli precedenti.\\
 
-\noindent I valori ottenuti negli esperimenti in condizioni di visibilit\`a ideale sono comunque hanno mostrato un certo grado di consistenza degli algoritmi realizzati. Rimane tuttavia necessario testarli in condizioni nebbia avendo a disposizione le corrette informazioni a disposizione.\\
+\noindent I valori ottenuti negli esperimenti in condizioni di visibilit\`a ideale hanno comunque mostrato un certo grado di consistenza degli algoritmi realizzati. Rimane tuttavia necessario testarli in condizioni nebbia avendo a disposizione tutte le necessarie informazioni per una corretta valutazione.\\
 
 \noindent Possibili sviluppi futuri possono riguardare la reimplementazione in C\verb|++| del codice Matlab ed un'ottimizzazione degli algoritmi mirata a migliorarne le performance, eventualmente fino al punto di rendere possibile l'analisi direttamente su uno streaming video in realtime, senza le rielaborazioni successive del codice attualmente in uso.\\
 
@@ -735,6 +765,7 @@ $$t_{imp,q} = -\lambda\log \left(q\right) = \alpha\lambda$$
 
 \begin{itemize}
 	\item	DATA VELOCIT\`A NOTA, FILTRARE FEAT IN BASE A VEL IN QUALCHE MODO?
+	\item	AGGIUNGERE QUALCHE ALTRA IDEA?
 \end{itemize}
 
 
