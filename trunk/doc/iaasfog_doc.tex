@@ -53,7 +53,7 @@ Prof.~Vincenzo \textsc{Caglioti}
 \\[4cm]
 
 % Bottom of the page
-{\large 15 maggio 2011}
+{\large 17 maggio 2011}
 
 \end{center}
 \end{adjustwidth}
@@ -88,7 +88,7 @@ $$k_fe^{-t_{imp}/\lambda}$$
 \noindent Il tracking delle features\footnote{All'interno di questo documento con il termine ``feature'' ci si riferisce ad una sequenza di corner associati ad uno stesso dettaglio nella scena in frame successivi.} deve individuare il maggior numero di features in ogni immagine, e nel contempo escludere gli outliers che influirebbero nei passaggi successivi dell'elaborazione.\\
 L'elaborazione dei frame avviene in modo inverso rispetto al tempo, in modo da individuare le features quando sono ben visibili per poi inseguirle nei frame temporalmente precedenti, dove il riconoscimento \`e pi\`u difficoltoso a causa della nebbia.\\
 
-\noindent Ad ogni frame viene eseguita la funzione \verb|cvGoodFeaturesToTrack| che individua la posizione dei corner con autovalori pi\`u alti e quindi con maggior probabilit\`a di essere individuati nei frame successivi. Nel frame successivo vengono quindi inseguiti utilizzando la funzione \verb|cvCalcOpticalFlowPyrLK|, che utilizzando l'algoritmo iterativo di \emph{Lucas-Kanade} ricalcola la nuova posizione di ogni feature.\\
+\noindent Ad ogni frame viene eseguita la funzione \verb|cvGoodFeaturesToTrack| che individua la posizione dei corner con autovalori pi\`u alti e quindi con maggior probabilit\`a di essere individuati nei frame successivi. Nel frame seguente vengono quindi inseguiti utilizzando la funzione \verb|cvCalcOpticalFlowPyrLK|, che utilizzando l'algoritmo iterativo di \emph{Lucas-Kanade} ricalcola la nuova posizione di ogni feature.\\
 
 \noindent Prima di aggiungere alla sequenza il nuovo punto individuato vengono effettuati dei controlli di coerenza: la nuova posizione deve avere direzione concorde con i punti antecedenti ed il nuovo passo deve essere maggiore dei precedenti. Una sequenza di corner \`e considerata valida se \`e inseguita per almeno cinque frame (per ottenere una migliore approsimazione del birapporto), in caso contrario viene eliminata. Se la feature \`e valida viene eseguito un controllo sulla cross-ratio dei punti, che deve essere prossima a 4/3. I punti trovati saranno comunque soggetti ad errori di posizione dovuti a diversi fattori e quindi non collineari: per rimediare viene quindi calcolata la retta di regressione, su cui verranno proiettati i punti per l'analisi del birapporto.\\
 
@@ -159,7 +159,7 @@ $$ t_{i} = \frac{\overline{a'v'}}{\overline{a'b'}}\frac{\overline{ab}}{v} = \fra
 
 $$ c\left(I_{M\times N}\right) = \sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(i_{ij}-\bar{I})^2} $$
 
-\noindent Dal momento che nel calcolo del valore contribuiscono tutti i pixel all'interno della finestra tale formula risulta essere molto pi\`u resistente al rumore rispetto alle precendenti, il cui risultato risulta essere dipendente dall'errore sul singolo pixel centrale per Weber, e dall'errore sui valori di min e max per Michelson.\\
+\noindent Dal momento che nel calcolo del valore contribuiscono tutti i pixel all'interno della finestra tale formula risulta essere molto pi\`u resistente al rumore rispetto alle precendenti, il cui risultato risulta essere influenzato dall'errore sul singolo pixel centrale per Weber, e dall'errore sui valori di min e max per Michelson.\\
 
 \noindent Confrontando i valori ottenuti calcolando i livelli di contrasto utilizzando i diversi metodi si nota come RMS tenda a generare curve pi\`u smooth (figure \ref{fig:contr01}, \ref{fig:contr02} e \ref{fig:contr03}).\\
 
@@ -190,7 +190,7 @@ $$ c\left(I_{M\times N}\right) = \sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(i_{i
 
 \subsection{Fitting di $\lambda$}
 
-\noindent Una prima tecnica adottata \`e stata quella di sfruttare la funzione \verb|fit| di Matlab per estrarre il parametri $k_f$ e $\lambda_f$ che meglio descrivono ogni singola feature mediante il metodo dei minimo quadrati non lineare. Per ogni dato viene cos\`i calcolato l'errore rispetto alla curva generata, valore in base al quale verr\'a selezionata la met\'a dei dati migliori che verranno riutilizzati per approssimare nuovamente i parametri di una seconda curva esponenziale.\\
+\noindent Una prima tecnica adottata \`e stata quella di sfruttare la funzione \verb|fit| di Matlab per estrarre il parametri $k_f$ e $\lambda_f$ che meglio descrivono ogni singola feature mediante il metodo dei minimi quadrati non lineare. Per ogni dato viene cos\`i calcolato l'errore rispetto alla curva generata, valore in base al quale verr\'a selezionata la met\'a dei dati migliori che verranno riutilizzati per approssimare nuovamente i parametri di una seconda curva esponenziale.\\
 
 \begin{center}
 	\includegraphics[scale=0.7]{images/twoFits.png}
@@ -244,19 +244,19 @@ $$ c\left(I_{M\times N}\right) = \sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(i_{i
 
 \noindent Definita la formula del contrasto per ogni feature come
 
-$$ c_{i,f} = k_se^{-t_{i,f}/\lambda} $$
+$$ c_{i,f} = k_fe^{-t_{i,f}/\lambda} $$
 
 \noindent il parametro $k_f$ risulta essere costante all'interno di ogni singola sequenza di corner, mentre $\lambda$ \`e globale.\\
-\noindent Sfruttando $k_s$ \`e possibile imporre la seguente uguaglianza fra due campioni di una stessa feature in modo da stimare il parametro $\lambda$ utilizzando i livelli di contrasto massimo e minimo (ed i relativi tempi all'impatto):
+\noindent Sfruttando $k_f$ \`e possibile imporre la seguente uguaglianza fra due campioni di una stessa feature in modo da stimare il parametro $\lambda$ utilizzando i livelli di contrasto massimo e minimo (ed i relativi tempi all'impatto):
 
 $$ c_1e^{t_1/\lambda} = c_2e^{t_2/\lambda} $$
 $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
-\noindent A questo punto viene introdotto un primo semplice criterio atto ad eliminare features eccessivamente rumorose: ricordando che i dati sono ordinati sul tempo d'impatto (e quindi il contrasto risulter\`a essere una funzione decrescente) vengono ignorate features la cui differenza fra gli indici dei valori di contrasto minimo e massimo non \`e sufficientemente grande (nel nostro caso dovr\`a essere superiore alla met\`a del numero di corners all'interno del set).\\
+\noindent A questo punto viene introdotto un primo semplice criterio atto ad eliminare features eccessivamente rumorose: ricordando che i dati sono ordinati sul tempo d'impatto (e quindi il contrasto risulter\`a essere una funzione decrescente) vengono ignorate features la cui differenza fra gli indici dei valori di contrasto minimo e massimo non \`e sufficientemente grande (nel nostro caso deve essere superiore alla met\`a del numero di corners all'interno del set).\\
 
 \noindent Successivamente si pu\`o procedere al calcolo di un $\lambda$ globale in base a quelli stimati calcolandone la media o la mediana.\\
 
-\noindent Tale approccio tuttavia, per quanto computazionalmente leggero, \`e stato abbandonato a causa dell'eccessiva sensibilit\`a all'errore sui dati (dal momento che di sovente vengono selezionati come valori di min e max proprio degli outlier). Gli altri due approcci invece facendo uso di una maggiore quantit\`a di dati risultano essere molto pi\`u robusti, ma pagano in termini di prestazioni a causa della complessit\`a dei fitting delle curve.
+\noindent Tale approccio tuttavia, per quanto computazionalmente leggero, \`e stato abbandonato a causa dell'eccessiva sensibilit\`a all'errore sui dati (dal momento che sovente vengono selezionati come valori di min e max proprio degli outliers). Gli altri due approcci invece facendo uso di una maggiore quantit\`a di dati risultano essere molto pi\`u robusti, ma pagano in termini di prestazioni a causa della complessit\`a dei fitting delle curve.
 
 
 
@@ -268,8 +268,8 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \noindent I test sono stati eseguiti sulla sequenza di immagini fornite, consistenti in 113 frames estratti da un video acquisito mediante una telecamera in condizioni di nebbia. Di tale filmato tuttavia non sono noti parametri quali il framerate e la velocit\`a del veicolo; per ovviare a queste incognite sono state fatte diverse assunzioni:
 \begin{itemize}
 	\item	framerate a 30fps: una diversa frequenza d'acquisizione porterebbe a calcolare diversi tempi d'impatto, ma i valori rimarrebbero comunque congruenti fra di loro. Molto pi\`u rilevante \`e che il framerate si mantenga costante per tutto il filmato.
-	\item	moto rettilineo: necessaria per semplificare il tracking delle features. Ispezionando il filmato tuttavia si notano delle vistose oscillazioni, possibili cause di problemi in fase di tracking.
-	\item	velocit\'a costante: il tempo all'impatto medio (in secondi) si relaziona alla visibilit\`a (in metri) mediante la velocit\`a del veicolo, parametro purtroppo non \`e disponibile. In mancanza di migliori soluzioni questo valore \`e stato ipotizzato come costante, in modo da poter considerare il tempo d'impatto come stima della velocit\`a. Sfortunatamente neanche questa assunzione appare essere particolarmente evidente: una variazione nella velocit\`a del veicolo porterebbe a rendere incongruenti i tempi d'impatto (\`e infatti possibile ottenere uno stesso tti in condizioni di visibilit\`a peggiori semplicemente rallentando).
+	\item	moto rettilineo: necessario per semplificare il tracking delle features. Ispezionando il filmato tuttavia si notano delle vistose oscillazioni, possibili cause di problemi in fase di tracking.
+	\item	velocit\'a costante: il tempo all'impatto medio (in secondi) si relaziona alla visibilit\`a (in metri) mediante la velocit\`a del veicolo, parametro purtroppo non disponibile. In mancanza di migliori soluzioni questo valore \`e stato ipotizzato come costante, in modo da poter considerare il tempo d'impatto come stima della velocit\`a. Sfortunatamente questa assunzione non appare essere realistica, rendendo incongruenti i tempi calcolati (\`e infatti possibile ottenere uno stesso tti in condizioni di visibilit\`a peggiori semplicemente rallentando).
 \end{itemize}
 \noindent Come si nota dal campione di immagini mostrate in figura \ref{fig:video} la visibilit\`a migliora nel corso della sequenza.\\
 
@@ -391,17 +391,19 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \begin{tabular}{|c|c|c|c|}
 	\hline
 	distanza & tti reale & \begin{minipage}{2.5cm}\centering tti calcolato al frame 0 \end{minipage}& errore\\[6pt] \hline
-	32m	& 2.88s	& 2.72s	& 0.16s	\\ \hline
-	24m	& 2.16s	& 2.22s	& 0.06s	\\ \hline
-	46m	& 4.14s	& 5.08s	& 0.96s	\\ \hline
+	17m	& 1.53s	& 1.73s	& 0.2s	\\ \hline
 	19m	& 1.71s	& 1.9s	& 0.19s	\\ \hline
 	20m	& 1.8s	& 2.08s	& 0.28s	\\ \hline
-	64m	& 5.76s	& 3.86s	& 1.9s	\\ \hline
+	21m	& 1.89s	& 2.4s	& 0.51s	\\ \hline
+	24m	& 2.16s	& 2.22s	& 0.06s	\\ \hline
+	32m	& 2.88s	& 2.72s	& 0.16s	\\ \hline
 	46m	& 4.14s	& 4.32s	& 0.18s	\\ \hline
 	46m	& 4.14s	& 4.76s	& 0.62s	\\ \hline
-	21m	& 1.89s	& 2.4s	& 0.61s	\\ \hline
-	17m	& 1.53s	& 1.73s	& 0.2s	\\ \hline
-	46m	& 4.14s	& 4.26s	& 0.08s	\\ \hline
+	46m	& 4.14s	& 5.08s	& 0.94s	\\ \hline
+	46m	& 4.14s	& 4.26s	& 0.12s	\\ \hline
+	64m	& 5.76s	& 3.86s	& 1.9s	\\ \hline
+	64m	& 5.76s	& 5.34s	& 0.42s	\\ \hline
+
 \end{tabular}
 \caption{Valori ottenuti viaggiando ad una velocit\`a di 40 km/h.}
 \end{table}
@@ -419,7 +421,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 	\begin{minipage}[H]{0.13\linewidth} \begin{tabular}{l} dist: 24m \\ tti_r: 2.16s \\ tti_0: 2.22s \\ err : 0.06s \\ \end{tabular}\end{minipage} \\
 	\hline
 	\begin{minipage}[H]{0.35\linewidth}\includegraphics[scale=\ttiScale]{images/tti3.png} \end{minipage} & 
-	\begin{minipage}[H]{0.13\linewidth} \begin{tabular}{l} dist: 46m \\ tti_r: 4.14s \\ tti_0: 5.08s \\ err : 0.96s \\ \end{tabular}\end{minipage} & 
+	\begin{minipage}[H]{0.13\linewidth} \begin{tabular}{l} dist: 46m \\ tti_r: 4.14s \\ tti_0: 5.08s \\ err : 0.94s \\ \end{tabular}\end{minipage} & 
 	\begin{minipage}[H]{0.35\linewidth}\includegraphics[scale=\ttiScale]{images/tti4.png} \end{minipage} & 
 	\begin{minipage}[H]{0.13\linewidth} \begin{tabular}{l} dist: 19m \\ tti_r: 1.71s \\ tti_0: 1.9s \\ err : 0.19s \\ \end{tabular}\end{minipage} \\
 	\hline
@@ -543,7 +545,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \newapage
 \noindent L'immagine \ref{fig:bestIntErr} invece illustra il quartile dei migliori dati calcolato usando l'area fra i due successivi fitting (ricordiamo che partiamo dall'idea che per buoni set le due curve non differiscono molto). In blu viene visualizzata la curva approssimante l'intero set di dati, mentre in rosso \`e evidenziata la met\`a dei dati con errore minore e la curva approssimante da questi ultimi ottenuta. Similmente, in figura \ref{fig:worstIntErr} sono riportate le features con errore peggiore.\\
 
-\noindent In base ai parametri $\lambda$ delle features migliori viene infine calcolato il valore globale come la mediana, mostrato in figura \ref{fig:intErrHist}
+\noindent In base ai parametri $\lambda$ delle features migliori viene infine calcolata la mediana come valore globale, mostrato in figura \ref{fig:intErrHist}
 
 \newcommand{\imFeatBW}{.48}
 \begin{figure}[H]
@@ -559,7 +561,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 	\includegraphics[scale=\imFeatBW]{images/best4}\\
 	\includegraphics[scale=\imFeatBW]{images/best6}\\
 \end{minipage}
-\caption[short]{Migliori features secondo l'errore integrale.}
+\caption[short]{Migliori features secondo l'integrale dell'errore.}
 \label{fig:bestIntErr}
 \end{figure}
 
@@ -576,7 +578,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 	\includegraphics[scale=\imFeatBW]{images/worst4}\\
 	\includegraphics[scale=\imFeatBW]{images/worst6}\\
 \end{minipage}
-\caption[short]{Feature peggiori secondo l'errore integrale.}
+\caption[short]{Feature peggiori secondo l'integrale dell'errore.}
 \label{fig:worstIntErr}
 \end{figure}
 
@@ -585,7 +587,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=.5]{images/intErrhistLamFit}
-	\caption{Istogramma dei migliori $\lambda$ secondo l'errore integrale (mediana: 1.22).}
+	\caption{Istogramma dei migliori $\lambda$ secondo l'integrale dell'errore (mediana: 1.22).}
 	\label{fig:intErrHist}
 \end{figure}
 
@@ -607,7 +609,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \end{center}
 \end{table}
 
-\noindent Osservando il filmato campione ci si aspetterebbe di osservare un miglioramento nelle condizioni di visibili\`a, cosa non evidente dai valori restituiti. Tali incongruenze potrebbero essere imputabili a possibili variazioni della velocit\`a nel veicolo usato per l'acquisizione del filmato, in violazione delle ipotesi fatte in partenza. Per questo motivo l'esperimento \`e stato ripetuto utilizzando i nuovi filmati acquisiti: diverse sequenza di immagini sono state estratte da un filmato ripreso con una videocamera a 30fps su di un veicolo alla velocit\`a costante di 60 km/h (precisione ottenibile con un tachimetro analogico) in condizioni di visibilit\`a ideali. Ciascuna sequenza \`e stata analizzata dieci volte.\\
+\noindent Osservando il filmato campione ci si aspetterebbe di osservare un miglioramento nelle condizioni di visibili\`a, cosa non evidente dai valori restituiti. Tali incongruenze potrebbero essere imputabili a possibili variazioni della velocit\`a nel veicolo usato per l'acquisizione del filmato, in violazione delle ipotesi fatte in partenza. Per questo motivo l'esperimento \`e stato ripetuto utilizzando i nuovi filmati acquisiti: diverse sequenze di immagini sono state estratte da un filmato ripreso con una videocamera a 30fps su di un veicolo alla velocit\`a costante di 60 km/h (precisione ottenibile con un tachimetro analogico) in condizioni di visibilit\`a ideali. Ciascuna sequenza \`e stata analizzata dieci volte.\\
 
 \begin{table}[H]
 \centering
@@ -626,14 +628,15 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \caption{$\lambda$ medio e deviazione standard campionaria per diversi frame iniziali e lunghezze d'analisi.}
 \end{table}
 
-\noindent Si nota come all'aumentare della lunghezza dell'analisi le soluzioni tendono a convergere, essendo le condizioni di visibilit\`a sostanzialmente simili nelle diverse sequenze. Per una $\lambda$ pari ad 1.4s ad una velocit\`a di 60 km/h la visibilit\`a risulta essere di 23.3m\\
+\noindent Si nota come all'aumentare della lunghezza dell'analisi le soluzioni tendano a convergere, essendo le condizioni di visibilit\`a sostanzialmente identiche nelle diverse sequenze. Per un $\lambda$ pari ad 1.4s ad una velocit\`a di 60 km/h la visibilit\`a risulta essere di 23.3m\\
 
-\noindent \footnote{\color{red} QUESTO COMMENTO VA BENE QUI O VA SPOSTATO PRIMA?}Ricordiamo che il $\lambda$ ottenuto corrisponde alla distanza media per cui la curva teorica del contrasto delle varie features raggiunge il valore $k_f/e$, scelto in quanto comodo per i calcoli, e non va quindi interpretato come visibilit\`a in termini ``umani'': per far ci\`o si dovrebbe determinare un valore percentuale $q$ sul contrasto raggiunto il quale una feature campione pu\`o essere considerata visibile per un occhio umano e semplicemente riscalare i valori ottenuti mediante un coefficiente $\alpha$ (pari a $-log\left(q\right)$) come mostra la formula
+\noindent \footnote{\color{red} QUESTO COMMENTO VA BENE QUI O VA SPOSTATO PRIMA?\\ DIMMI UN PO' COSA NE PENSI DI STO PEZZO}Ricordiamo che il $\lambda$ ottenuto corrisponde alla distanza media per cui la curva teorica del contrasto delle varie features raggiunge il valore $k_f/e$, scelto in quanto comodo per i calcoli, e non va quindi interpretato come visibilit\`a in termini ``umani'': per far ci\`o si dovrebbe determinare un valore percentuale $q$ sul contrasto raggiunto il quale una feature campione pu\`o essere considerata visibile per un occhio umano, per poi riscalare i valori ottenuti mediante un coefficiente $\alpha$ (pari a $-log\left(q\right)$) come nella formula
 
 $$qk_f = k_fe^{-t_{imp,q}/\lambda}$$
 $$t_{imp,q} = -\lambda\log \left(q\right) = \alpha\lambda$$
 
-\noindent ricordando che $q$ \`e inferiore all'unit\`a e quindi $\alpha$ risulter\`a essere positivo. Una volta calcolato il $\lambda$ come mostrato fin'ora non rimarr\`a che moltiplicarlo per $\alpha$ per ottenere la distanza cui la feature assume il livello $qk_f$ per cui possiamo considerarla come visibile.\\
+\noindent ricordando che $q$ \`e inferiore all'unit\`a e quindi $\alpha$ risulter\`a essere positivo. \\
+\noindent Quindi una volta calcolato il $\lambda$ come mostrato fin'ora potremo moltiplicarlo per $\alpha$ ottenendo la distanza cui la feature assume il livello $qk_f$ per cui possiamo considerarla come visibile.\\
 
 
 \newpage
@@ -693,35 +696,20 @@ $$t_{imp,q} = -\lambda\log \left(q\right) = \alpha\lambda$$
 	\label{fig:multiRansac}
 \end{figure}
 
-\noindent In modo analogo al caso precedente, l'algoritmo \`e stato eseguito dieci volte per diversi frame di partenza e numero di immagini, con risultati ancora una volta difficilmente interpretabili.
+\noindent In modo analogo al caso precedente, l'algoritmo \`e stato eseguito dieci volte sul video con nebbia per diverse condizioni iniziali, con risultati ancora una volta difficilmente interpretabili.
 
 \begin{table}[H]
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|}
 	\hline
 	& 15 & 25 & 35 & 50 \\ \hline
-	frame0000 & 0.72224 (0.096333) & 0.91077 (0.16737) & 1.0033 (0.65278) & 1.2289 (0.12142)\\ \hline
-	frame0020 & 0.50379 (0.062369) & 1.5982 (0.51735) & 0.83693 (0.14097) & 0.87359 (0.024909)\\ \hline
-	frame0040 & 0.53189 (0.14799) & 0.54959 (0.01375) & 0.55191 (0.010494) & 0.90524 (0.062828)\\ \hline
-	frame0060 & 0.21356 (0.42649) & 0.57252 (0.073703) & 0.63189 (0.0516) & 1.0276 (0.16565)\\ \hline
+	Images/frame0000.jpg & 0.77s (0.01s) & 0.71s (0.005s) & NaN (NaN) & 1.42s (0.02s)\\ \hline
+	Images/frame0020.jpg & 0.59s (0.01s) & 0.96s (0.12s) & 1.06s (0.06s) & 0.83s (0.003s)\\ \hline
+	Images/frame0040.jpg & 0.84s (1.2e-16s) & 0.51s (0.002s) & 0.58s (0.003s) & 0.99s (0.007s)\\ \hline
+	Images/frame0060.jpg & 0.38s (0.001s) & 0.6s (0.08s) & 0.55s (0.06s) & 1.06s (0.06s)\\ \hline
 \end{tabular}
-\caption{Media (deviazione standard campionaria) del $\lambda$ calcolato mediante RANSAC. Sulle righe l'immagine di partenza, sulle colonne il numero di frame analizzati.}
+\caption{Media (deviazione standard campionaria) del $\lambda$ calcolato mediante RANSAC. Sulle righe l'immagine di partenza, sulle colonne il numero di frame analizzati. I NaN indicano il fallimento di RANSAC a causa dell'eccessiva rumorosit\`a dei dati (l'eccessivo errore medio non ha portato a nessun set di consenso abbastanza grande).}
 \label{tabRans}
-\end{center}
-\end{table}
-
-\begin{table}[H]
-\begin{center}
-\begin{tabular}{|c|c|c|c|c|}
-	\hline
-	& 15 & 25 & 35 & 50 \\ \hline
-	frame0000 & 2.2951 (0.10126) & 0.70166 (0.17513) & 1.7832 (1.3057) & 1.3418 (0.21269)\\ \hline
-	frame0020 & 0.68235 (0.23275) & 12.6856 (1.4202) & 1.3026 (0.16435) & 0.94356 (0.034169)\\ \hline
-	frame0040 & 0.70609 (0.21565) & 0.57862 (0.019586) & 0.56058 (0.051861) & 0.94022 (0.074242)\\ \hline
-	frame0060 & 0.36377 (0.059513) & 0.53882 (0.069068) & 1.0892 (0.19126) & 1.5443 (0.2292)\\ \hline
-\end{tabular}
-\caption{Media (deviazione standard campionaria) del $\lambda$ calcolato mediante RANSAC. Sulle righe l'immagine di partenza, sulle colonne il numero di frame analizzati.}
-\label{tabRans2}
 \end{center}
 \end{table}
 
@@ -732,22 +720,21 @@ $$t_{imp,q} = -\lambda\log \left(q\right) = \alpha\lambda$$
 \begin{tabular}{|c|c|c|c|c|}
 	\hline
 	& 15 & 25 & 35 & 50 \\ \hline
-	Images01/frame0000.png & 1.43s (0.075s) & 1.98s (0.15s) & 0.889s (0.01s) & 1.18s (0.11s)\\ \hline
-	Images02/frame0000.png & 1.17s (0.12s) & 2.52s (0.95s) & 1.59s (0.19s) & 1.93s (0.3s)\\ \hline
-	Images02/frame0060.png & 3.12s (0.87s) & 2.23s (2.4s) & 3.21s (0.79s) & 3.07s (0.41s)\\ \hline
-	Images03/frame0000.png & 0.173s (0.0019s) & 0.568s (0.085s) & 0.721s (0.13s) & 1.08s (0.13s)\\ \hline
-	Images04/frame0000.png & 49.4s (20s) & 2.94s (1.9s) & 1.04s (0.09s) & 1.62s (0.15s)\\ \hline
-	Images04/frame0040.png & 0.469s (0.095s) & 3.01s (0.26s) & 2.39s (0.33s) & 2.29s (0.19s)\\ \hline
-	Images05/frame0000.png & 0.823s (0.11s) & 1.11s (0.29s) & 4.3s (0.78s) & 1.62s (0.37s)\\ \hline
-	Images05/frame0100.png & 0.897s (0.044s) & 0.908s (0.051s) & 0.932s (0.02s) & 0.686s (0.11s)\\ \hline
+	Images01/frame0000.png & 1.43s (0.08s) & 2.03s (0.16s) & 0.9s (0.02s) & 1.14s (0.14s)\\ \hline
+	Images02/frame0000.png & 1.22s (0.03s) & 1.99s (0.11s) & 1.58s (0.16s) & 1.8s (0.11s)\\ \hline
+	Images02/frame0060.png & 2.8s (0.25s) & 1.55s (1.1s) & 3.68s (0.71s) & 2.95s (0.18s)\\ \hline
+	Images03/frame0000.png & 0.17s (0.00s) & 0.56s (0.08s) & 0.67s (0.11s) & 1.01s (0.09s)\\ \hline
+	Images04/frame0000.png & 45.3s (8.7s) & 1.87s (0.14s) & 1.13s (0.21s) & 1.63s (0.11s)\\ \hline
+	Images04/frame0040.png & 0.54s (0.22s) & 2.73s (0.26s) & 2.33s (0.28s) & 2.26s (0.19s)\\ \hline
+	Images05/frame0000.png & 0.87s (0.04s) & 1.02s (0.042s) & 3.97s (1.3s) & 1.65s (0.36s)\\ \hline
+	Images05/frame0100.png & 0.90s (0.03s) & 0.89s (0.02s) & 0.95s (0.04s) & 0.68s (0.1s)\\ \hline
 \end{tabular}
 \caption{Media (deviazione standard campionaria) del $\lambda$ calcolato mediante RANSAC sulle nuove sequenze acquisite. Sulle righe l'immagine di partenza, sulle colonne il numero di frame analizzati.}
 \label{tab:ransNew}
 \end{center}
 \end{table}
 
-
-\noindent Dalla tabella \ref{tab:ransNew} si nota qualcosa \dots Cosa? Mah \dots
+\noindent \textcolor{red}{I risultati, per quanto molto pi\`u variabili, sembrano avvicinarsi a quelli ottenuti nell'analogo test usanto il metodo di fitting. Un simile risultato era prevedibile dal momento che vengono usati meno filtri sulla bont\`a delle features.}
 
 
 
@@ -755,15 +742,16 @@ $$t_{imp,q} = -\lambda\log \left(q\right) = \alpha\lambda$$
 
 \noindent I risultati dei test hanno evidenziato come il problema sia fortemente influenzato dal numero di outliers derivati sia da un errato tracking delle features, sia da una non perfetta variazione del contrasto sulle features stesse. Il maggior sforzo computazionale \`e infatti da attribuire alla complessit\`a degli algoritmi utilizzati per escludere gli outliers in tutte le fasi dell'elaborazione in modo da avere valori attendibili in ogni condizione.\\
 
-\noindent Sono stati analizzati diversi approcci ed algoritmi per la risoluzione del problema, e si \`e preferito, in ultimo, sacrificare il tempo di elaborazione in favore di una migliore affidabilit\`a dei risultati: gli algoritmi utilizzati sono in grado di individuare autonomamente le features migliori e scartare quelle meno buone, ottenendo dei buoni risultati fcome esposto nei capitoli precedenti.\\
+\noindent Sono stati analizzati diversi approcci ed algoritmi per la risoluzione del problema, e si \`e preferito, in ultimo, sacrificare il tempo di elaborazione in favore di una migliore affidabilit\`a dei risultati: gli algoritmi utilizzati sono in grado di individuare autonomamente le features migliori e scartare quelle meno buone, ottenendo dei buoni risultati come esposto nei capitoli precedenti.\\
 
-\noindent I valori ottenuti negli esperimenti in condizioni di visibilit\`a ideale hanno comunque mostrato un certo grado di consistenza degli algoritmi realizzati. Rimane tuttavia necessario testarli in condizioni nebbia avendo a disposizione tutte le necessarie informazioni per una corretta valutazione.\\
-
-\noindent Possibili sviluppi futuri possono riguardare la reimplementazione in C\verb|++| del codice Matlab ed un'ottimizzazione degli algoritmi mirata a migliorarne le performance, eventualmente fino al punto di rendere possibile l'analisi direttamente su uno streaming video in realtime, senza le rielaborazioni successive del codice attualmente in uso.\\
+\noindent \textcolor{red}{Per quanto alcuni degli esperimenti usando il campione video fornito fossero inconcludenti a causa della mancanza di diverse informazioni, i valori ottenuti nei test in condizioni di visibilit\`a ideale hanno comunque mostrato un certo grado di consistenza degli algoritmi implementati. Rimane tuttavia necessario testarli in condizioni di nebbia avendo a disposizione tutte le necessarie informazioni per una corretta valutazione.}\\
 
 \noindent \`E inoltre necessario uno studio su come manipolare il $\lambda$ restituito in modo da conferirgli un significato pi\`u vicino al mondo delle percezioni umane, pi\'u intuitivo per l'utente, in modo simile a come suggerito alla fine della sezione \ref{fittest}.\\
 
+\noindent Ulteriori sviluppi futuri possono riguardare la reimplementazione in C\verb|++| del codice Matlab ed un'ottimizzazione degli algoritmi mirata a migliorarne le performance, eventualmente fino al punto di rendere possibile l'analisi direttamente su uno streaming video in realtime, senza le rielaborazioni successive del codice attualmente in uso.\\
+
 \begin{itemize}
+\color{red}
 	\item	DATA VELOCIT\`A NOTA, FILTRARE FEAT IN BASE A VEL IN QUALCHE MODO?
 	\item	AGGIUNGERE QUALCHE ALTRA IDEA?
 \end{itemize}
