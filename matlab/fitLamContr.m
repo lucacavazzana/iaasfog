@@ -74,6 +74,7 @@ for ff = feats
         
         clf;
         plot(ff.tti, ff.contr, 'o');
+        axis([ff.tti(1) ff.tti(end) minmax(ff.contr)])
         hold on; grid on;
         plot(x, cfun.k*exp(-x/cfun.lam));
         

@@ -22,7 +22,7 @@
 %\bibliography{bib}
 
 \begin{titlepage}
-\begin{adjustwidth}{}{-3.5cm}
+\begin{adjustwidth}{}{-3.7cm}
 \begin{center}
 
 \\[2.1cm]
@@ -86,7 +86,7 @@ $$k_fe^{-t_{imp}/\lambda}$$
 
 
 \noindent Il tracking delle features\footnote{All'interno di questo documento con il termine ``feature'' ci si riferisce ad una sequenza di corner associati ad uno stesso dettaglio nella scena in frame successivi.} deve individuare il maggior numero di features in ogni immagine, e nel contempo escludere gli outliers che influirebbero nei passaggi successivi dell'elaborazione.\\
-L'elaborazione dei frame avviene in modo inverso rispetto al tempo, in modo da individuare le features quando sono ben visibili per poi inseguirle nei frame temporalmente precedenti, dove il riconoscimento \`e pi\`u difficoltoso a causa della nebbia.\\
+L'analisi dei frame avviene in modo inverso rispetto al tempo, in modo da individuare le features quando sono ben visibili per poi inseguirle nei frame temporalmente precedenti, dove il riconoscimento \`e pi\`u difficoltoso a causa della nebbia.\\
 
 \noindent Ad ogni frame viene eseguita la funzione \verb|cvGoodFeaturesToTrack| che individua la posizione dei corner con autovalori pi\`u alti e quindi con maggior probabilit\`a di essere individuati nei frame successivi. Nel frame seguente vengono quindi inseguiti utilizzando la funzione \verb|cvCalcOpticalFlowPyrLK|, che utilizzando l'algoritmo iterativo di \emph{Lucas-Kanade} ricalcola la nuova posizione di ogni feature.\\
 
@@ -256,7 +256,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 \noindent Successivamente si pu\`o procedere al calcolo di un $\lambda$ globale in base a quelli stimati calcolandone la media o la mediana.\\
 
-\noindent Tale approccio tuttavia, per quanto computazionalmente leggero, \`e stato abbandonato a causa dell'eccessiva sensibilit\`a all'errore sui dati (dal momento che sovente vengono selezionati come valori di min e max proprio degli outliers). Gli altri due approcci invece facendo uso di una maggiore quantit\`a di dati risultano essere molto pi\`u robusti, ma pagano in termini di prestazioni a causa della complessit\`a dei fitting delle curve.
+\noindent Tale approccio tuttavia, per quanto computazionalmente leggero, \`e stato abbandonato a causa dell'eccessiva sensibilit\`a all'errore sui dati (dal momento che spesso vengono selezionati come valori di min e max proprio degli outliers). Gli altri due approcci invece facendo uso di una maggiore quantit\`a di dati risultano essere molto pi\`u robusti, ma pagano in termini di prestazioni a causa della complessit\`a dei fitting delle curve.
 
 
 
@@ -273,7 +273,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \end{itemize}
 \noindent Come si nota dal campione di immagini mostrate in figura \ref{fig:video} la visibilit\`a migliora nel corso della sequenza.\\
 
-\noindent A causa di risultati poco congruenti registrati nei test mostrati nelle sezioni \ref{fittest} e \ref{ransactest} potenzialmente riconducibili ad una violazione della terza ipotesi \`e stato deciso di acquisire appositamente dei nuovi filmati ad una velocit\`a nota e costante, annotando tutti i parametri necessari per completare i test. Sfortunatamente essendo la nebbia in questa stagione di difficile reperibilit\`a ci si \`e dovuti accontentare di riprendere in condizioni di visibilit\`a quasi ideali.\\
+\noindent A causa di risultati poco congruenti registrati nei test mostrati nelle sezioni \ref{fittest} e \ref{ransactest} potenzialmente riconducibili ad una violazione della terza ipotesi \`e stato deciso di acquisire appositamente dei nuovi filmati ad una velocit\`a nota e costante, anche se in condizioni di visibilit\`a ideali (vista la stagione), annotando tutti i parametri necessari per completare i test.\\
 
 
 \newcommand{\videoScale}{0.5}
@@ -295,9 +295,9 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 \section{Calcolo del vanishing pointe e tracking delle features}
 
-\noindent Le figure \ref{fig:vp15}, \ref{fig:vp25} e \ref{fig:vp50} rappresentano il risultato dell'elaborazione dell'algoritmo sul calcolo del vanishing point su differenti spezzoni del video con la nebbia: l'algoritmo restituisce risultati tanto migliori quanto pi\`u sono le features disponibili, a loro volta dipendenti dal numero di frames; mentre per pochi frames (quindici) il calcolo del vanishing point \`e affetto da errori pi\`u o meno grandi, per tracking pi\`u lunghi (oltre i trenta frames) l'affidabilit\`a dell'algoritmo migliora notevolmente.\\
+\noindent Le figure \ref{fig:vp15}, \ref{fig:vp25} e \ref{fig:vp50} rappresentano il risultato dell'elaborazione dell'algoritmo sul calcolo del vanishing point su differenti sezioni del video con nebbia: l'algoritmo restituisce risultati tanto migliori quanto pi\`u sono le features disponibili, a loro volta dipendenti dal numero di frames; mentre per pochi frames (quindici) il calcolo del vanishing point \`e affetto da errori pi\`u o meno grandi, per tracking pi\`u lunghi (oltre i trenta frames) l'affidabilit\`a dell'algoritmo migliora notevolmente.\\
 
-\noindent Nelle immagini poste a destra \`e possibile verificare come la met\`a delle linee di fuga individuate venga eliminata dal set, perch\'e troppo lontana dal vanishing point trovato.\\
+\noindent Nelle immagini poste a destra \`e possibile verificare come la met\`a delle linee di fuga individuate venga eliminata dal set perch\'e troppo lontana dal vanishing point trovato.\\
 
 \newcommand{\imTrackScale}{0.7}
 \begin{figure}[H]
@@ -357,7 +357,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \label{fig:vp50}
 \end{figure}
 
-\noindent L'algoritmo \`e stato testato per diversi punti di partenza e diverse lunghezze di inseguimento, allo scopo di osservare il numero di features restituite. Dal momento che la presenza di RANSAC in fase di calcolo del vanishing point porta ad una certa variabilit\`a del risultato \`e stato considerato il valore medio su dieci esecuzioni per ogni condizione iniziale.\\
+\noindent L'algoritmo \`e stato testato con diversi punti di partenza e diverse lunghezze di inseguimento, allo scopo di osservare il numero di features restituite. Dal momento che la presenza di RANSAC in fase di calcolo del vanishing point porta ad una certa variabilit\`a del risultato \`e stato considerato il valore medio su dieci esecuzioni per ogni condizione iniziale.\\
 \noindent I risultati nella tabella \ref{tabNum} mostrano come il numero di feature estratte aumenti con la lunghezza del tracking e con il migliorare delle condizioni di visibilit\`a. La varianza sul numero di features a parit\`a di condizioni iniziali \`e minima.
 
 \begin{table}[H]
@@ -630,7 +630,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 \noindent Si nota come all'aumentare della lunghezza dell'analisi le soluzioni tendano a convergere, essendo le condizioni di visibilit\`a sostanzialmente identiche nelle diverse sequenze. Per un $\lambda$ pari ad 1.4s ad una velocit\`a di 60 km/h la visibilit\`a risulta essere di 23.3m\\
 
-\noindent \footnote{\color{red} QUESTO COMMENTO VA BENE QUI O VA SPOSTATO PRIMA?\\ DIMMI UN PO' COSA NE PENSI DI STO PEZZO}Ricordiamo che il $\lambda$ ottenuto corrisponde alla distanza media per cui la curva teorica del contrasto delle varie features raggiunge il valore $k_f/e$, scelto in quanto comodo per i calcoli, e non va quindi interpretato come visibilit\`a in termini ``umani'': per far ci\`o si dovrebbe determinare un valore percentuale $q$ sul contrasto raggiunto il quale una feature campione pu\`o essere considerata visibile per un occhio umano, per poi riscalare i valori ottenuti mediante un coefficiente $\alpha$ (pari a $-log\left(q\right)$) come nella formula
+\noindent Ricordiamo che il $\lambda$ ottenuto corrisponde alla distanza media per cui la curva teorica del contrasto delle varie features raggiunge il valore $k_f/e$, scelto in quanto comodo per i calcoli, e non va quindi interpretato come visibilit\`a in termini ``umani'': per far ci\`o si dovrebbe determinare un valore percentuale $q$ sul contrasto raggiunto il quale una feature campione pu\`o essere considerata visibile per un occhio umano, per poi riscalare i valori ottenuti mediante un coefficiente $\alpha$ (pari a $-log\left(q\right)$) come nella formula
 
 $$qk_f = k_fe^{-t_{imp,q}/\lambda}$$
 $$t_{imp,q} = -\lambda\log \left(q\right) = \alpha\lambda$$
@@ -734,7 +734,7 @@ $$t_{imp,q} = -\lambda\log \left(q\right) = \alpha\lambda$$
 \end{center}
 \end{table}
 
-\noindent \textcolor{red}{I risultati, per quanto molto pi\`u variabili, sembrano avvicinarsi a quelli ottenuti nell'analogo test usanto il metodo di fitting. Un simile risultato era prevedibile dal momento che vengono usati meno filtri sulla bont\`a delle features.}
+\noindent I risultati, per quanto molto pi\`u variabili, sembrano avvicinarsi a quelli ottenuti nell'analogo test usanto il metodo di fitting. Un simile risultato era prevedibile dal momento che vengono usati meno filtri sulla bont\`a delle features.
 
 
 
@@ -744,17 +744,14 @@ $$t_{imp,q} = -\lambda\log \left(q\right) = \alpha\lambda$$
 
 \noindent Sono stati analizzati diversi approcci ed algoritmi per la risoluzione del problema, e si \`e preferito, in ultimo, sacrificare il tempo di elaborazione in favore di una migliore affidabilit\`a dei risultati: gli algoritmi utilizzati sono in grado di individuare autonomamente le features migliori e scartare quelle meno buone, ottenendo dei buoni risultati come esposto nei capitoli precedenti.\\
 
-\noindent \textcolor{red}{Per quanto alcuni degli esperimenti usando il campione video fornito fossero inconcludenti a causa della mancanza di diverse informazioni, i valori ottenuti nei test in condizioni di visibilit\`a ideale hanno comunque mostrato un certo grado di consistenza degli algoritmi implementati. Rimane tuttavia necessario testarli in condizioni di nebbia avendo a disposizione tutte le necessarie informazioni per una corretta valutazione.}\\
+\noindent Per quanto alcuni degli esperimenti usando il campione video fornito fossero inconcludenti a causa della mancanza di informazioni, i valori ottenuti nei test in condizioni di visibilit\`a ideale hanno comunque mostrato un certo grado di consistenza degli algoritmi implementati. Rimane tuttavia necessario testarli in condizioni di nebbia avendo a disposizione tutte le necessarie informazioni per una corretta valutazione.\\
 
 \noindent \`E inoltre necessario uno studio su come manipolare il $\lambda$ restituito in modo da conferirgli un significato pi\`u vicino al mondo delle percezioni umane, pi\'u intuitivo per l'utente, in modo simile a come suggerito alla fine della sezione \ref{fittest}.\\
 
+\noindent L'aggiunta di un sistema stereoscopico potrebbe migliorare la fase di tracking delle feature, permettendo eliminare quelle inseguite in modo scorretto confrontandone la velocit\`a calcolata con quella effettiva del veicolo.\\
+
 \noindent Ulteriori sviluppi futuri possono riguardare la reimplementazione in C\verb|++| del codice Matlab ed un'ottimizzazione degli algoritmi mirata a migliorarne le performance, eventualmente fino al punto di rendere possibile l'analisi direttamente su uno streaming video in realtime, senza le rielaborazioni successive del codice attualmente in uso.\\
 
-\begin{itemize}
-\color{red}
-	\item	DATA VELOCIT\`A NOTA, FILTRARE FEAT IN BASE A VEL IN QUALCHE MODO?
-	\item	AGGIUNGERE QUALCHE ALTRA IDEA?
-\end{itemize}
 
 
 
@@ -882,7 +879,7 @@ Per compilare la libreria \`e necessario installare gli header offerti da MinGW 
 Compilare.\\
 
 \noindent In Matlab aggiungere il path degli m-file ed assicurarsi che il percorso specificato dalla varibile \verb|exec_path| in \verb|iaas.m| corrisponda alla cartella dell'eseguibile del codice C\verb|++|.\\
-Per eseguire il programma lanciare nella console di Matlab il comando \verb|iaas [#]|, dove \verb|#|, opzionale, non far\`a visualizzare nessuna finestra se assente o uguale a \verb|0|, se uguale a \verb|1| visualizzer\`a una serie di grafici che mostrano le curve approssimanti, mentre se uguale a \verb|2| mostrer\`a un numero maggiore di grafici (modalit\`a pensata principalmente per il debugging, l'eccessiva quantitat\'a di grafici rischia di risultare tediosa per l'utente).
+Per eseguire il programma lanciare nella console di Matlab il comando \verb|iaas [#]|, dove \verb|#|, opzionale, non far\`a visualizzare nessuna finestra se assente o uguale a \verb|0|, se uguale a \verb|1| visualizzer\`a una serie di grafici che mostrano le curve approssimanti, mentre per valori maggiori o uguali a \verb|2| mostrer\`a un numero maggiore di grafici (modalit\`a pensata principalmente per il debugging, l'eccessiva quantitat\'a di grafici rischia di risultare tediosa per l'utente).
 
 %\printbibliography
 

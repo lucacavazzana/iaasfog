@@ -75,7 +75,7 @@ for ff = feats
     end
     indf=indf+1;
     drawnow;
-    pause();
+    pause(.2);
     clf(fig);
 end
 

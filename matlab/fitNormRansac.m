@@ -19,7 +19,7 @@ feats = normContrast(feats, 'fitExp', showPlot);
 
 % sweeping some outliers
 lam = [feats.pars]; lam = lam(2:2:end); % tmp var, not the output
-feats(lam > prctile(lam,85)) = [];
+feats(lam > prctile(lam,80)) = [];
 
 % ransacching
 [pars ~] = myRansac(feats, showPlot);
