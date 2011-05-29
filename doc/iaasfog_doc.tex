@@ -5,7 +5,7 @@
 \usepackage[italian]{babel}
 \usepackage[latin1]{inputenc}
 \usepackage{url}
-\usepackage{biblatex}
+%\usepackage{biblatex}
 \usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage{caption}
@@ -82,8 +82,31 @@ $$k_fe^{-t_{imp}/\lambda}$$
 
 \chapter{Implementazione}
 
-\section{Tracking delle features}
+\noindent Il progetto \`e diviso in due parti: la prima, sviluppata in C++ in modo da poter sfruttare le funzioni messe a disposizione dalle librerie di OpenCV, si occupa dell'estrazione e delle features, del relativo tracking e del controllo della consistenza delle sequenze create, il calcolo del contrasto e dei tempi d'impatto. Vengono infine selezionate le sequenze migliori in base alla distanza del vanishing point calcolato. Questa parte viene descritta pi\`u in dettaglio nella sezioni da \ref{sect:track} a \ref{sect:contr}.\\
 
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.7]{images/schemaCpp.pdf} 
+	\label{diag:high}
+	\caption{Fase di estrazione delle features e calcolo dei relativi contrasti sul tti}
+\end{figure}
+
+\noindent La seconda seconda parte, sviluppata in matlab per sfruttarne le funzioni di fitting, calcola il $\lambda$ globale come la media dei parametri stimati delle migliori sequenze di dati, illustrato in dettaglio nella sottosezione \ref{sect:fit}.\\
+Viene inoltre riportato nella sottosezione \ref{sect:rans} un secondo approccio basato RANSAC, che avendo dato risultati interessanti \`e stato mantenuto ed \`e selezionabile come alternativa al metodo precedente.\\
+Nella sottosezione \ref{sect:minmax} viene infine riportato, per completezza, un terzo approccio tentato ed infine abbandonato in quanto poco robusto.\\
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.7]{images/schemaMatlab.pdf} 
+	\label{diag:high}
+	\caption{\textcolor{red}{aggiungere in parallelo ransac, magari in grigio invece che nero, per fare vedere che \`e di riserva. $\forall$ seq normalizza rispetto $k$ fittato $\Rightarrow$ loop: seleziona seq a caso, aggrega, fitta, controlla errore sulle altre}}
+\end{figure}
+
+\noindent \textcolor{red}{aggiungere alla fine una sezioncina con il confronto delle prestazioni fra i tre metodi per il lambda? Alla fine si traterebbe solo di spostare le ultime righe del capitolo minmax}
+
+
+\section{Tracking delle features}
+\label{sect:track}
 
 \noindent Il tracking delle features\footnote{All'interno di questo documento con il termine ``feature'' ci si riferisce ad una sequenza di corner associati ad uno stesso dettaglio nella scena in frame successivi.} deve individuare il maggior numero di features in ogni immagine, e nel contempo escludere gli outliers che influirebbero nei passaggi successivi dell'elaborazione.\\
 L'analisi dei frame avviene in modo inverso rispetto al tempo, in modo da individuare le features quando sono ben visibili per poi inseguirle nei frame temporalmente precedenti, dove il riconoscimento \`e pi\`u difficoltoso a causa della nebbia.\\
@@ -103,7 +126,7 @@ La posizione del vanishing point riveste un ruolo fondamentale nella risoluzione
 
 \begin{itemize}
 \item	Ad ogni iterazione viene eletto casualmente un possibile candidato vanishing point calcolando l'intersezione delle rette rappresentanti due features, con il solo vincolo di essere all'interno del field of view dell'immagine.
-\item	Per ogni retta viene calcolata la distanza dal vanishing point candidato. Tali distanze vengono ordinate in un vettore, la cui mediana sar\`a il rank associata a quel particolare vanishing point.
+\item	Per ogni retta viene calcolata la distanza dal vanishing pointimages/iaasBefore.png candidato. Tali distanze vengono ordinate in un vettore, la cui mediana sar\`a il rank associata a quel particolare vanishing point.
 \item	Se il nuovo vanishing point ha un rank migliore dei precedenti viene eletto come nuovo best vanishing point.
 \item	Il ciclo termina quando vengono analizzati un numero di intersezioni ritenuto sufficiente (il $5\%$ di tutte le possibili intersezioni tra rette).
 \end{itemize}
@@ -124,8 +147,6 @@ La posizione del vanishing point riveste un ruolo fondamentale nella risoluzione
 		\captionof{figure}{Linee di fuga coerenti con il vanishing point calcolato.}
 		\label{fig:vpAft}
 	\end{minipage}
-
-
 \end{figure}
 
 \noindent L'algoritmo applicato a diversi set di dati ha restituito buoni risultati con tempi notevolmente ridotti (circa $1$ secondo di elaborazione per $200$ features) rispetto alla precedente implementazione meno efficiente (complessit\`a $O\left(n^2\log{n}\right)$).\\
@@ -154,6 +175,7 @@ $$ \frac{\overline{ia}}{\overline{ab}} = \frac{\overline{a'v'}}{\overline{a'b'}}
 $$ t_{i} = \frac{\overline{a'v'}}{\overline{a'b'}}\frac{\overline{ab}}{v} = \frac{\overline{a'v'}}{\overline{a'b'}}f^{-1} $$
 
 \section{Calcolo del contrasto}
+\label{sect:contr}
 
 \noindent Per il calcolo del contrasto nell'intorno delle features sono stati presi in considerazione diversi approcci: oltre alla formule di Michelson e Weber, gi\`a sfruttate nelle precedenti fasi del progetto, \`e stato deciso di introdurre anche Root Mean Square, che calcola il livello di contrasto secondo la formula
 
@@ -188,7 +210,10 @@ $$ c\left(I_{M\times N}\right) = \sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(i_{i
 
 \noindent La visibilit\`a viene espressa come una distanza: tale misura potrebbe essere calcolata mediante il birapporto note le posizioni di un certo numero di landmark presenti nella scena o mediante il tempo all'impatto data la velocit\`a del veicolo. Sfortunatamente tali informazioni per il video campione fornito non sono disponibili, quindi ci si \`e limitati a considerare il tempo d'impatto medio calcolato per il parametro $\lambda$ come valutazione delle condizioni di visibilit\`a nell'ipotesi (forte) di velocit\`a costante.\\
 
+
+
 \subsection{Fitting di $\lambda$}
+\label{sect:fit}
 
 \noindent Una prima tecnica adottata \`e stata quella di sfruttare la funzione \verb|fit| di Matlab per estrarre il parametri $k_f$ e $\lambda_f$ che meglio descrivono ogni singola feature mediante il metodo dei minimi quadrati non lineare. Per ogni dato viene cos\`i calcolato l'errore rispetto alla curva generata, valore in base al quale verr\'a selezionata la met\'a dei dati migliori che verranno riutilizzati per approssimare nuovamente i parametri di una seconda curva esponenziale.\\
 
@@ -208,7 +233,11 @@ $$ c\left(I_{M\times N}\right) = \sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(i_{i
 
 \noindent L'ultimo approccio appare essere quello pi\`u robusto, ed \`e quello selezionato di default nel codice. Il $\lambda$ globale viene cos\`i calcolato come la mediana di quelli delle features selezionate.
 
+
+
+
 \subsection{Normalizzazione mediante fitting di $k$ e RANSAC}
+\label{sect:rans}
 
 \noindent Un'altra tecnica sperimentata consiste nel calcolare il parametro $k_f$ della curva che minimizza l'errore su ogni singola feature.\\
 
@@ -240,7 +269,11 @@ $$ c\left(I_{M\times N}\right) = \sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(i_{i
 \end{figure}
 
 
+
+
+
 \subsection{Stima di $\lambda$ mediante minMax (deprecato)}
+\label{sect:minmax}
 
 \noindent Definita la formula del contrasto per ogni feature come
 
