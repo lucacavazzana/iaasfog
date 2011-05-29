@@ -1,51 +1,25 @@
-\boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}
-\defcounter {refsection}{0}
 \select@language {italian}
-\defcounter {refsection}{0}
 \contentsline {chapter}{\numberline {1}Introduzione}{2}
-\defcounter {refsection}{0}
 \contentsline {chapter}{\numberline {2}Implementazione}{3}
-\defcounter {refsection}{0}
-\contentsline {section}{\numberline {2.1}Tracking delle features}{3}
-\defcounter {refsection}{0}
-\contentsline {section}{\numberline {2.2}Calcolo del vanishing point}{4}
-\defcounter {refsection}{0}
-\contentsline {section}{\numberline {2.3}Calcolo del tempo all'impatto}{5}
-\defcounter {refsection}{0}
-\contentsline {section}{\numberline {2.4}Calcolo del contrasto}{5}
-\defcounter {refsection}{0}
-\contentsline {section}{\numberline {2.5}Stima dei parametri}{10}
-\defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {2.5.1}Fitting di $\lambda $}{10}
-\defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {2.5.2}Normalizzazione mediante fitting di $k$ e RANSAC}{11}
-\defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {2.5.3}Stima di $\lambda $ mediante minMax (deprecato)}{12}
-\defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {3}Risultati sperimentali}{14}
-\defcounter {refsection}{0}
-\contentsline {section}{\numberline {3.1}Calcolo del vanishing pointe e tracking delle features}{15}
-\defcounter {refsection}{0}
-\contentsline {section}{\numberline {3.2}Tempi d'impatto}{20}
-\defcounter {refsection}{0}
-\contentsline {section}{\numberline {3.3}Stima di $\lambda $ mediante fitting}{22}
-\defcounter {refsection}{0}
-\contentsline {section}{\numberline {3.4}Stima di $\lambda $ mediante RANSAC}{31}
-\defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {4}Conclusioni e sviluppi futuri}{35}
-\defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {5}Documentazione}{36}
-\defcounter {refsection}{0}
-\contentsline {section}{\numberline {5.1}C++}{36}
-\defcounter {refsection}{0}
-\contentsline {section}{\numberline {5.2}Matlab}{36}
-\defcounter {refsection}{0}
-\contentsline {chapter}{\numberline {6}Installazione}{39}
-\defcounter {refsection}{0}
-\contentsline {section}{\numberline {6.1}OpenCV}{39}
-\defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {6.1.1}Windows}{39}
-\defcounter {refsection}{0}
-\contentsline {subsection}{\numberline {6.1.2}Linux / MacOSX}{39}
-\defcounter {refsection}{0}
-\contentsline {section}{\numberline {6.2}Installazione ed esecuzione del programma}{40}
+\contentsline {section}{\numberline {2.1}Tracking delle features}{5}
+\contentsline {section}{\numberline {2.2}Calcolo del vanishing point}{5}
+\contentsline {section}{\numberline {2.3}Calcolo del tempo all'impatto}{7}
+\contentsline {section}{\numberline {2.4}Calcolo del contrasto}{7}
+\contentsline {section}{\numberline {2.5}Stima dei parametri}{11}
+\contentsline {subsection}{\numberline {2.5.1}Fitting di $\lambda $}{11}
+\contentsline {subsection}{\numberline {2.5.2}Normalizzazione mediante fitting di $k$ e RANSAC}{12}
+\contentsline {subsection}{\numberline {2.5.3}Stima di $\lambda $ mediante minMax (deprecato)}{13}
+\contentsline {chapter}{\numberline {3}Risultati sperimentali}{15}
+\contentsline {section}{\numberline {3.1}Calcolo del vanishing pointe e tracking delle features}{16}
+\contentsline {section}{\numberline {3.2}Tempi d'impatto}{21}
+\contentsline {section}{\numberline {3.3}Stima di $\lambda $ mediante fitting}{23}
+\contentsline {section}{\numberline {3.4}Stima di $\lambda $ mediante RANSAC}{32}
+\contentsline {chapter}{\numberline {4}Conclusioni e sviluppi futuri}{36}
+\contentsline {chapter}{\numberline {5}Documentazione}{37}
+\contentsline {section}{\numberline {5.1}C++}{37}
+\contentsline {section}{\numberline {5.2}Matlab}{37}
+\contentsline {chapter}{\numberline {6}Installazione}{40}
+\contentsline {section}{\numberline {6.1}OpenCV}{40}
+\contentsline {subsection}{\numberline {6.1.1}Windows}{40}
+\contentsline {subsection}{\numberline {6.1.2}Linux / MacOSX}{40}
+\contentsline {section}{\numberline {6.2}Installazione ed esecuzione del programma}{41}
