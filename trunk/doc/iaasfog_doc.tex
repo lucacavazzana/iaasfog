@@ -82,7 +82,7 @@ $$k_fe^{-t_{imp}/\lambda}$$
 
 \chapter{Implementazione}
 
-\noindent Il progetto \`e diviso in due parti: la prima, sviluppata in C++ in modo da poter sfruttare le funzioni messe a disposizione dalle librerie di OpenCV, si occupa dell'estrazione e delle features, del relativo tracking e del controllo della consistenza delle sequenze create, il calcolo del contrasto e dei tempi d'impatto. Vengono infine selezionate le sequenze migliori in base alla distanza del vanishing point calcolato. Questa parte viene descritta pi\`u in dettaglio nella sezioni da \ref{sect:track} a \ref{sect:contr}.\\
+\noindent Il progetto \`e diviso in due parti: la prima, sviluppata in C\verb|++| in modo da poter sfruttare le funzioni messe a disposizione dalle librerie di OpenCV, si occupa dell'estrazione e delle features, del relativo tracking e del controllo della consistenza delle sequenze create, il calcolo del contrasto e dei tempi d'impatto. Vengono infine selezionate le sequenze migliori in base alla distanza del vanishing point calcolato. Questa parte viene descritta pi\`u in dettaglio nella sezioni da \ref{sect:track} a \ref{sect:contr}.\\
 
 \begin{figure}[H]
 	\centering
@@ -91,15 +91,15 @@ $$k_fe^{-t_{imp}/\lambda}$$
 	\caption{Fase di estrazione delle features e calcolo dei relativi contrasti sul tti}
 \end{figure}
 
-\noindent La seconda seconda parte, sviluppata in matlab per sfruttarne le funzioni di fitting, calcola il $\lambda$ globale come la media dei parametri stimati delle migliori sequenze di dati, illustrato in dettaglio nella sottosezione \ref{sect:fit}.\\
+\noindent La seconda seconda parte, sviluppata in Matlab per sfruttare le funzioni di fitting, calcola il $\lambda$ globale come la media dei parametri stimati delle migliori sequenze di dati, illustrato in dettaglio nella sottosezione \ref{sect:fit}.\\
 Viene inoltre riportato nella sottosezione \ref{sect:rans} un secondo approccio basato RANSAC, che avendo dato risultati interessanti \`e stato mantenuto ed \`e selezionabile come alternativa al metodo precedente.\\
-Nella sottosezione \ref{sect:minmax} viene infine riportato, per completezza, un terzo approccio tentato ed infine abbandonato in quanto poco robusto.\\
+Nella sottosezione \ref{sect:minmax} viene infine riportato per completezza l'approccio minMax, preso in considerazione ed infine abbandonato in quanto poco robusto.\\
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.7]{images/schemaMatlab.pdf} 
 	\label{diag:high}
-	\caption{\textcolor{red}{aggiungere in parallelo ransac, magari in grigio invece che nero, per fare vedere che \`e di riserva. $\forall$ seq normalizza rispetto $k$ fittato $\Rightarrow$ loop: seleziona seq a caso, aggrega, fitta, controlla errore sulle altre}}
+	\caption{A sinistra: fase di estrazione di $\lambda$ mediante fittig. A destra: approccio alternativo basato su RANSAC.}
 \end{figure}
 
 \noindent \textcolor{red}{aggiungere alla fine una sezioncina con il confronto delle prestazioni fra i tre metodi per il lambda? Alla fine si traterebbe solo di spostare le ultime righe del capitolo minmax}
