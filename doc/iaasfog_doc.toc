@@ -2,24 +2,24 @@
 \contentsline {chapter}{\numberline {1}Introduzione}{2}
 \contentsline {chapter}{\numberline {2}Implementazione}{3}
 \contentsline {section}{\numberline {2.1}Tracking delle features}{4}
-\contentsline {section}{\numberline {2.2}Calcolo del vanishing point}{4}
-\contentsline {section}{\numberline {2.3}Calcolo del tempo all'impatto}{5}
-\contentsline {section}{\numberline {2.4}Calcolo del contrasto}{6}
-\contentsline {section}{\numberline {2.5}Stima dei parametri}{7}
-\contentsline {subsection}{\numberline {2.5.1}Fitting di $\lambda $}{7}
-\contentsline {subsection}{\numberline {2.5.2}Normalizzazione mediante fitting di $k$ e RANSAC}{8}
-\contentsline {subsection}{\numberline {2.5.3}Stima di $\lambda $ mediante minMax (deprecato)}{9}
-\contentsline {chapter}{\numberline {3}Risultati sperimentali}{10}
-\contentsline {section}{\numberline {3.1}Calcolo del vanishing pointe e tracking delle features}{11}
-\contentsline {section}{\numberline {3.2}Tempi d'impatto}{13}
-\contentsline {section}{\numberline {3.3}Stima di $\lambda $ mediante fitting}{15}
-\contentsline {section}{\numberline {3.4}Stima di $\lambda $ mediante RANSAC}{23}
-\contentsline {chapter}{\numberline {4}Conclusioni e sviluppi futuri}{27}
-\contentsline {chapter}{\numberline {5}Documentazione}{28}
-\contentsline {section}{\numberline {5.1}C++}{28}
-\contentsline {section}{\numberline {5.2}Matlab}{28}
-\contentsline {chapter}{\numberline {6}Installazione}{31}
-\contentsline {section}{\numberline {6.1}OpenCV}{31}
-\contentsline {subsection}{\numberline {6.1.1}Windows}{31}
-\contentsline {subsection}{\numberline {6.1.2}Linux / MacOSX}{31}
-\contentsline {section}{\numberline {6.2}Installazione ed esecuzione del programma}{32}
+\contentsline {section}{\numberline {2.2}Calcolo del vanishing point}{5}
+\contentsline {section}{\numberline {2.3}Calcolo del tempo all'impatto}{6}
+\contentsline {section}{\numberline {2.4}Calcolo del contrasto}{7}
+\contentsline {section}{\numberline {2.5}Stima dei parametri}{11}
+\contentsline {subsection}{\numberline {2.5.1}Fitting di $\lambda $}{11}
+\contentsline {subsection}{\numberline {2.5.2}Normalizzazione mediante fitting di $k$ e RANSAC}{12}
+\contentsline {subsection}{\numberline {2.5.3}Stima di $\lambda $ mediante minMax (deprecato)}{14}
+\contentsline {chapter}{\numberline {3}Risultati sperimentali}{15}
+\contentsline {section}{\numberline {3.1}Calcolo del vanishing pointe e tracking delle features}{16}
+\contentsline {section}{\numberline {3.2}Tempi d'impatto}{21}
+\contentsline {section}{\numberline {3.3}Stima di $\lambda $ mediante fitting}{23}
+\contentsline {section}{\numberline {3.4}Stima di $\lambda $ mediante RANSAC}{32}
+\contentsline {chapter}{\numberline {4}Conclusioni e sviluppi futuri}{36}
+\contentsline {chapter}{\numberline {5}Documentazione}{37}
+\contentsline {section}{\numberline {5.1}C++}{37}
+\contentsline {section}{\numberline {5.2}Matlab}{37}
+\contentsline {chapter}{\numberline {6}Installazione}{40}
+\contentsline {section}{\numberline {6.1}OpenCV}{40}
+\contentsline {subsection}{\numberline {6.1.1}Windows}{40}
+\contentsline {subsection}{\numberline {6.1.2}Linux / MacOSX}{40}
+\contentsline {section}{\numberline {6.2}Installazione ed esecuzione del programma}{41}
