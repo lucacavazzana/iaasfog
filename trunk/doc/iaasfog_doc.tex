@@ -53,7 +53,7 @@ Prof.~Vincenzo \textsc{Caglioti}
 \\[4cm]
 
 % Bottom of the page
-{\large 17 maggio 2011}
+{\large 30 maggio 2011}
 
 \end{center}
 \end{adjustwidth}
@@ -82,7 +82,7 @@ $$k_fe^{-t_{imp}/\lambda}$$
 
 \chapter{Implementazione}
 
-\noindent Il progetto \`e diviso in due parti: la prima, sviluppata in C\verb|++| in modo da poter sfruttare le funzioni messe a disposizione dalle librerie di OpenCV, si occupa dell'estrazione e del tracking delle features, del controllo della consistenza delle sequenze create, il calcolo del contrasto e dei tempi d'impatto. Seleziona infine le sequenze migliori in base alla distanza del vanishing point calcolato. Questa parte viene descritta pi\`u in dettaglio nella sezioni da \ref{sect:track} a \ref{sect:contr}.\\
+\noindent Il progetto \`e diviso in due parti: la prima, sviluppata in C\verb|++| in modo da poter sfruttare le funzioni messe a disposizione dalle librerie di OpenCV, si occupa dell'estrazione e del tracking delle features, del controllo della consistenza delle sequenze create, del calcolo del contrasto e dei tempi d'impatto. Seleziona infine le sequenze migliori in base alla distanza del vanishing point calcolato. Questa parte viene descritta pi\`u in dettaglio nelle sezioni da \ref{sect:track} a \ref{sect:contr}.\\
 
 \begin{figure}[H]
 	\centering
@@ -99,7 +99,7 @@ Nella sottosezione \ref{sect:minmax} viene infine riportato per completezza l'ap
 	\centering 
 	\includegraphics[scale=0.7]{images/schemaMatlab.pdf} 
 	\label{diag:high}
-	\caption{A sinistra: fase di calcolo di $\lambda$ mediante fittig. A destra, ombreggiato: approccio alternativo basato su RANSAC.}
+	\caption{A sinistra: fase di calcolo di $\lambda$ mediante fitting. A destra, ombreggiato: approccio alternativo basato su RANSAC.}
 \end{figure}
 
 
@@ -215,7 +215,7 @@ $$ c\left(I_{M\times N}\right) = \sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(i_{i
 \subsection{Fitting di $\lambda$}
 \label{sect:fit}
 
-\noindent Una prima tecnica adottata \`e stata quella di sfruttare la funzione \verb|fit| di Matlab per estrarre il parametri $k_f$ e $\lambda_f$ che meglio descrivono ogni singola feature mediante il metodo dei minimi quadrati non lineare. Per ogni dato viene cos\`i calcolato l'errore rispetto alla curva generata, valore in base al quale verr\'a selezionata la met\'a dei dati migliori che verranno riutilizzati per approssimare nuovamente i parametri di una seconda curva esponenziale.\\
+\noindent Una prima tecnica adottata (e di fatto algoritmo selezionato di default nel codice sviluppato) \`e stata quella di sfruttare la funzione \verb|fit| di Matlab per estrarre il parametri $k_f$ e $\lambda_f$ che meglio descrivono ogni singola feature mediante il metodo dei minimi quadrati non lineare. Per ogni dato viene cos\`i calcolato l'errore rispetto alla curva generata, valore in base al quale verr\'a selezionata la met\'a dei dati migliori che verranno riutilizzati per approssimare nuovamente i parametri di una seconda curva esponenziale.\\
 
 \begin{center}
 	\includegraphics[scale=0.7]{images/twoFits.png}
@@ -239,7 +239,7 @@ $$ c\left(I_{M\times N}\right) = \sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(i_{i
 \subsection{Normalizzazione mediante fitting di $k$ e RANSAC}
 \label{sect:rans}
 
-\noindent Un'altra tecnica sperimentata consiste nel calcolare il parametro $k_f$ della curva che minimizza l'errore su ogni singola feature.\\
+\noindent Un'altra tecnica sperimentata (selezionabile come algoritmo alternativo a quello descritto nella sezione precedente) consiste nel calcolare il parametro $k_f$ della curva che minimizza l'errore su ogni singola feature.\\
 
 \begin{figure}[H]
 	\centering
