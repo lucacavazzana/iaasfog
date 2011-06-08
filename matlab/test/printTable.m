@@ -1,11 +1,4 @@
-% imStart = ['Images/frame0000.jpg';...
-%     'Images/frame0020.jpg';...
-%     'Images/frame0040.jpg';...
-%     'Images/frame0060.jpg'];
-% 
-% n = [15,25,35,50];
-
-load('oldImgs.mat');
+load('newImgs.mat');
 
 disp('fit:')
 disp('\hline');
@@ -42,7 +35,7 @@ for st = 1:size(imStart,1)
     for num = 1:size(n,2)        
         
         asd = [res(st,num,:).nFeats];
-        lol = [lol, ' & ' num2str(mean(asd),3),'s (',num2str(std(asd),2),'s)'];
+        lol = [lol, ' & ' num2str(mean(asd),3),' (',num2str(std(asd),2),')'];
         
     end
     disp([lol, '\\ \hline']);
