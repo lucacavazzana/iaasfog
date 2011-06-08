@@ -14,7 +14,7 @@ function [] = inspectFeatures(imPaths, feats, vp)
 %   See also PARSEFEATURES
 
 %   Copyright 2011 Stefano Cadario, Luca Cavazzana.
-%   $Revision: xxxxx $  $Date: 2011/04/11 17:20:22 $
+%   $Revision: xxxxx $  $Date: 2011/05/15  $
 
 % REMEMBER: in 'feats' elements are ordered from the nearest to the
 % farthest

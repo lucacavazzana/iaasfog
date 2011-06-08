@@ -5,7 +5,10 @@ function [] = estimateLamMinMax(feats, showPlot)
 %   This method is too much sensitive to outliers, hence we advise against
 %   using it
 
-if ~exist('showPlot','var')
+%   Copyright 2011 Stefano Cadario, Luca Cavazzana.
+%   $Revision: xxxxx $  $Date: 2011/05/10 $
+
+if nargin < 2
     showPlot = 0;
 end
 
@@ -17,12 +20,14 @@ end
 feats = feats([feats.pars]~=-1);
 disp(['Now only ', num2str(size(feats,2)), ' feats']);
 
-if showPlot
-    hist([feats.pars]);
-    title(['mean: ', num2str(mean([feats.pars])), ', median: ', num2str(median([feats.pars]))]);
-    disp(' ');
-    disp('Estimated lambdas:');
-    disp(num2str([feats.pars]));
+if ~showPlot
+    return;
 end
+
+hist([feats.pars]);
+title(['mean: ', num2str(mean([feats.pars])), ', median: ', num2str(median([feats.pars]))]);
+disp(' ');
+disp('Estimated lambdas:');
+disp(num2str([feats.pars]));
 
 end

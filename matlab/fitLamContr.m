@@ -20,9 +20,9 @@ function [feats] = fitLamContr(feats, showPlot)
 %   See also PARSEFEATURES, ESTIMATELAMFIT
 
 %   Copyright 2011 Stefano Cadario, Luca Cavazzana.
-%   $Revision: xxxxx $  $Date: 2011/04/13 17:20:22 $
+%   $Revision: xxxxx $  $Date: 2011/05/17 $
 
-if ~exist('showPlot','var')
+if nargin < 2
     showPlot = 0;
 end
 
@@ -55,7 +55,7 @@ for ff = feats
     try
         [cfun gof] = fit(ff.tti',ff.contr', ft, options);
     catch exc %#ok
-        disp('- Warning: Inf computed by model function. Feat deleted');
+        warning('Inf computed by model function. Feat deleted');
         infFit = infFit +1;
         feats(ii) = [];
     end

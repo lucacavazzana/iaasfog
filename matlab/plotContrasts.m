@@ -9,7 +9,7 @@ function [fig] = plotContrasts(feats)
 %     'fig'     :   figure handler
 
 %   Copyright 2011 Stefano Cadario, Luca Cavazzana.
-%   $Revision: xxxxx $  $Date: 2011/04/13 17:20:22 $
+%   $Revision: xxxxx $  $Date: 2011/05/09 $
 
 % 0 = using frames
 % 1 = using time-to-impact

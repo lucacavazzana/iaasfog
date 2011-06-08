@@ -7,10 +7,10 @@ function [contr, norm] = contrastMap(img, alg)
 %   (default),1:MICHELSON, 2:WEBER)
 
 %   Copyright 2011 Stefano Cadario, Luca Cavazzana.
-%   $Revision: xxxxx $  $Date: 2011/04/18 17:20:22 $
+%   $Revision: xxxxx $  $Date: 2011/05/05 $
 
 %default: RMS
-if exist('alg','var')~=1
+if nargin < 2
     alg=0;
 end
 

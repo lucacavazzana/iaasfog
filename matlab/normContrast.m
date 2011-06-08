@@ -16,7 +16,7 @@ function [feats] = normContrast(feats, type, showPlot)
 %   See also PARSEFEATURES
 
 %   Copyright 2011 Stefano Cadario, Luca Cavazzana.
-%   $Revision: xxxxx $  $Date: 2011/04/09 11:59:22 $
+%   $Revision: xxxxx $  $Date: 2011/05/11 $
 
 
 if ~exist('showPlot','var')

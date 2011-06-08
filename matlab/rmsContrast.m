@@ -20,7 +20,7 @@ function [contr] = rmsContrast(feature, image, n)
 %   See also MICHELSONCONTRAST, WEBERCONTRAST.
 
 %   Copyright 2011 Stefano Cadario, Luca Cavazzana.
-%   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
+%   $Revision: xxxxx $  $Date: 2011/05/10 $
 
 if exist('image','var')
     if ~exist('n','var')

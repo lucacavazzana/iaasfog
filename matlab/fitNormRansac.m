@@ -8,12 +8,16 @@ function [lam] = fitNormRansac(feats, showPlot)
 %       'feat'  :   list of features as parsed by parseFeatures
 %
 %   OUTPUT:
-%       'lam'   :   the computed lambda    
+%       'lam'   :   the computed lambda
 %
 %   See also PARSEFEATURES, NORMCONTRAST
 
 %   Copyright 2011 Stefano Cadario, Luca Cavazzana.
-%   $Revision: xxxxx $  $Date: 2011/04/09 11:59:22 $
+%   $Revision: xxxxx $  $Date: 2011/05/16 $
+
+if nargin < 2
+    showPlot = 0;
+end
 
 feats = normContrast(feats, 'fitExp', showPlot);
 
@@ -24,19 +28,21 @@ feats(lam > prctile(lam,80)) = [];
 % ransacching
 [pars ~] = myRansac(feats, showPlot);
 
-if showPlot
-    figure; grid on; hold on;
-    
-    plot(0:.01:max([feats.tti]), exp(-(0:.01:max([feats.tti]))/pars.lam), 'y*');
-    title(['lambda: ', num2str(pars.lam)]);
-    
-    for ff = feats
-        plot(ff.tti, ff.contr, 'o');
-    end
-    pause;
-    close;
+lam = pars.lam;
+
+if ~showPlot
+    return;
 end
 
-lam = pars.lam;
+figure; grid on; hold on;
+
+plot(0:.01:max([feats.tti]), exp(-(0:.01:max([feats.tti]))/pars.lam), 'y*');
+title(['lambda: ', num2str(pars.lam)]);
+
+for ff = feats
+    plot(ff.tti, ff.contr, 'o');
+end
+pause;
+close;
 
 end
