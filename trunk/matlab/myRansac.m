@@ -64,7 +64,8 @@ for ii=1:K
     end
     
     lam = interpFn.lam;
-    
+%     [k lam2] = fitExp([modelSet.tti]',[modelSet.contr]');
+%     fprintf('fit: %f, calc: %f',lam, lam2);
     
     if showPlot
         disp(' ');
@@ -74,6 +75,7 @@ for ii=1:K
             % show how the function fits the model
             yFit = exp(-x/lam);
             plot(x,yFit);
+%             plot(x,exp(-x/lam2),'r');
             title(['candidate lambda: ', num2str(lam)]);
             legend('model data','fitted function');
             drawnow

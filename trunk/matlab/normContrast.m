@@ -69,20 +69,26 @@ elseif strcmp(type, 'fitExp') %-----------------------------------------------
     end
     ii=1;
     for ff = feats
-        
         options.StartPoint = [max(ff.contr), 1]; % TODO: find good starting point
-        cfun = fit(ff.tti',ff.contr(1:end)', ft, options);
+        [cfun] = fit(ff.tti',ff.contr(1:end)', ft, options);
+%         [cfun gof] = fit(ff.tti',ff.contr(1:end)', ft, options);
         
         feats(ii).contr = ff.contr/cfun.k;
         feats(ii).pars = [cfun.k, cfun.lam];
         
+%         [k, lam, rmse] = fitExp(ff.tti,ff.contr);
+%         feats(ii).pars = [k, lam];
+%         [rmse, gof.rmse]
+
         if showPlot > 2 % plotting for debug
             
             plot(feats(ii).tti,cfun.k*feats(ii).contr(1:end), 'ro');
             hold on; grid on;
             x = feats(ii).tti(1):.01:feats(ii).tti(end);
             plot(x, cfun.k*exp(-x/cfun.lam));
-            legend(['feat #', num2str(ii)], ['k: ', num2str(cfun.k), ', lambda: ', num2str(cfun.lam)]);
+%             plot(x, k*exp(-x/lam),'r');
+            legend(sprintf('feat #%d',ii), sprintf('k: %f, lambda: %f', cfun.k, cfun.lam));
+%             legend(sprintf('feat #%d',ii), sprintf('k: %f, lambda: %f', cfun.k, cfun.lam), sprintf('k: %f, lambda: %f', k, lam));
             
             pause();
             clf;

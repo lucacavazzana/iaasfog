@@ -663,7 +663,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 \noindent Si nota come all'aumentare della lunghezza dell'analisi le soluzioni tendano a convergere, essendo le condizioni di visibilit\`a sostanzialmente identiche nelle diverse sequenze. Per un $\lambda$ pari ad 1.4s ad una velocit\`a di 60 km/h la visibilit\`a risulta essere di 23.3m\\
 
-\noindent Ricordiamo che il $\lambda$ ottenuto corrisponde alla distanza media per cui la curva teorica del contrasto delle varie features raggiunge il valore $k_f/e$, scelto in quanto comodo per i calcoli, e non va quindi interpretato come visibilit\`a in termini ``umani'': per far ci\`o si dovrebbe determinare un valore percentuale $q$ sul contrasto raggiunto il quale una feature campione pu\`o essere considerata visibile per un occhio umano, per poi riscalare i valori ottenuti mediante un coefficiente $\alpha$ (pari a $-log\left(q\right)$) come nella formula
+\noindent \textcolor{red}{SPOSTARE QUESTO PEZZO PRIMA, MAGARI \`E QUESTO CHE IL CAGLIOTI VOLEVA NELLA MAIL}Ricordiamo che il $\lambda$ ottenuto corrisponde alla distanza media per cui la curva teorica del contrasto delle varie features raggiunge il valore $k_f/e$, scelto in quanto comodo per i calcoli, e non va quindi interpretato come visibilit\`a in termini ``umani'': per far ci\`o si dovrebbe determinare un valore percentuale $q$ sul contrasto raggiunto il quale una feature campione pu\`o essere considerata visibile per un occhio umano, per poi riscalare i valori ottenuti mediante un coefficiente $\alpha$ (pari a $-log\left(q\right)$) come nella formula
 
 $$qk_f = k_fe^{-t_{imp,q}/\lambda}$$
 $$t_{imp,q} = -\lambda\log \left(q\right) = \alpha\lambda$$
@@ -767,7 +767,16 @@ $$t_{imp,q} = -\lambda\log \left(q\right) = \alpha\lambda$$
 \end{center}
 \end{table}
 
-\noindent I risultati, per quanto molto pi\`u variabili, sembrano avvicinarsi a quelli ottenuti nell'analogo test usanto il metodo di fitting. Un simile risultato era prevedibile dal momento che vengono usati meno filtri sulla bont\`a delle features.
+\noindent I risultati, per quanto molto pi\`u variabili, sembrano avvicinarsi a quelli ottenuti nell'analogo test usanto il metodo di fitting. Un simile risultato era prevedibile dal momento che vengono usati meno filtri sulla bont\`a delle features. \\
+
+
+
+\subsection{Confronto}
+
+\noindent \textcolor{red}{confronto tra fit e RANSAC su\dots\\
+- bont\`a dei risultati (in base a cosa se non abbiamo i dati?). Fit fa maggiore controllo sui dati, ransac invece macina anche rumore (ma alla fine \`e ransac, no?) \\
+- consistenza: confrontando le std delle simulazioni \\
+- velocit\`a: prova un po'...}
 
 
 
