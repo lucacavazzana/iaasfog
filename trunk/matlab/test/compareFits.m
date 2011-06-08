@@ -71,7 +71,7 @@ while ii<=10
     st = 1;
 end
 
-save('lol.mat','res','imStart','num');
+save('lol.mat','res','imStart','n');
 
 disp('DONE!');
 
