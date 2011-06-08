@@ -1,21 +1,48 @@
-% imStart = ['Images01/frame0000.png';...
-%     'Images02/frame0000.png';...
-%     'Images02/frame0060.png';...
-%     'Images03/frame0000.png';...
-%     'Images04/frame0000.png';...
-%     'Images04/frame0040.png';...
-%     'Images05/frame0000.png';...
-%     'Images05/frame0100.png'];
+% imStart = ['Images/frame0000.jpg';...
+%     'Images/frame0020.jpg';...
+%     'Images/frame0040.jpg';...
+%     'Images/frame0060.jpg'];
+% 
+% n = [15,25,35,50];
 
-res = resRans;
+load('oldImgs.mat');
 
-
+disp('fit:')
 disp('\hline');
 for st = 1:size(imStart,1)
     lol = [imStart(st,:)];
-    for n = 1:4 % già formattato per latex, lol
+    for num = 1:size(n,2) % già formattato per latex, lol
+                
+        asd = [res(st,num,[res(st,num,:).fit]>0).fit];
+        lol = [lol, ' & ' num2str(mean(asd),3),'s (',num2str(std(asd),2),'s)'];
         
-        lol = [lol, ' & ' num2str(mean(res(st,n,res(st,n,:)>0)),3),'s (',num2str(std(res(st,n,res(st,n,:)>0)),2),'s)'];
+    end
+    disp([lol, '\\ \hline']);
+end
+
+disp(' ');
+disp('ransac:')
+disp('\hline');
+for st = 1:size(imStart,1)
+    lol = imStart(st,:);
+    for num = 1:size(n,2)        
+        
+        asd = [res(st,num,[res(st,num,:).rans]>0).rans];
+        lol = [lol, ' & ' num2str(mean(asd),3),'s (',num2str(std(asd),2),'s)'];
+        
+    end
+    disp([lol, '\\ \hline']);
+end
+
+disp(' ');
+disp('nFeats:')
+disp('\hline');
+for st = 1:size(imStart,1)
+    lol = imStart(st,:);
+    for num = 1:size(n,2)        
+        
+        asd = [res(st,num,:).nFeats];
+        lol = [lol, ' & ' num2str(mean(asd),3),'s (',num2str(std(asd),2),'s)'];
         
     end
     disp([lol, '\\ \hline']);
