@@ -16,7 +16,7 @@ function [bestPars, bestModel, bestError] = myRansac(feats, showPlot)
 %   See also PARSEFEATURES
 
 %   Copyright 2011 Stefano Cadario, Luca Cavazzana.
-%   $Revision: xxxxx $  $Date: 2011/05/15 $
+%   $Revision: xxxxx $  $Date: 2011/06/08 $
 
 if nargin < 2
     showPlot = 0;
