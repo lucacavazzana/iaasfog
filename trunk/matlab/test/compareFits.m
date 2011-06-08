@@ -3,20 +3,20 @@ function [] = compareFits()
 % result matrix on file
 
 % old set
-imStart = ['Images/frame0000.jpg';...
-    'Images/frame0020.jpg';...
-    'Images/frame0040.jpg';...
-    'Images/frame0060.jpg'];
+% imStart = ['Images/frame0000.jpg';...
+%     'Images/frame0020.jpg';...
+%     'Images/frame0040.jpg';...
+%     'Images/frame0060.jpg'];
 
 % new set
-% imStart = ['Images01/frame0000.png';...
-%     'newImages/Images02/frame0000.png';...
-%     'newImages/Images02/frame0060.png';...
-% 	  'newImages/Images03/frame0000.png';...
-%     'newImages/Images04/frame0000.png';...
-%     'newImages/Images04/frame0040.png';...
-%     'newImages/Images05/frame0000.png';...
-%     'newImages/Images05/frame0100.png'];
+imStart = ['Images01/frame0000.png';...
+    'newImages/Images02/frame0000.png';...
+    'newImages/Images02/frame0060.png';...
+    'newImages/Images03/frame0000.png';...
+    'newImages/Images04/frame0000.png';...
+    'newImages/Images04/frame0040.png';...
+    'newImages/Images05/frame0000.png';...
+    'newImages/Images05/frame0100.png'];
 
 nSt = size(imStart,1);
 
@@ -24,7 +24,7 @@ n = [15,25,35,50];
 nLen = size(n,2);
 
 if exist('lol.mat','file')==2 % reload datas in case of crash
-    load('lol.mat');
+    load('lol.mat','res','ii','st','num');
 else % initialize
     res.feats = []; % features
     res.nFeats = []; % #feats
@@ -38,12 +38,10 @@ else % initialize
     num = 1;
 end
 
-
 while ii<=10
-    while st <= nSt
-        while num <= nLen
-            
-            fprintf('%s, %d frames, try #%d\n', imStart(st), n(num), ii);
+    while st<=nSt
+        while num<=nLen
+            fprintf('\n %s, %d frames, try #%d\n', imStart(st,:), n(num), ii);
             
             cmd = ['c++/Debug/iaasfog -f /home/luca/Matlab/iaasfog/ -i ', imStart(st,:),' -n ', num2str(n(num)),' -o compare.txt'];
             system(cmd);
@@ -61,14 +59,20 @@ while ii<=10
                 disp('Infinite computed, Ransac fail');
             end
             
-            save lol.mat; %mica che crasha e mi tocca ricominciare da 0, con quello che ci mette...
+            save('lol.mat','res','ii','st','num'); %mica che crasha e mi tocca ricominciare da 0, con quello che ci mette...
             pause(5); % per lasciare raffreddare il processore...
-            
+
             num = num+1;
         end
-        nSt = nSt +1;
+        st = st+1;
+        num = 1;
     end
     ii = ii+1;
+    st = 1;
 end
+
+save('lol.mat','res','imStart','num');
+
+disp('DONE!');
 
 end

@@ -14,7 +14,7 @@ function [lam] = estimateLamFit(feats, showPlot)
 %   See also PARSEFEATURES, FITLAMCONTR
 
 %   Copyright 2011 Stefano Cadario, Luca Cavazzana.
-%   $Revision: xxxxx $  $Date: 2011/05/13 $
+%   $Revision: xxxxx $  $Date: 2011/06/08 $
 
 if nargin < 2
     showPlot = 0;

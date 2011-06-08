@@ -13,7 +13,7 @@ function [lam] = iaas(showPlot)
 %      'lam'        : computed lamda value for k*exp(-t/lam)
 
 %   Copyright 2011 Stefano Cadario, Luca Cavazzana.
-%   $Revision: xxxxx $  $Date: 2011/05/16 $
+%   $Revision: xxxxx $  $Date: 2011/06/08 $
 
 % OPTIONS
 GUI = 0;    % if 0 use our default test values
