@@ -13,7 +13,7 @@ function [lam] = iaas(showPlot)
 %      'lam'        : computed lamda value for k*exp(-t/lam)
 
 %   Copyright 2011 Stefano Cadario, Luca Cavazzana.
-%   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
+%   $Revision: xxxxx $  $Date: 2011/05/16 $
 
 % OPTIONS
 GUI = 0;    % if 0 use our default test values
@@ -21,10 +21,9 @@ GUI = 0;    % if 0 use our default test values
 try
 %     !rm outFile.txt
 catch e
-    
 end
 
-if ~exist('showPlot','var')
+if ~nargin
     showPlot=0;
 else
     showPlot = str2double(showPlot);

@@ -19,7 +19,7 @@ function [feats]  = parseFeatures(fileName, cleanFeats)
 %                       f.pars - vector to store possible parameters
 
 %   Copyright 2011 Stefano Cadario, Luca Cavazzana.
-%   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
+%   $Revision: xxxxx $  $Date: 2011/05/11 $
 
 
 if ~exist('cleanFeats','var')  %FIXME: rimuovere cleanFeats quando sarà sistemato in findFeatures

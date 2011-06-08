@@ -1,5 +1,8 @@
 function [fol, img, nImg] = iaasGui()
 
+%   Copyright 2011 Stefano Cadario, Luca Cavazzana.
+%   $Revision: xxxxx $  $Date: 2011/05/07 $
+
 f = figure('Visible','off','Position',[360,500,400,120]);
 
 hFolderLabel = uicontrol('Style','text','String','image folder',...

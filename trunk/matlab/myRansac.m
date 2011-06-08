@@ -16,9 +16,9 @@ function [bestPars, bestModel, bestError] = myRansac(feats, showPlot)
 %   See also PARSEFEATURES
 
 %   Copyright 2011 Stefano Cadario, Luca Cavazzana.
-%   $Revision: xxxxx $  $Date: 2011/04/07 17:20:22 $
+%   $Revision: xxxxx $  $Date: 2011/05/15 $
 
-if ~exist('showPlot','var')
+if nargin < 2
     showPlot = 0;
 end
 
@@ -56,8 +56,13 @@ for ii=1:K
         drawnow;
     end
     
+    try
+        interpFn = fit([modelSet.tti]',[modelSet.contr]', fun, options); % and now fit!
+    catch e
+        warning('Inf computed in the fitting function. Moving to the next model');
+        continue;
+    end
     
-    interpFn = fit([modelSet.tti]',[modelSet.contr]', fun, options); % and now fit!
     lam = interpFn.lam;
     
     

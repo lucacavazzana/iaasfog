@@ -17,7 +17,7 @@ function[wContr] = weberContrast(feature, image, n, fogLevel)
 %   See also MICHELSONCONTRAST, RMSCONTRAST.
 
 %   Copyright 2011 Stefano Cadario, Luca Cavazzana.
-%   $Revision: xxxxx $  $Date: 2011/02/01 17:20:22 $
+%   $Revision: xxxxx $  $Date: 2011/05/19 $
 
 
 if exist('image','var')
