@@ -9,18 +9,18 @@
 \contentsline {subsection}{\numberline {2.5.1}Fitting di $\lambda $}{11}
 \contentsline {subsection}{\numberline {2.5.2}Normalizzazione mediante fitting di $k$ e RANSAC}{12}
 \contentsline {subsection}{\numberline {2.5.3}Stima di $\lambda $ mediante minMax (deprecato)}{14}
-\contentsline {chapter}{\numberline {3}Risultati sperimentali}{15}
-\contentsline {section}{\numberline {3.1}Calcolo del vanishing pointe e tracking delle features}{16}
-\contentsline {section}{\numberline {3.2}Tempi d'impatto}{21}
-\contentsline {section}{\numberline {3.3}Stima di $\lambda $ mediante fitting}{23}
-\contentsline {section}{\numberline {3.4}Stima di $\lambda $ mediante RANSAC}{32}
-\contentsline {subsection}{\numberline {3.4.1}Confronto}{35}
-\contentsline {chapter}{\numberline {4}Conclusioni e sviluppi futuri}{36}
-\contentsline {chapter}{\numberline {5}Documentazione}{37}
-\contentsline {section}{\numberline {5.1}C++}{37}
-\contentsline {section}{\numberline {5.2}Matlab}{37}
-\contentsline {chapter}{\numberline {6}Installazione}{40}
-\contentsline {section}{\numberline {6.1}OpenCV}{40}
-\contentsline {subsection}{\numberline {6.1.1}Windows}{40}
-\contentsline {subsection}{\numberline {6.1.2}Linux / MacOSX}{40}
-\contentsline {section}{\numberline {6.2}Installazione ed esecuzione del programma}{41}
+\contentsline {chapter}{\numberline {3}Risultati sperimentali}{16}
+\contentsline {section}{\numberline {3.1}Calcolo del vanishing point e tracking delle features}{17}
+\contentsline {section}{\numberline {3.2}Tempi d'impatto}{22}
+\contentsline {section}{\numberline {3.3}Stima di $\lambda $ mediante fitting}{24}
+\contentsline {section}{\numberline {3.4}Stima di $\lambda $ mediante RANSAC}{33}
+\contentsline {subsection}{\numberline {3.4.1}Confronto}{36}
+\contentsline {chapter}{\numberline {4}Conclusioni e sviluppi futuri}{37}
+\contentsline {chapter}{\numberline {5}Documentazione}{39}
+\contentsline {section}{\numberline {5.1}C++}{39}
+\contentsline {section}{\numberline {5.2}Matlab}{39}
+\contentsline {chapter}{\numberline {6}Installazione}{42}
+\contentsline {section}{\numberline {6.1}OpenCV}{42}
+\contentsline {subsection}{\numberline {6.1.1}Windows}{42}
+\contentsline {subsection}{\numberline {6.1.2}Linux / MacOSX}{42}
+\contentsline {section}{\numberline {6.2}Installazione ed esecuzione del programma}{43}
