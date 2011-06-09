@@ -38,9 +38,9 @@ feats(1).err2perc = []; % mean percent error over the second fit
 feats(1).rmse2 = [];    % rmse error over the second fit
 feats(1).intErr = [];   % area between the two fitted functions
 
-fun = 'k*exp(-x/lam)';
-ft = fittype(fun);
-options = fitoptions('Method', 'NonlinearLeastSquares');
+% fun = 'k*exp(-x/lam)';
+% ft = fittype(fun);
+% options = fitoptions('Method', 'NonlinearLeastSquares');
 
 if showPlot > 2
     asd = figure;
@@ -49,22 +49,24 @@ end
 ii=1; infFit = 0; % to handle possible exceptions caused by fitting generating infinite values
 for ff = feats
     
-    options.StartPoint = [max(ff.contr), .5]; % TODO: find good starting points
+%     options.StartPoint = [max(ff.contr), .5]; % TODO: find good starting points
     
     % first fit
     try
-        [cfun gof] = fit(ff.tti',ff.contr', ft, options);
+%         [cfun gof] = fit(ff.tti',ff.contr', ft, options);
+        [cfun gof] = fit(ff.tti',ff.contr', 'exp1');
+        k = cfun.a; lam = -1/cfun.b;
     catch exc %#ok
         warning('Inf computed by model function. Feat deleted');
         infFit = infFit +1;
         feats(ii) = [];
     end
     
-    fitted = cfun.k*exp(-(ff.tti)/cfun.lam);
+    fitted = k*exp(-(ff.tti)/lam);
     err = abs(ff.contr - fitted);   % error 1th fit
     
     % memorizziamo un po' tutto per prova...
-    ff.err1norm = mean(err)/cfun.lam; % 1th mean norm error
+    ff.err1norm = mean(err)/lam; % 1th mean norm error
     ff.err1perc = mean(err ./ fitted);  % 1th mean perc error
     ff.rmse1 = gof.rmse;    % 1th rmse
     
@@ -76,47 +78,49 @@ for ff = feats
         plot(ff.tti, ff.contr, 'o');
         axis([ff.tti(1) ff.tti(end) minmax(ff.contr)])
         hold on; grid on;
-        plot(x, cfun.k*exp(-x/cfun.lam));
+        plot(x, k*exp(-x/lam));
         
-        title(['feat #',num2str(ii)]);
-        disp(['    k: ', num2str(cfun.k), ',     lambda: ', num2str(cfun.lam), ',     rmse (k-norm): ', num2str(gof.rmse), ' (', num2str(gof.rmse/cfun.k),')']);
+        title(sprintf('feat #d', ii));
+        fprintf('    k: %f,     lambda: %f,     rmse (k-norm): %f (%f)\n',k,lam,gof.rmse,gof.rmse/k);
         drawnow;
     end
-    ff.oldPars = [cfun.k, cfun.lam];
+    ff.oldPars = [k, lam];
     
     % best 50% data
     ff.bestData = err./fitted <= prctile(err./fitted,50); % err percent
     
     % second fit
     try
-        [cfun gof] = fit(ff.tti(ff.bestData)',ff.contr(ff.bestData)', ft, options);
+%         [cfun gof] = fit(ff.tti(ff.bestData)',ff.contr(ff.bestData)', ft, options);
+        [cfun gof] = fit(ff.tti(ff.bestData)',ff.contr(ff.bestData)', 'exp1');
+        k = cfun.a; lam = -1/cfun.b;
     catch exc %#ok
         disp('- Warning: Inf computed by model function. Feat deleted');
         infFit = infFit +1;
         feats(ii) = [];
     end
     
-    fitted = cfun.k*exp(-(ff.tti(ff.bestData))/cfun.lam);
+    fitted = k*exp(-(ff.tti(ff.bestData))/lam);
     err = abs(ff.contr(ff.bestData) - fitted);   % error 2nd fit
     
-    ff.err2norm = mean(err)/cfun.lam;   % 2nd mean norm error
+    ff.err2norm = mean(err)/lam;   % 2nd mean norm error
     ff.err2perc = mean(err ./ fitted);  % 2nd mean perc error
     ff.rmse2 = gof.rmse;    % 2nd rmse
     
     % promettente
     % int(k1*exp(-t/lam1,0,Inf) - k2*exp(-t/lam2)) = k2*lam2*exp(-t/lam2) - k1*lam1*exp(-t/lam1) ~ k2*lam2 - k1*lam1
-    ff.intErr = abs(cfun.k*cfun.lam - ff.oldPars(1)*ff.oldPars(2));
+    ff.intErr = abs(k*lam - ff.oldPars(1)*ff.oldPars(2));
     
-    ff.pars = [cfun.k, cfun.lam];
+    ff.pars = [k, lam];
     
     if showPlot > 2
         plot(ff.tti(ff.bestData),ff.contr(ff.bestData), 'or');
-        plot(x, cfun.k*exp(-x/cfun.lam),'r');
+        plot(x, k*exp(-x/lam),'r');
         legend(['data - rmse: ', num2str(ff.rmse1)], ...
             ['first fit - k: ', num2str(ff.oldPars(1)), ', \lambda: ', num2str(ff.oldPars(2))], ...
             ['best data - rmse: ', num2str(ff.rmse2)], ...
             ['second fit - k: ', num2str(ff.pars(1)), ', \lambda: ', num2str(ff.pars(2))]);
-        disp(['new k: ', num2str(ff.pars(1)), ', new lambda: ', num2str(ff.pars(2)), ', new rmse (k-norm): ', num2str(gof.rmse), ' (', num2str(gof.rmse/cfun.k),')']);
+        disp(['new k: ', num2str(ff.pars(1)), ', new lambda: ', num2str(ff.pars(2)), ', new rmse (k-norm): ', num2str(gof.rmse), ' (', num2str(gof.rmse/k),')']);
         disp(['err1: ', num2str(ff.err1norm), ...
             ', err1perc: ', num2str(ff.err1perc), ...
             ', rmse1: ', num2str(ff.rmse1)]);

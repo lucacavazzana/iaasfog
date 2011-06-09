@@ -58,14 +58,14 @@ for ii=1:K
     
     try
         interpFn = fit([modelSet.tti]',[modelSet.contr]', fun, options); % and now fit!
+%         interpFn2 = fit([modelSet.tti]',[modelSet.contr]', 'exp1'); % and now fit!
     catch e
         warning('Inf computed in the fitting function. Moving to the next model');
         continue;
     end
     
-    lam = interpFn.lam;
-%     [k lam2] = fitExp([modelSet.tti]',[modelSet.contr]');
-%     fprintf('fit: %f, calc: %f',lam, lam2);
+    lam = interpFn.lam
+%     [interpFn2.a, -1/interpFn2.b]
     
     if showPlot
         disp(' ');

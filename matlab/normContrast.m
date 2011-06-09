@@ -16,7 +16,7 @@ function [feats] = normContrast(feats, type, showPlot)
 %   See also PARSEFEATURES
 
 %   Copyright 2011 Stefano Cadario, Luca Cavazzana.
-%   $Revision: xxxxx $  $Date: 2011/05/11 $
+%   $Revision: xxxxx $  $Date: 2011/06/08 $
 
 
 if ~exist('showPlot','var')
@@ -60,8 +60,8 @@ elseif strcmp(type, 'mean') %----------------------------------------------
     end
     
 elseif strcmp(type, 'fitExp') %-----------------------------------------------
-    ft = fittype('k*exp(-x/lam)');
-    options = fitoptions('Method', 'NonlinearLeastSquares');
+%     ft = fittype('k*exp(-x/lam)');
+%     options = fitoptions('Method', 'NonlinearLeastSquares');
     
     
     if showPlot > 2
@@ -69,26 +69,29 @@ elseif strcmp(type, 'fitExp') %-----------------------------------------------
     end
     ii=1;
     for ff = feats
-        options.StartPoint = [max(ff.contr), 1]; % TODO: find good starting point
-        [cfun] = fit(ff.tti',ff.contr(1:end)', ft, options);
-%         [cfun gof] = fit(ff.tti',ff.contr(1:end)', ft, options);
+        % using simple fit
+%         options.StartPoint = [max(ff.contr), 1]; % TODO: find good starting point
+%         [cfun gof] = fit(ff.tti',ff.contr', ft, options);
+%         k = cfun.k; lam = cfun.lam;
+
+        % exp fit
+        cfun = fit(ff.tti',ff.contr', 'exp1');
+        k = cfun.a; lam = -1/cfun.b;
         
-        feats(ii).contr = ff.contr/cfun.k;
-        feats(ii).pars = [cfun.k, cfun.lam];
+        % LSE fit
+%         [k, lam] = fitExp(ff.tti,ff.contr);
         
-%         [k, lam, rmse] = fitExp(ff.tti,ff.contr);
-%         feats(ii).pars = [k, lam];
-%         [rmse, gof.rmse]
+        feats(ii).contr = ff.contr/k;
+        feats(ii).pars = [k, lam];
+        
 
         if showPlot > 2 % plotting for debug
             
-            plot(feats(ii).tti,cfun.k*feats(ii).contr(1:end), 'ro');
+            plot(feats(ii).tti,k*feats(ii).contr, 'ro');
             hold on; grid on;
             x = feats(ii).tti(1):.01:feats(ii).tti(end);
-            plot(x, cfun.k*exp(-x/cfun.lam));
-%             plot(x, k*exp(-x/lam),'r');
-            legend(sprintf('feat #%d',ii), sprintf('k: %f, lambda: %f', cfun.k, cfun.lam));
-%             legend(sprintf('feat #%d',ii), sprintf('k: %f, lambda: %f', cfun.k, cfun.lam), sprintf('k: %f, lambda: %f', k, lam));
+            plot(x, k*exp(-x/lam));
+            legend(sprintf('feat #%d',ii), sprintf('k: %f, lambda: %f', k, lam));
             
             pause();
             clf;
