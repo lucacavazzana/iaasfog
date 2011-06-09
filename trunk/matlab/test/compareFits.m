@@ -43,6 +43,7 @@ end
 while ii<=10
     while st<=nSt
         while num<=nLen
+            save('lol.mat','res','ii','st','num'); %mica che crasha e mi tocca ricominciare da 0, con quello che ci mette...
             fprintf('\n %s, %d frames, try #%d\n', imStart(st,:), n(num), ii);
             
             cmd = ['c++/Debug/iaasfog -f /home/luca/Matlab/iaasfog/ -i ', imStart(st,:),' -n ', num2str(n(num)),' -o compare.txt'];
@@ -53,16 +54,15 @@ while ii<=10
             res(st,num,ii).feats = feats;
             res(st,num,ii).nFeats = max(size(feats));
             res(st,num,ii).fit = estimateLamFit(feats,0);
-            pause(3); % per lasciare raffreddare il processore, altrimenti crasha...
+%             pause(3); % per lasciare raffreddare il processore, altrimenti crasha...
             try
                 res(st,num,ii).rans = fitNormRansac(feats,0);
             catch e
                 res(st,num,ii).rans = -1;
-                disp('Infinite computed, Ransac fail');
+                warning('Ransac failed');
             end
             
-            save('lol.mat','res','ii','st','num'); %mica che crasha e mi tocca ricominciare da 0, con quello che ci mette...
-            pause(3); % per lasciare raffreddare il processore...
+%             pause(3); % per lasciare raffreddare il processore...
 
             num = num+1;
         end

@@ -64,7 +64,7 @@ for ii=1:K
         continue;
     end
     
-    lam = interpFn.lam
+    lam = interpFn.lam;
 %     [interpFn2.a, -1/interpFn2.b]
     
     if showPlot
