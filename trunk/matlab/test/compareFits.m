@@ -2,6 +2,8 @@ function [] = compareFits()
 % test function. Computes lambdas over various sets of images and saves the
 % result matrix on file
 
+%   $Revision: xxxxx $  $Date: 2011/06/08 $
+
 % old set
 % imStart = ['Images/frame0000.jpg';...
 %     'Images/frame0020.jpg';...
