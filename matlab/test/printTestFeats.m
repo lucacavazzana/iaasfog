@@ -1,25 +1,43 @@
 % carica dati salvati mediante
 
-if ~exist('res','var')
-    load oldImgs.mat
+FIT = 0; RANSAC = 1;
+
+% - indici dell'immagine da visualizzare / printare------------------------
+st = 1;     % first image
+num = 4;    % {15, 25, 35, 50}
+it = 1;     % nth iteration
+
+SAVE = 1;   % if 1 saves images, else just visualize
+ALG = FIT;  % FIT / RANSAC}. Choose the alg used to compute lam
+%--------------------------------------------------------------------------
+
+if SAVE
+    if ~exist('res','var')
+        load oldImgs2.mat
+    end
+    
+    if ~exist('test','dir')
+        !mkdir test
+        !mkdir test/lol
+    end
+    if ~exist('test/lol','dir')
+        !mkdir test/lol
+    end
 end
-
-% indici dell'immagine da printare------------------------------
-st = 1;
-num = 4;
-it = 1;
-
-SAVE = 1;
-%----------------------------------------------------------------
 
 feats = res(st, num, it).feats;
 lamF = res(st, num, it).fit;
 lamR = res(st, num, it).rans;
+if ALG == FIT
+    lam = lamF;
+else
+    lam = lamR;
+end
 
 im = imStart(st,:);
 s = str2double(im(end-7:end-4));
 
-save(['test/',im(1:max(strfind(im,'/'))),'data.mat'],'feats','im','n','lamF','lamR');
+save('test/lol/data.mat','feats','im','n','lamF','lamR');
 
 for ii = 1:size(feats,2)
     asd = fit(feats(ii).tti',feats(ii).contr','exp1');
@@ -45,14 +63,35 @@ for ii = 1:n(num)
     drawnow;
     if SAVE
         try
-            print('-dpng',['test/',im(1:end-3),'png'],'-loose');
+            print('-dpng',['test/lol/',im(max(strfind(im,'/'))+1:end-3),'png']);
+            disp([im, ' saved']);
         catch e
             warning(e.identifier,'%s, make sure the folder exists',e.message);
         end
+    else
+        disp('hit a key to continue');
+        pause;
     end
     
-%     pause;
     clf;
+end
+
+imshow(rgb2gray(imread(im)));
+for ff = feats
+    line([ff.x(1) ff.x(end)],[ff.y(1) ff.y(end)],'LineWidth',2);
+end
+set(gca,'Position',[0 0 1 1]);
+
+if SAVE
+    try
+        print('-dpng',['test/lol/flow.png']);
+        disp('flow saved');
+    catch e
+        warning(e.identifier,'%s, make sure the folder exists',e.message);
+    end
+else
+    disp('hit a key to end');
+    pause;
 end
 
 close;
