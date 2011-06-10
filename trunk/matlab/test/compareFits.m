@@ -1,4 +1,3 @@
-function [] = compareFits()
 % test function. Computes lambdas over various sets of images and saves the
 % result matrix on file
 
@@ -76,5 +75,3 @@ end
 save('lol.mat','res','imStart','n');
 
 disp('DONE!');
-
-end

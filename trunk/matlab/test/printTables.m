@@ -1,7 +1,7 @@
 %   $Revision: xxxxx $  $Date: 2011/06/08 $
 clear all;
 
-load('newImgs2.mat');
+load('lol.mat');
 
 disp('fit:')
 disp('\hline');
