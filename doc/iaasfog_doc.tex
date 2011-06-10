@@ -15,7 +15,8 @@
 \usepackage{changepage}
 \usepackage{color}
 \usepackage{multirow}
-
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue}
 
 \hyphenation{ransac}
 	
@@ -766,7 +767,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 
 
-\subsection{Confronto}
+\subsection{Confronto - eliminare}
 
 \noindent \textcolor{red}{confronto tra fit e RANSAC su\dots\\
 - bont\`a dei risultati (in base a cosa se non abbiamo i dati?). Fit fa maggiore controllo sui dati, ransac invece macina anche rumore (ma alla fine \`e ransac, no?) \\
@@ -791,8 +792,8 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 \noindent L'aggiunta di un sistema stereoscopico potrebbe migliorare la fase di tracking delle feature, permettendo di introdurre un ulteriore filtro basato sul confronto della velocit\`a calcolata con quella effettiva del veicolo.\\
 
-\noindent Ulteriori sviluppi futuri possono riguardare la reimplementazione in C\verb|++| del codice Matlab ed un'ottimizzazione degli algoritmi mirata a migliorarne le performance, eventualmente fino al punto di rendere possibile l'analisi direttamente su uno streaming video in realtime, senza le rielaborazioni successive del codice attualmente in uso.\\
-
+\noindent Ulteriori sviluppi futuri possono riguardare la reimplementazione in C\verb|++| del codice Matlab ed un'ottimizzazione degli algoritmi mirata a migliorarne le performance, eventualmente fino al punto di rendere possibile l'analisi direttamente su uno streaming video in realtime, senza le rielaborazioni successive del codice attualmente in uso. \\
+In particolare \`e necessario esplorare approcci pi\`u performanti per la stima dei parametri degli esponenziali, che allo stato attuale rappresenta il collo di bottiglia del sistema (alcuni approcci sono gi\`a stati abbozzati come mostrato nel paragrafo \ref{subsect:fitExp}). \\
 
 
 
@@ -821,6 +822,7 @@ Viene qui presentata una panoramica delle funzioni realizzate. Per informazioni 
 \end{verbatim}
 
 
+
 \section{Matlab}
 
 \paragraph*{\verb_iaas:_} funzione principale, parsa le feature generate dal codice C\verb|++| e chiede all'utente di selezionare l'algoritmo per il calcolo del $\lambda$ globale.
@@ -837,8 +839,10 @@ Viene qui presentata una panoramica delle funzioni realizzate. Per informazioni 
 
 \paragraph*{\verb_myRansac:_} implementazione di RANSAC per calcolare il parametro $\lambda$ della funzione del contrasto dati in ingresso una lista di features.
 
-\paragraph*{\verb_inspectFeatures:_} stampa a video le sequenze di features per un'ispezione visiva, visualizzandone i relativi valori di contrasto.
+\paragraph*{\verb_fitExp:_} calcola i parametri della curva approssimante usando i \href{http://mathworld.wolfram.com/LeastSquaresFittingExponential.html}{minimi quadrati per funzioni esponenziali}. Tale approccio risulta essere molto pi\`u leggero rispetto alla funzione \verb|fit| (con tempi d'esecuzione inferiori di diversi ordini di grandezza), ma appare risentire in modo molto maggiore della rumorosit\`a dei dati. Questa funzione di fatto non viene utilizzata nel codice realizzato, ma la sua integrazione andrebbe ulteriormente studiata visti i vantaggi a livello di tempo di calcolo.
+\label{subsect:fitExp}
 
+\paragraph*{\verb_inspectFeatures:_} stampa a video le sequenze di features per un'ispezione visiva, visualizzandone i relativi valori di contrasto.
 
 \paragraph*{\verb_inspectContrasts:_} data una serie di features ne stampa a video i livelli di contrasto ordinati sul tempo d'impatto.
 
