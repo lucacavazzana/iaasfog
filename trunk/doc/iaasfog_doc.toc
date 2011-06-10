@@ -1,26 +1,26 @@
 \select@language {italian}
-\contentsline {chapter}{\numberline {1}Introduzione}{2}
-\contentsline {chapter}{\numberline {2}Implementazione}{3}
-\contentsline {section}{\numberline {2.1}Tracking delle features}{4}
-\contentsline {section}{\numberline {2.2}Calcolo del vanishing point}{5}
-\contentsline {section}{\numberline {2.3}Calcolo del tempo all'impatto}{6}
-\contentsline {section}{\numberline {2.4}Calcolo del contrasto}{7}
-\contentsline {section}{\numberline {2.5}Stima dei parametri}{11}
-\contentsline {subsection}{\numberline {2.5.1}Fitting di $\lambda $}{11}
-\contentsline {subsection}{\numberline {2.5.2}Normalizzazione mediante fitting di $k$ e RANSAC}{12}
-\contentsline {subsection}{\numberline {2.5.3}Stima di $\lambda $ mediante minMax (deprecato)}{14}
-\contentsline {chapter}{\numberline {3}Risultati sperimentali}{16}
-\contentsline {section}{\numberline {3.1}Calcolo del vanishing point e tracking delle features}{17}
-\contentsline {section}{\numberline {3.2}Tempi d'impatto}{22}
-\contentsline {section}{\numberline {3.3}Stima di $\lambda $ mediante fitting}{24}
-\contentsline {section}{\numberline {3.4}Stima di $\lambda $ mediante RANSAC}{33}
-\contentsline {subsection}{\numberline {3.4.1}Confronto}{36}
-\contentsline {chapter}{\numberline {4}Conclusioni e sviluppi futuri}{37}
-\contentsline {chapter}{\numberline {5}Documentazione}{39}
-\contentsline {section}{\numberline {5.1}C++}{39}
-\contentsline {section}{\numberline {5.2}Matlab}{39}
-\contentsline {chapter}{\numberline {6}Installazione}{42}
-\contentsline {section}{\numberline {6.1}OpenCV}{42}
-\contentsline {subsection}{\numberline {6.1.1}Windows}{42}
-\contentsline {subsection}{\numberline {6.1.2}Linux / MacOSX}{42}
-\contentsline {section}{\numberline {6.2}Installazione ed esecuzione del programma}{43}
+\contentsline {chapter}{\numberline {1}Introduzione}{2}{chapter.1}
+\contentsline {chapter}{\numberline {2}Implementazione}{3}{chapter.2}
+\contentsline {section}{\numberline {2.1}Tracking delle features}{4}{section.2.1}
+\contentsline {section}{\numberline {2.2}Calcolo del vanishing point}{5}{section.2.2}
+\contentsline {section}{\numberline {2.3}Calcolo del tempo all'impatto}{6}{section.2.3}
+\contentsline {section}{\numberline {2.4}Calcolo del contrasto}{7}{section.2.4}
+\contentsline {section}{\numberline {2.5}Stima dei parametri}{11}{section.2.5}
+\contentsline {subsection}{\numberline {2.5.1}Fitting di $\lambda $}{11}{subsection.2.5.1}
+\contentsline {subsection}{\numberline {2.5.2}Normalizzazione mediante fitting di $k$ e RANSAC}{12}{subsection.2.5.2}
+\contentsline {subsection}{\numberline {2.5.3}Stima di $\lambda $ mediante minMax (deprecato)}{14}{subsection.2.5.3}
+\contentsline {chapter}{\numberline {3}Risultati sperimentali}{16}{chapter.3}
+\contentsline {section}{\numberline {3.1}Calcolo del vanishing point e tracking delle features}{17}{section.3.1}
+\contentsline {section}{\numberline {3.2}Tempi d'impatto}{22}{section.3.2}
+\contentsline {section}{\numberline {3.3}Stima di $\lambda $ mediante fitting}{24}{section.3.3}
+\contentsline {section}{\numberline {3.4}Stima di $\lambda $ mediante RANSAC}{33}{section.3.4}
+\contentsline {subsection}{\numberline {3.4.1}Confronto - eliminare}{36}{subsection.3.4.1}
+\contentsline {chapter}{\numberline {4}Conclusioni e sviluppi futuri}{37}{chapter.4}
+\contentsline {chapter}{\numberline {5}Documentazione}{39}{chapter.5}
+\contentsline {section}{\numberline {5.1}C++}{39}{section.5.1}
+\contentsline {section}{\numberline {5.2}Matlab}{39}{section.5.2}
+\contentsline {chapter}{\numberline {6}Installazione}{42}{chapter.6}
+\contentsline {section}{\numberline {6.1}OpenCV}{42}{section.6.1}
+\contentsline {subsection}{\numberline {6.1.1}Windows}{42}{subsection.6.1.1}
+\contentsline {subsection}{\numberline {6.1.2}Linux / MacOSX}{42}{subsection.6.1.2}
+\contentsline {section}{\numberline {6.2}Installazione ed esecuzione del programma}{43}{section.6.2}

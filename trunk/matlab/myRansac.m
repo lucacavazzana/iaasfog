@@ -5,8 +5,9 @@ function [bestPars, bestModel, bestError] = myRansac(feats, showPlot)
 %   visibility function.
 %   INPUT:
 %     'feats'       :   features vector as parsed by parseFeatures
-%     'showPlot'    :   0: shows nothing, 1: shows messages,
-%                       2: plots all ransac models and errors over data
+%     'showPlot'    :   0 - shows nothing
+%                       1 - shows messages
+%                       2 - plots all ransac models and errors over data
 %
 %   OUTPUT:
 %     'bestPars'    :   computed list of parameters
@@ -28,7 +29,7 @@ NSET = size(feats,2);
 N = ceil(NSET*.25); % model
 K = 45; % max iterations
 D = ceil(NSET*.75); % required number to assert the model fits well the data
-T = .2;
+T = .4; % consensus treshold
 
 % some initializations...
 if showPlot
@@ -58,7 +59,6 @@ for ii=1:K
     
     try
         interpFn = fit([modelSet.tti]',[modelSet.contr]', fun, options); % and now fit!
-%         interpFn2 = fit([modelSet.tti]',[modelSet.contr]', 'exp1'); % and now fit!
     catch e
         warning('Inf computed in the fitting function. Moving to the next model');
         continue;
@@ -75,7 +75,7 @@ for ii=1:K
             % show how the function fits the model
             yFit = exp(-x/lam);
             plot(x,yFit);
-%             plot(x,exp(-x/lam2),'r');
+            plot(x,exp(-x/lam2),'r');
             title(['candidate lambda: ', num2str(lam)]);
             legend('model data','fitted function');
             drawnow

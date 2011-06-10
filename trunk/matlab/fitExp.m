@@ -13,6 +13,15 @@ function [k, lam, rmse] = fitExp(x, y)
 %       plot(x,y,'o',x,k*exp(-xx/lam),'r');
 %       title(sprintf('k: %f, \lambda: %f',k,lam));
 %
+% INPUT:
+%   x: x-values vector
+%   y: y-values vector
+%
+% OUTPUT:
+%   k:     k parameter
+%   lam:   lamda parameter
+%   rmse:  optional, root mean square error computed on the dataset
+%           
 %   See also fit http://mathworld.wolfram.com/LeastSquaresFittingExponential.html
 
 %   Copyright 2011 Stefano Cadario, Luca Cavazzana.
@@ -31,6 +40,4 @@ lam = -den/(max(size(x))*sxly - sx*sly);
 
 if nargout > 2
     rmse = sqrt(mean((y-k*exp(-x/lam)).^2));
-end
-
 end
