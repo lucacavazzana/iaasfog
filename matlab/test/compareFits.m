@@ -9,6 +9,8 @@
 %     'Images/frame0040.jpg';...
 %     'Images/frame0060.jpg'];
 
+clear res;
+
 % new set
 imStart = ['newImages/Images01/frame0000.png';...
     'newImages/Images02/frame0000.png';...
@@ -31,6 +33,8 @@ else % initialize
     res.nFeats = []; % #feats
     res.fit = []; % lambda fit
     res.rans = []; % lambda ransac
+    res.rTime = []; % exec time
+    res.fTime = []; % exec time
     res(nSt,nLen,10) = res; % lamer way to preallocate
     % size(res)
     
@@ -42,7 +46,7 @@ end
 while ii<=10
     while st<=nSt
         while num<=nLen
-            save('lol.mat','res','ii','st','num'); %mica che crasha e mi tocca ricominciare da 0, con quello che ci mette...
+            save('lol.mat','res','ii','st','num','imStart','n'); % mica che crasha e mi tocca ricominciare da 0, con quello che ci mette...
             fprintf('\n %s, %d frames, try #%d\n', imStart(st,:), n(num), ii);
             
             cmd = ['c++/Debug/iaasfog -f /home/luca/Matlab/iaasfog/ -i ', imStart(st,:),' -n ', num2str(n(num)),' -o compare.txt'];
@@ -52,15 +56,21 @@ while ii<=10
             % start X numFr X try
             res(st,num,ii).feats = feats;
             res(st,num,ii).nFeats = max(size(feats));
+            
+            tic;
             res(st,num,ii).fit = estimateLamFit(feats,0);
+            res(st,num,ii).fTime = toc;
 %             pause(3); % per lasciare raffreddare il processore, altrimenti crasha...
             try
+                tic;
                 res(st,num,ii).rans = fitNormRansac(feats,0);
+                res(st,num,ii).rTime = toc;
             catch e
                 res(st,num,ii).rans = -1;
                 warning('Ransac failed');
             end
             
+            disp(mean([res(st,num,:).fit]));
 %             pause(3); % per lasciare raffreddare il processore...
 
             num = num+1;
@@ -72,6 +82,6 @@ while ii<=10
     st = 1;
 end
 
-save('lol.mat','res','imStart','n');
+save('lol.mat','res','ii','st','num','imStart','n');
 
 disp('DONE!');
