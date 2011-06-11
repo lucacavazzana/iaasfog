@@ -631,12 +631,11 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|}
 	\hline
-	& 15 & 25 & 35 & 50 \\
-	\hline
-	Images/frame0000.jpg & 0.349s (1.1e-06s) & 0.688s (4.4e-07s) & 0.801s (0.22s) & 1.16s (0.13s)\\ \hline
-	Images/frame0020.jpg & 0.844s (0.14s) & 0.471s (1.1e-07s) & 0.739s (0.12s) & 0.997s (0.17s)\\ \hline
-	Images/frame0040.jpg & 0.11s (1.4e-06s) & 0.613s (0.022s) & 0.682s (0.079s) & 0.972s (0.078s)\\ \hline
-	Images/frame0060.jpg & 0.473s (0.071s) & 0.625s (0.044s) & 0.774s (0.0084s) & 0.675s (0.042s)\\ \hline
+	& 15 & 25 & 35 & 50 \\ \hline
+	Images/frame0000.jpg & 0.512s (2.8e-07s) & 1.02s (0.13s) & 0.81s (0.26s) & 1.09s (0.021s)\\ \hline
+	Images/frame0020.jpg & 0.945s (0.026s) & 0.999s (0.43s) & 0.888s (0.21s) & 1.03s (0.11s)\\ \hline
+	Images/frame0040.jpg & 0.515s (0.079s) & 0.584s (0.053s) & 0.621s (0.1s) & 0.87s (0.12s)\\ \hline
+	Images/frame0060.jpg & 0.591s (0.063s) & 0.68s (0.054s) & 0.774s (0.0086s) & 0.718s (0.065s)\\ \hline
 \end{tabular}
 \caption{Media (deviazione standard campionaria) del $\lambda$ calcolato mediante fitting. Sulle righe l'immagine di partenza, sulle colonne il numero di frame analizzati.}
 \label{tabFit}
@@ -650,19 +649,19 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \begin{tabular}{|c|c|c|c|c|}
 	\hline
 	& 15 & 25 & 35 & 50 \\ \hline
-	Images01/frame0000.png & 1.36s (1.9e-05s) & 1.48s (0.92s) & 0.907s (0.12s) & 1.3s (0.47s)\\ \hline
-	Images02/frame0000.png & 0.842s (0.021s) & 0.944s (0.19s) & 1.11s (0.16s) & 1.34s (0.13s)\\ \hline
-	Images02/frame0060.png & 0.927s (0.46s) & 1.03s (0.37s) & 0.998s (0s) & 0.56s (0s)\\ \hline
-	Images03/frame0000.png & 0.38s (0.00088s) & 0.882s (0.33s) & 0.603s (0.2s) & 1.11s (0.09s)\\ \hline
-	Images04/frame0000.png & 0.86s (0.06s) & 1.84s (0.33s) & 1.04s (0.13s) & 1.65s (0.13s)\\ \hline
-	Images04/frame0040.png & 0.677s (0.19s) & 1.69s (6.4e-06s) & 0.81s (0.19s) & 0.593s (0.27s)\\ \hline
-	Images05/frame0000.png & 0.879s (0.33s) & 1.3s (0.32s) & 2.25s (0.22s) & 1.45s (0.081s)\\ \hline
-	Images05/frame0100.png & 0.705s (0.15s) & 0.591s (0.045s) & 1.08s (0.14s) & 0.752s (0.061s)\\ \hline
+	Images01/frame0000.png & 1.59s (0.17s) & 2s (0.56s) & 1.25s (0.16s) & 1.5s (0.39s)\\ \hline
+	Images02/frame0000.png & 1.21s (0.074s) & 0.948s (0.033s) & 1.14s (0.13s) & 1.36s (0.077s)\\ \hline
+	Images02/frame0060.png & 1.26s (0.35s) & 1.36s (0.084s) & 1.17s (0.081s) & 1.41s (0.14s)\\ \hline
+	Images03/frame0000.png & 0.961s (0.98s) & 1.17s (0.046s) & 1.36s (0.19s) & 1.47s (0.26s)\\ \hline
+	Images04/frame0000.png & 0.963s (0.031s) & 2.12s (0.082s) & 1.48s (0.35s) & 1.74s (0.24s)\\ \hline
+	Images04/frame0040.png & 0.738s (0.0067s) & 1.72s (0.066s) & 1.7s (0.16s) & 1.49s (0.25s)\\ \hline
+	Images05/frame0000.png & 1.22s (0.057s) & 1.65s (0.083s) & 2.04s (0.34s) & 1.47s (0.12s)\\ \hline
+	Images05/frame0100.png & 0.829s (0.17s) & 0.888s (0.2s) & 1.18s (0.039s) & 0.801s (0.024s)\\ \hline
 \end{tabular}
 \caption{$\lambda$ medio e deviazione standard campionaria per diversi frame iniziali e lunghezze d'analisi.}
 \end{table}
 
-\noindent \textcolor{red}{Si nota come all'aumentare della lunghezza dell'analisi le soluzioni tendano a convergere, essendo le condizioni di visibilit\`a sostanzialmente identiche nelle diverse sequenze. Per un $\lambda$ pari ad 1.4s ad una velocit\`a di 60 km/h la visibilit\`a risulta essere di 23.3m}\\
+\noindent Si nota come all'aumentare della lunghezza dell'analisi le soluzioni tendano a convergere, essendo le condizioni di visibilit\`a sostanzialmente identiche nelle diverse sequenze. Per un $\lambda$ pari ad 1.5s ad una velocit\`a di 60 km/h la visibilit\`a risulta essere di 25m (si ricordi la definizione di ``visibilit\`a'' fornita nel all'inizio della sezione \ref{sect:stima}).\\
 
 \noindent I dati grezzi ottenuti a seguito di quest'esperimento sono forniti allegati alla presente relazione nei files \verb|oldImgs.dat| e \verb|newImgs.dat|, dove sono salvate le matrici $\text{imgStart} \times \text{nFrames} \times 10$ le cui celle contengono per ogni iterazione le feature estratte ed i valori di $\lambda$ ottenuti sia mediante fitting sia RANSAC. \\
 
@@ -731,10 +730,10 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \begin{tabular}{|c|c|c|c|c|}
 	\hline
 	& 15 & 25 & 35 & 50 \\ \hline
-	Images/frame0000.jpg & NaNs (NaNs) & 0.615s (0.015s) & 0.926s (0.21s) & 1.24s (0.029s)\\ \hline
-	Images/frame0020.jpg & 0.744s (0.29s) & NaNs (NaNs) & 1.12s (0.27s) & 0.803s (0.018s)\\ \hline
-	Images/frame0040.jpg & 0.656s (0.014s) & 0.528s (0.0035s) & 0.585s (0.0031s) & 0.89s (0.12s)\\ \hline
-	Images/frame0060.jpg & 0.352s (0.0065s) & 0.421s (0.015s) & 0.568s (0.062s) & 1s (0.16s)\\ \hline
+	Images/frame0000.jpg & 0.655s (0.0019s) & 0.729s (0.042s) & 0.943s (0.05s) & 1.45s (0.016s)\\ \hline
+	Images/frame0020.jpg & 0.653s (0.012s) & 1.05s (0.34s) & 0.699s (0.25s) & 0.849s (0.014s)\\ \hline
+	Images/frame0040.jpg & 0.711s (0.16s) & 0.539s (0.011s) & 0.587s (0.0055s) & 0.802s (0.023s)\\ \hline
+	Images/frame0060.jpg & 0.382s (0.0056s) & 0.489s (0.029s) & 0.517s (0.052s) & 1.16s (0.38s)\\ \hline
 \end{tabular}
 \caption{Media (deviazione standard campionaria) del $\lambda$ calcolato mediante RANSAC. Sulle righe l'immagine di partenza, sulle colonne il numero di frame analizzati. I NaN indicano il fallimento di RANSAC a causa dell'eccessiva rumorosit\`a dei dati (l'eccessivo errore medio non ha portato a nessun set di consenso abbastanza grande).}
 \label{tabRans}
@@ -748,14 +747,14 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \begin{tabular}{|c|c|c|c|c|}
 	\hline
 	& 15 & 25 & 35 & 50 \\ \hline
-	Images01/frame0000.png & 1.86s (0.099s) & 1.2s (0.12s) & 0.862s (0.015s) & 1.28s (0.33s)\\ \hline
-	Images02/frame0000.png & 0.909s (0.33s) & 3.45s (1.5s) & 1.61s (0.57s) & 2.1s (0.39s)\\ \hline
-	Images02/frame0060.png & 664s (2.1e+03s) & 2.49e+03s (3.6e+03s) & NaNs (NaNs) & NaNs (NaNs)\\ \hline
-	Images03/frame0000.png & 0.203s (0.032s) & 0.573s (0.034s) & 0.997s (0.25s) & 2.39s (0.23s)\\ \hline
-	Images04/frame0000.png & NaNs (NaNs) & NaNs (NaNs) & 1.42s (0.51s) & 1.42s (0.15s)\\ \hline
-	Images04/frame0040.png & 0.824s (0.3s) & 4.55s (1.7s) & 3.4s (0.75s) & NaNs (NaNs)\\ \hline
-	Images05/frame0000.png & 1.43s (0.53s) & 1.9s (0.61s) & 2.23s (0.11s) & 1.44s (0.12s)\\ \hline
-	Images05/frame0100.png & 0.655s (0.047s) & 0.42s (0.23s) & 1.25s (0.44s) & 0.712s (0.031s)\\ \hline
+	Images01/frame0000.png & 1.11s (0.28s) & 1.96s (0.6s) & 0.892s (0.02s) & 1.3s (0.22s)\\ \hline
+	Images02/frame0000.png & 0.864s (0.13s) & 1.82s (0.15s) & 2.03s (0.15s) & 2.43s (0.28s)\\ \hline
+	Images02/frame0060.png & 2.97s (0.18s) & 2.94s (1.4s) & 2.77s (0.9s) & 4.06s (0.98s)\\ \hline
+	Images03/frame0000.png & 0.221s (0.069s) & 0.729s (0.059s) & 0.888s (0.027s) & 1.18s (0.071s)\\ \hline
+	Images04/frame0000.png & 43.3s (28s) & 1.87s (0.44s) & 1.17s (0.15s) & 1.47s (0.16s)\\ \hline
+	Images04/frame0040.png & 0.6s (0.015s) & 3.65s (0.13s) & 1.67s (0.41s) & 1.89s (0.33s)\\ \hline
+	Images05/frame0000.png & 0.529s (0.15s) & 1.33s (0.057s) & 3.27s (1.2s) & 1.8s (0.24s)\\ \hline
+	Images05/frame0100.png & 0.888s (0.048s) & 0.897s (0.3s) & 0.778s (0.16s) & 0.648s (0.062s)\\ \hline
 \end{tabular}
 \caption{Media (deviazione standard campionaria) del $\lambda$ calcolato mediante RANSAC sulle nuove sequenze acquisite. Sulle righe l'immagine di partenza, sulle colonne il numero di frame analizzati.}
 \label{tab:ransNew}
@@ -769,14 +768,25 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 
 
-\subsection{Confronto - eliminare}
+\subsection{Confronto}
 
-\noindent \textcolor{red}{confronto tra fit e RANSAC su\dots\\
-- bont\`a dei risultati (in base a cosa se non abbiamo i dati?). Fit fa maggiore controllo sui dati, ransac invece macina anche rumore (ma alla fine \`e ransac, no?) \\
-- consistenza: confrontando le std delle simulazioni \\
-- velocit\`a: prova un po'...}
+\noindent Confrontando i risultati ottenuti sulle diverse immagini di prova si pu\`o notare come i risultati ottenuti mediante fitting siano molto pi\`u consistenti rispetto a quelli ottenuti mediante RANSAC. Questo non stupisce, dal momento che il primo algoritmo effettua un maggiore filtraggio sulla bont\`a delle features, al contrario RANSAC include nei calcoli anche dati pi\`u affetti da rumore.\\
 
+\noindent Esaminando invece i tempi di calcolo si nota che sono sostanzialmente simili: mentre il primo algoritmo richiede due fit per ogni feature, RANSAC ne richiede solo uno per la normalizzazione iniziale pi\`u un fit per ogni modello provato.\\
 
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+	\hline
+	& 15 & 25 & 35 & 50 \\ \hline
+	Images/frame0000.jpg & 6.42/5.8 & 3.9/4.1 & 5.93/4.8 & 7.84/6\\ \hline
+	Images/frame0020.jpg & 6.08/5.6 & 10.5/8.3 & 10.9/8.1 & 7.7/6.1\\ \hline
+	Images/frame0040.jpg & 3.69/4.3 & 4.15/4.9 & 4.47/4.5 & 7.93/5.9\\ \hline
+	Images/frame0060.jpg & 7.21/6.9 & 7.68/6.4 & 7.44/6.6 & 7.86/6.3\\ \hline
+\end{tabular}
+	\caption{Tempi di esecuzione medi di fit/RANSAC}
+\end{center}
+\end{table}
 
 \chapter{Conclusioni e sviluppi futuri}
 

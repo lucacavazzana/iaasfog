@@ -4,22 +4,22 @@
 %   $Revision: xxxxx $  $Date: 2011/06/08 $
 
 % old set
-% imStart = ['Images/frame0000.jpg';...
-%     'Images/frame0020.jpg';...
-%     'Images/frame0040.jpg';...
-%     'Images/frame0060.jpg'];
+imStart = ['Images/frame0000.jpg';...
+    'Images/frame0020.jpg';...
+    'Images/frame0040.jpg';...
+    'Images/frame0060.jpg'];
 
 clear res;
 
 % new set
-imStart = ['newImages/Images01/frame0000.png';...
-    'newImages/Images02/frame0000.png';...
-    'newImages/Images02/frame0060.png';...
-    'newImages/Images03/frame0000.png';...
-    'newImages/Images04/frame0000.png';...
-    'newImages/Images04/frame0040.png';...
-    'newImages/Images05/frame0000.png';...
-    'newImages/Images05/frame0100.png'];
+% imStart = ['newImages/Images01/frame0000.png';...
+%     'newImages/Images02/frame0000.png';...
+%     'newImages/Images02/frame0060.png';...
+%     'newImages/Images03/frame0000.png';...
+%     'newImages/Images04/frame0000.png';...
+%     'newImages/Images04/frame0040.png';...
+%     'newImages/Images05/frame0000.png';...
+%     'newImages/Images05/frame0100.png'];
 
 nSt = size(imStart,1);
 
@@ -57,22 +57,37 @@ while ii<=10
             res(st,num,ii).feats = feats;
             res(st,num,ii).nFeats = max(size(feats));
             
-            tic;
-            res(st,num,ii).fit = estimateLamFit(feats,0);
-            res(st,num,ii).fTime = toc;
-%             pause(3); % per lasciare raffreddare il processore, altrimenti crasha...
-            try
+            if round(rand) % mixing order to avoid biasing exec time via caching
                 tic;
-                res(st,num,ii).rans = fitNormRansac(feats,0);
-                res(st,num,ii).rTime = toc;
-            catch e
-                res(st,num,ii).rans = -1;
-                warning('Ransac failed');
+                res(st,num,ii).fit = estimateLamFit(feats,0);
+                res(st,num,ii).fTime = toc;
+                %             pause(3); % per lasciare raffreddare il processore, altrimenti crasha...
+                try
+                    tic;
+                    res(st,num,ii).rans = fitNormRansac(feats,0);
+                    res(st,num,ii).rTime = toc;
+                catch e
+                    res(st,num,ii).rans = -1;
+                    warning('Ransac failed');
+                end
+            else
+                try
+                    tic;
+                    res(st,num,ii).rans = fitNormRansac(feats,0);
+                    res(st,num,ii).rTime = toc;
+                catch e
+                    res(st,num,ii).rans = -1;
+                    warning('Ransac failed');
+                end
+%                 pause(3); % per lasciare raffreddare il processore...
+                tic;
+                res(st,num,ii).fit = estimateLamFit(feats,0);
+                res(st,num,ii).fTime = toc;
             end
             
             disp(mean([res(st,num,:).fit]));
 %             pause(3); % per lasciare raffreddare il processore...
-
+            
             num = num+1;
         end
         st = st+1;
