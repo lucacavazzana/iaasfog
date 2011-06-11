@@ -14,13 +14,13 @@
 \contentsline {section}{\numberline {3.2}Tempi d'impatto}{22}{section.3.2}
 \contentsline {section}{\numberline {3.3}Stima di $\lambda $ mediante fitting}{24}{section.3.3}
 \contentsline {section}{\numberline {3.4}Stima di $\lambda $ mediante RANSAC}{33}{section.3.4}
-\contentsline {subsection}{\numberline {3.4.1}Confronto - eliminare}{36}{subsection.3.4.1}
-\contentsline {chapter}{\numberline {4}Conclusioni e sviluppi futuri}{37}{chapter.4}
-\contentsline {chapter}{\numberline {5}Documentazione}{39}{chapter.5}
-\contentsline {section}{\numberline {5.1}C++}{39}{section.5.1}
-\contentsline {section}{\numberline {5.2}Matlab}{39}{section.5.2}
-\contentsline {chapter}{\numberline {6}Installazione}{42}{chapter.6}
-\contentsline {section}{\numberline {6.1}OpenCV}{42}{section.6.1}
-\contentsline {subsection}{\numberline {6.1.1}Windows}{42}{subsection.6.1.1}
-\contentsline {subsection}{\numberline {6.1.2}Linux / MacOSX}{42}{subsection.6.1.2}
-\contentsline {section}{\numberline {6.2}Installazione ed esecuzione del programma}{43}{section.6.2}
+\contentsline {subsection}{\numberline {3.4.1}Confronto}{36}{subsection.3.4.1}
+\contentsline {chapter}{\numberline {4}Conclusioni e sviluppi futuri}{38}{chapter.4}
+\contentsline {chapter}{\numberline {5}Documentazione}{40}{chapter.5}
+\contentsline {section}{\numberline {5.1}C++}{40}{section.5.1}
+\contentsline {section}{\numberline {5.2}Matlab}{40}{section.5.2}
+\contentsline {chapter}{\numberline {6}Installazione}{43}{chapter.6}
+\contentsline {section}{\numberline {6.1}OpenCV}{43}{section.6.1}
+\contentsline {subsection}{\numberline {6.1.1}Windows}{43}{subsection.6.1.1}
+\contentsline {subsection}{\numberline {6.1.2}Linux / MacOSX}{43}{subsection.6.1.2}
+\contentsline {section}{\numberline {6.2}Installazione ed esecuzione del programma}{44}{section.6.2}

@@ -1,10 +1,12 @@
-%   $Revision: xxxxx $  $Date: 2011/06/08 $
+%   $Revision: xxxxx $  $Date: 2011/06/11$
+
+% generates latex code from saved .mat files
+
 clear all;
 
-load('oldImgs.mat');
+load('lol.mat');
 
 disp('fit:')
-disp('\hline');
 for st = 1:size(imStart,1)
     lol = imStart(st,:);
     for num = 1:size(n,2) % già formattato per latex, lol
@@ -18,7 +20,6 @@ end
 
 disp(' ');
 disp('ransac:')
-disp('\hline');
 for st = 1:size(imStart,1)
     lol = imStart(st,:);
     for num = 1:size(n,2)        
@@ -32,13 +33,25 @@ end
 
 disp(' ');
 disp('nFeats:')
-disp('\hline');
 for st = 1:size(imStart,1)
     lol = imStart(st,:);
     for num = 1:size(n,2)        
         
         asd = [res(st,num,:).nFeats];
         lol = [lol, ' & ' num2str(mean(asd),3),' (',num2str(std(asd),2),')'];
+        
+    end
+    disp([lol, '\\ \hline']);
+end
+
+disp(' ');
+disp('exec time:')
+for st = 1:size(imStart,1)
+    lol = imStart(st,:);
+    for num = 1:size(n,2)        
+        
+        asd = [res(st,num,:).nFeats];
+        lol = [lol, ' & ' num2str(mean([res(st,num,:).fTime]),3),'/',num2str(mean([res(st,num,:).rTime]),2)];
         
     end
     disp([lol, '\\ \hline']);
