@@ -60,23 +60,22 @@ elseif strcmp(type, 'mean') %----------------------------------------------
     end
     
 elseif strcmp(type, 'fitExp') %-----------------------------------------------
-%     ft = fittype('k*exp(-x/lam)');
-%     options = fitoptions('Method', 'NonlinearLeastSquares');
-    
-    
+    ft = fittype('k*exp(-x/lam)');
+    options = fitoptions('Method', 'NonlinearLeastSquares');
+        
     if showPlot > 2
         fig = figure;
     end
     ii=1;
     for ff = feats
         % using simple fit
-%         options.StartPoint = [max(ff.contr), 1]; % TODO: find good starting point
-%         [cfun gof] = fit(ff.tti',ff.contr', ft, options);
-%         k = cfun.k; lam = cfun.lam;
+        options.StartPoint = [max(ff.contr), 1]; % TODO: find good starting point
+        [cfun gof] = fit(ff.tti',ff.contr', ft, options);
+        k = cfun.k; lam = cfun.lam;
 
         % exp fit
-        cfun = fit(ff.tti',ff.contr', 'exp1');
-        k = cfun.a; lam = -1/cfun.b;
+%         cfun = fit(ff.tti',ff.contr', 'exp1');
+%         k = cfun.a; lam = -1/cfun.b;
         
         % LSE fit
 %         [k, lam] = fitExp(ff.tti,ff.contr);

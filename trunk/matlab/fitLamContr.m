@@ -38,9 +38,9 @@ feats(1).err2perc = []; % mean percent error over the second fit
 feats(1).rmse2 = [];    % rmse error over the second fit
 feats(1).intErr = [];   % area between the two fitted functions
 
-% fun = 'k*exp(-x/lam)';
-% ft = fittype(fun);
-% options = fitoptions('Method', 'NonlinearLeastSquares');
+fun = 'k*exp(-x/lam)';
+ft = fittype(fun);
+options = fitoptions('Method', 'NonlinearLeastSquares');
 
 if showPlot > 2
     asd = figure;
@@ -49,13 +49,13 @@ end
 ii=1; infFit = 0; % to handle possible exceptions caused by fitting generating infinite values
 for ff = feats
     
-%     options.StartPoint = [max(ff.contr), .5]; % TODO: find good starting points
+    options.StartPoint = [max(ff.contr), .5]; % TODO: find good starting points
     
     % first fit
     try
-%         [cfun gof] = fit(ff.tti',ff.contr', ft, options);
-        [cfun gof] = fit(ff.tti',ff.contr', 'exp1');
-        k = cfun.a; lam = -1/cfun.b;
+        [cfun gof] = fit(ff.tti',ff.contr', ft, options);
+%         [cfun gof] = fit(ff.tti',ff.contr', 'exp1');
+        k = cfun.k; lam = cfun.lam;
     catch exc %#ok
         warning('Inf computed by model function. Feat deleted');
         infFit = infFit +1;
@@ -91,9 +91,9 @@ for ff = feats
     
     % second fit
     try
-%         [cfun gof] = fit(ff.tti(ff.bestData)',ff.contr(ff.bestData)', ft, options);
-        [cfun gof] = fit(ff.tti(ff.bestData)',ff.contr(ff.bestData)', 'exp1');
-        k = cfun.a; lam = -1/cfun.b;
+        [cfun gof] = fit(ff.tti(ff.bestData)',ff.contr(ff.bestData)', ft, options);
+%         [cfun gof] = fit(ff.tti(ff.bestData)',ff.contr(ff.bestData)', 'exp1');
+        k = cfun.k; lam = cfun.lam;
     catch exc %#ok
         disp('- Warning: Inf computed by model function. Feat deleted');
         infFit = infFit +1;
@@ -107,7 +107,7 @@ for ff = feats
     ff.err2perc = mean(err ./ fitted);  % 2nd mean perc error
     ff.rmse2 = gof.rmse;    % 2nd rmse
     
-    % promettente
+    % errore integrale
     % int(k1*exp(-t/lam1,0,Inf) - k2*exp(-t/lam2)) = k2*lam2*exp(-t/lam2) - k1*lam1*exp(-t/lam1) ~ k2*lam2 - k1*lam1
     ff.intErr = abs(k*lam - ff.oldPars(1)*ff.oldPars(2));
     
