@@ -14,7 +14,7 @@
 \contentsline {section}{\numberline {3.2}Tempi d'impatto}{22}{section.3.2}
 \contentsline {section}{\numberline {3.3}Stima di $\lambda $ mediante fitting}{24}{section.3.3}
 \contentsline {section}{\numberline {3.4}Stima di $\lambda $ mediante RANSAC}{33}{section.3.4}
-\contentsline {subsection}{\numberline {3.4.1}Confronto}{36}{subsection.3.4.1}
+\contentsline {section}{\numberline {3.5}Confronto}{36}{section.3.5}
 \contentsline {chapter}{\numberline {4}Conclusioni e sviluppi futuri}{38}{chapter.4}
 \contentsline {chapter}{\numberline {5}Documentazione}{40}{chapter.5}
 \contentsline {section}{\numberline {5.1}C++}{40}{section.5.1}

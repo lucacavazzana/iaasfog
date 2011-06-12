@@ -54,7 +54,7 @@ Prof.~Vincenzo \textsc{Caglioti}
 \\[4cm]
 
 % Bottom of the page
-{\large 30 maggio 2011}
+{\large 12 giugno 2011}
 
 \end{center}
 \end{adjustwidth}
@@ -409,7 +409,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 	Images/frame0040.jpg & 6 (0) & 18 (0) & 25 (0) & 24.5 (1.6)\\ \hline
 	Images/frame0060.jpg & 24 (0) & 22.8 (1) & 22 (0) & 23 (0)\\ \hline
 \end{tabular}
-\caption{Numero medio (e deviazione standard) di features estratte dalla sequenza di immagini. Sulle righe l'immagine di partenza, sulle colonne il numero di frame analizzati.}
+\caption{Numero medio (e deviazione standard) di features estratte dalla sequenza di immagini su dieci iterazioni. Sulle righe l'immagine di partenza, sulle colonne il numero di frame analizzati.}
 \label{tabNum}
 \end{center}
 \end{table}
@@ -595,7 +595,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 	\includegraphics[scale=\imFeatBW]{images/best4}\\
 	\includegraphics[scale=\imFeatBW]{images/best6}\\
 \end{minipage}
-\caption[short]{Migliori features secondo l'integrale dell'errore.}
+\caption[short]{Migliori features secondo l'integrale dell'errore. In rosso evidenziati i dati considerati migliori e la nuova curva fittata.}
 \label{fig:bestIntErr}
 \end{figure}
 
@@ -612,7 +612,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 	\includegraphics[scale=\imFeatBW]{images/worst4}\\
 	\includegraphics[scale=\imFeatBW]{images/worst6}\\
 \end{minipage}
-\caption[short]{Feature peggiori secondo l'integrale dell'errore.}
+\caption[short]{Feature peggiori secondo l'integrale dell'errore. In rosso evidenziati i dati considerati migliori e la nuova curva fittata.}
 \label{fig:worstIntErr}
 \end{figure}
 
@@ -663,7 +663,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 \noindent Si nota come all'aumentare della lunghezza dell'analisi le soluzioni tendano a convergere, essendo le condizioni di visibilit\`a sostanzialmente identiche nelle diverse sequenze. Per un $\lambda$ pari ad 1.5s ad una velocit\`a di 60 km/h la visibilit\`a risulta essere di 25m (si ricordi la definizione di ``visibilit\`a'' fornita nel all'inizio della sezione \ref{sect:stima}).\\
 
-\noindent I dati grezzi ottenuti a seguito di quest'esperimento sono forniti allegati alla presente relazione nei files \verb|oldImgs.dat| e \verb|newImgs.dat|, dove sono salvate le matrici $\text{imgStart} \times \text{nFrames} \times 10$ le cui celle contengono per ogni iterazione le feature estratte ed i valori di $\lambda$ ottenuti sia mediante fitting sia RANSAC. \\
+\noindent I dati grezzi ottenuti a seguito di quest'esperimento sono forniti allegati alla presente relazione nei files \verb|oldImgs.dat| e \verb|newImgs.dat|, dove sono salvate le matrici $\text{imgStart} \times \text{nFrames} \times 10$ le cui celle contengono per ogni iterazione le feature estratte, i valori di $\lambda$ ottenuti sia mediante fitting sia RANSAC ed i relativi tempi di calcolo. \\
 
 
 \newpage
@@ -723,7 +723,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 	\label{fig:multiRansac}
 \end{figure}
 
-\noindent In modo analogo al caso precedente, l'algoritmo \`e stato eseguito dieci volte sul video con nebbia per diverse condizioni iniziali, con risultati ancora una volta difficilmente interpretabili.
+\noindent In modo analogo al caso precedente l'algoritmo \`e stato eseguito dieci volte sul video con nebbia per diverse condizioni iniziali, con risultati ancora una volta difficilmente interpretabili.
 
 \begin{table}[H]
 \begin{center}
@@ -735,7 +735,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 	Images/frame0040.jpg & 0.711s (0.16s) & 0.539s (0.011s) & 0.587s (0.0055s) & 0.802s (0.023s)\\ \hline
 	Images/frame0060.jpg & 0.382s (0.0056s) & 0.489s (0.029s) & 0.517s (0.052s) & 1.16s (0.38s)\\ \hline
 \end{tabular}
-\caption{Media (deviazione standard campionaria) del $\lambda$ calcolato mediante RANSAC. Sulle righe l'immagine di partenza, sulle colonne il numero di frame analizzati. I NaN indicano il fallimento di RANSAC a causa dell'eccessiva rumorosit\`a dei dati (l'eccessivo errore medio non ha portato a nessun set di consenso abbastanza grande).}
+\caption{Media (deviazione standard campionaria) del $\lambda$ calcolato mediante RANSAC. Sulle righe l'immagine di partenza, sulle colonne il numero di frame analizzati.}
 \label{tabRans}
 \end{center}
 \end{table}
@@ -763,12 +763,12 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 \noindent I risultati, per quanto molto pi\`u variabili, sembrano avvicinarsi a quelli ottenuti nell'analogo test usanto il metodo di fitting. Un simile risultato era prevedibile dal momento che vengono usati meno filtri sulla bont\`a delle features. \\
 
-\noindent Analogamente al sottoparagrafo precedente, i  dati grezzi ottenuti sono nei files \verb|oldImgs.dat| e \verb|newImgs.dat|.
+\noindent Analogamente al sottoparagrafo precedente, i  dati grezzi ottenuti sono salvati nei files \verb|oldImgs.dat| e \verb|newImgs.dat|.
 
 
 
 
-\subsection{Confronto}
+\section{Confronto}
 
 \noindent Confrontando i risultati ottenuti sulle diverse immagini di prova si pu\`o notare come i risultati ottenuti mediante fitting siano molto pi\`u consistenti rispetto a quelli ottenuti mediante RANSAC. Questo non stupisce, dal momento che il primo algoritmo effettua un maggiore filtraggio sulla bont\`a delle features, al contrario RANSAC include nei calcoli anche dati pi\`u affetti da rumore.\\
 
@@ -803,7 +803,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 \noindent \`E inoltre necessario uno studio su come manipolare il $\lambda$ restituito in modo da conferirgli un significato pi\`u vicino al mondo delle percezioni umane, pi\'u intuitivo per l'utente, in modo simile a come suggerito nella sezione \ref{sect:stima}.\\
 
 \noindent Ulteriori sviluppi futuri possono riguardare la reimplementazione in C\verb|++| del codice Matlab ed un'ottimizzazione degli algoritmi mirata a migliorarne le performance, eventualmente fino al punto di rendere possibile l'analisi direttamente su uno streaming video in realtime, senza le rielaborazioni successive del codice attualmente in uso. \\
-In particolare \`e necessario implementare approcci pi\`u performanti per la stima dei parametri degli esponenziali, che allo stato attuale rappresenta il collo di bottiglia del sistema. Alcuni tentativi sono gi\`a stati abbozzati, come ad esempio utilizzando l'apposita opzione per gli esponenziali nel comando \verb|fit| o implementando la formula dei \href{http://mathworld.wolfram.com/LeastSquaresFittingExponential.html}{minimi quadrati} (accennato nel paragrafo \ref{subsect:fitExp}), ma per quanto molto pi\`u leggeri di un generico fit questi algoritmi hanno mostrato una robustezza al rumore significativamente minore. Si dovr\`a cos\`i considerare un possibile trade-off tra tempo di calcolo e affidabilit\`a dei risultati. \\
+In particolare \`e necessario implementare approcci pi\`u performanti per la stima dei parametri degli esponenziali, che allo stato attuale rappresenta il collo di bottiglia del sistema. Alcuni tentativi sono gi\`a stati abbozzati, come ad esempio utilizzando l'apposita opzione per gli esponenziali nel comando \verb|fit| o implementando la formula dei \href{http://mathworld.wolfram.com/LeastSquaresFittingExponential.html}{minimi quadrati} (riportato nel paragrafo \ref{subsect:fitExp}), ma per quanto molto pi\`u leggeri di un fit su generica formula questi algoritmi hanno mostrato una robustezza al rumore significativamente minore. Si dovr\`a cos\`i considerare un possibile trade-off tra tempo di calcolo e affidabilit\`a dei risultati. \\
 
 \noindent L'aggiunta di un sistema stereoscopico potrebbe migliorare la fase di tracking delle feature, permettendo di introdurre un ulteriore filtro basato sul confronto della velocit\`a calcolata con quella effettiva del veicolo.\\
 
