@@ -16,7 +16,12 @@
 \usepackage{color}
 \usepackage{multirow}
 \usepackage{hyperref}
-\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue}
+\hypersetup{colorlinks=true,
+		linkcolor=blue,
+		urlcolor=blue,
+		citecolor=blue,
+		pdftitle={iaasFog - Analisi della visibilit\'a in condizioni di nebbia},
+		pdfauthor={Stefano Cadario, Luca Cavazzana}}
 
 \hyphenation{ransac}
 	
@@ -213,9 +218,9 @@ $$ c\left(I_{M\times N}\right) = \sqrt{\frac{1}{MN}\sum_{i=1}^N\sum_{j=1}^M(i_{i
 
 \noindent Considerando l'equazione $k_fe^{-t_{\text{imp}}/\lambda}$ possiamo assumere la feature al tempo $0$ come completamente visibile (contrasto uguale a $k_f$), al contrario per $t_{\text{imp}}$ infinito abbiamo un livello di contrasto nullo. La variazione del parametro $\lambda$ agisce principalmente sulla dinamica con cui la feature cambia la propria visibilit\`a nel tempo: ad un aumento del valore corrisponde un appiattimento della curva che indicherebbe una variazione pi\`u lineare del contrasto (maggiore visibilit\`a), mentre per valori pi\`u piccoli abbiamo un incremento della pendenza della curva, portando ad un'improvvisa apparizione della feature prima dell'impatto. \\
 
-\noindent L'unit\`a di misura di $\lambda$ \`e in secondi, e questo significa che tale valore \`e legato al tempo d'impatto invece che alla visibilit\`a in metri; per ottenere la visibilit\`a classica \`e possibile utilizzare la formula $vt=s$ che ci fornisce una stima della visibilit\`a in metri conoscendo la velocit\`a istantenea dell'auto. Sfortunatamente la misura di tale informazione nel video fornito non \`e disponibile, quindi ci si \`e limitati a considerare il tempo d'impatto medio rappresentato da $\lambda$ nell'ipotesi (forte) di velocit\`a costante.\\
+\noindent L'unit\`a di misura di $\lambda$ \`e in secondi, e questo significa che tale valore \`e legato al tempo d'impatto invece che alla visibilit\`a in metri; per ottenere la visibilit\`a classica \`e possibile utilizzare la formula $vt=s$ che ci fornisce una stima della visibilit\`a in metri conoscendo la velocit\`a istantanea dell'auto. Sfortunatamente la misura di tale informazione nel video fornito non \`e disponibile, quindi ci si \`e limitati a considerare il tempo d'impatto medio rappresentato da $\lambda$ nell'ipotesi (forte) di velocit\`a costante.\\
 
-\noindent Pi\`u precisamente per $t_{\text{imp}}=\lambda$ abbiamo il tempo d'impatto per la feature a partire dall'istante in cui il relativo contrasto assume il valore $k_fe^{-1}$. Tale valore \`e stato scelto come soglia per discriminare le feature visibili da quelle non in quanto conveniente da un punto di vista dei calcoli, e non perch\`e associato ad un concetto di visibilit\`a intuitivo in termini umani. Per far ci\`o si dovrebbe osservare sperimentalmente per quali valori di contrasto $c=qk_f$ delle features campione possono essere considerate come ``visibili'' per un occhio umano e dunque riscalare il $\lambda$ da noi fornito per $\alpha=-\log\left(q\right)$ come giustificato dalla seguente formula $$qk_f = k_fe^{-t_{\text{imp,q}}/\lambda}$$ $$t_{\text{imp,q}} = -\lambda\log \left(q\right) = \alpha\lambda$$
+\noindent Pi\`u precisamente per $t_{\text{imp}}=\lambda$ abbiamo il tempo d'impatto per la feature a partire dall'istante in cui il relativo contrasto assume il valore $k_fe^{-1}$. Tale valore \`e stato scelto come soglia per discriminare le feature visibili da quelle non in quanto conveniente da un punto di vista dei calcoli, e non perch\`e associato ad un concetto di visibilit\`a intuitivo in termini umani. Per far ci\`o si dovrebbe osservare sperimentalmente per quali valori di contrasto $c=qk_f$ delle features campione possono essere considerate come ``visibili'' per un occhio umano e dunque riscalare il $\lambda$ da noi fornito per $\alpha=-\log\left(q\right)$ come giustificato dalla seguente formula: $$qk_f = k_fe^{-t_{\text{imp,q}}/\lambda}$$ $$t_{\text{imp,q}} = -\lambda\log \left(q\right) = \alpha\lambda$$
 
 
 \subsection{Fitting di $\lambda$}
@@ -772,7 +777,7 @@ $$ \lambda = \frac{t_2-t_1}{\log\frac{c_1}{c_2}} $$
 
 \noindent Confrontando i risultati ottenuti sulle diverse immagini di prova si pu\`o notare come i risultati ottenuti mediante fitting siano molto pi\`u consistenti rispetto a quelli ottenuti mediante RANSAC. Questo non stupisce, dal momento che il primo algoritmo effettua un maggiore filtraggio sulla bont\`a delle features, al contrario RANSAC include nei calcoli anche dati pi\`u affetti da rumore.\\
 
-\noindent Esaminando invece i tempi di calcolo si nota che sono sostanzialmente simili: mentre il primo algoritmo richiede due fit per ogni feature, RANSAC ne richiede solo uno per la normalizzazione iniziale pi\`u un fit per ogni modello provato.\\
+\noindent Esaminando invece i tempi di calcolo si nota come RANSAC tenda ad essere pi\`u perfornante, anche se non in modo significativo: mentre il primo algoritmo richiede due fit per ogni feature, RANSAC ne richiede solo uno per la normalizzazione iniziale pi\`u un fit per ogni modello provato.\\
 
 \begin{table}[H]
 \begin{center}
