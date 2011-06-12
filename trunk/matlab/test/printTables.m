@@ -4,7 +4,7 @@
 
 clear all;
 
-load('lol.mat');
+load('newImgs.mat');
 
 disp('fit:')
 for st = 1:size(imStart,1)

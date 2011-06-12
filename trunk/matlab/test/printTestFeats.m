@@ -1,5 +1,6 @@
 % carica dati salvati mediante
 
+clear all;
 FIT = 0; RANSAC = 1;
 
 % - indici dell'immagine da visualizzare / printare------------------------
@@ -11,17 +12,11 @@ SAVE = 1;   % if 1 saves images, else just visualize
 ALG = FIT;  % FIT / RANSAC}. Choose the alg used to compute lam
 %--------------------------------------------------------------------------
 
+load('oldImgs.mat','res','n','imStart');
+
 if SAVE
-    if ~exist('res','var')
-        load oldImgs2.mat
-    end
-    
-    if ~exist('test','dir')
-        !mkdir test
-        !mkdir test/lol
-    end
-    if ~exist('test/lol','dir')
-        !mkdir test/lol
+    if ~exist('./lol','dir')
+        !mkdir lol
     end
 end
 
@@ -37,7 +32,7 @@ end
 im = imStart(st,:);
 s = str2double(im(end-7:end-4));
 
-save('test/lol/data.mat','feats','im','n','lamF','lamR');
+save('lol/data.mat','feats','im','n','lamF','lamR');
 
 for ii = 1:size(feats,2)
     asd = fit(feats(ii).tti',feats(ii).contr','exp1');
@@ -46,7 +41,7 @@ end
 
 for ii = 1:n(num)
     im(end-3-size(num2str(s+ii-1),2):end-4) = num2str(s+ii-1);
-    imshow(rgb2gray(imread(im)));
+    imshow(imread(im));
     title(sprintf('%s, %d of %d - \\lambda: %f',im, ii,n(num), lam)); hold on;
     
     for ff=feats
@@ -63,7 +58,7 @@ for ii = 1:n(num)
     drawnow;
     if SAVE
         try
-            print('-dpng',['test/lol/',im(max(strfind(im,'/'))+1:end-3),'png']);
+            print('-dpng',['lol/',im(max(strfind(im,'/'))+1:end-3),'png']);
             disp([im, ' saved']);
         catch e
             warning(e.identifier,'%s, make sure the folder exists',e.message);
@@ -76,7 +71,7 @@ for ii = 1:n(num)
     clf;
 end
 
-imshow(rgb2gray(imread(im)));
+imshow(imread(im));
 for ff = feats
     line([ff.x(1) ff.x(end)],[ff.y(1) ff.y(end)],'LineWidth',2);
 end
@@ -84,7 +79,7 @@ set(gca,'Position',[0 0 1 1]);
 
 if SAVE
     try
-        print('-dpng',['test/lol/flow.png']);
+        print('-dpng','lol/flow.png');
         disp('flow saved');
     catch e
         warning(e.identifier,'%s, make sure the folder exists',e.message);
@@ -93,5 +88,7 @@ else
     disp('hit a key to end');
     pause;
 end
+
+fprintf('%s + %i - it %i\n', imStart(st,:), n(num), it);
 
 close;
